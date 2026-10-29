@@ -16,15 +16,19 @@ Open `http://localhost:3000`. No environment variables or API keys are required.
 ```sh
 npm test
 npm run build
+npm run test:e2e
 npm start
 ```
 
-Tests cover bilingual lookup, keyless requests, response validation, quotas, cancellation, caching, and local study feedback. The production build checks TypeScript.
+Unit/integration tests cover translation, grading, progress, twelve IndexedDB stores, migration, import/export, streaks, study charts, and content integrity. Playwright runs installed Chrome at desktop, tablet and mobile viewport sizes against a local production server on port 3015. Install Chrome before running E2E tests. The production build checks TypeScript.
+
+See `CODEX_IMPLEMENTATION_REPORT.md` for the actual run results and hardware/browser limitations. New work stays on `codex/haylingo-v1.1.4`; merging or pushing to `main` can deploy to production and requires the owner's separate approval.
 
 ## Learning content
 
 - `data/lessons.ts`, `data/vocabulary.ts`, `data/exercises.ts`: lessons, flashcards and answer keys.
 - `data/professions.ts`, `data/it-english.ts`: professional examples and scripted dialogue.
+- `data/professional-practice.ts`: 150 four-turn profession practice scenarios; `data/additional-lessons.ts`: new lessons and exercises.
 - `data/common-translations.ts`: original starter phrasebook; add checked English–Armenian pairs by category.
 - `lib/translation-dictionary.ts`: deduplicated bilingual lookup from the existing material.
 - `lib/translation.ts`: dictionary-first lookup, MyMemory, timeout, quota handling and a bounded session cache.
@@ -42,11 +46,11 @@ MyMemory is called directly from the browser after the learner submits a request
 
 Requests omit credentials and contact email. This app does not log user text or call the provider's contribution endpoint. The external service still receives submitted text. Google Translate is a regular link fallback, not an undocumented endpoint integration.
 
-## Vercel and armeng.royalarm.store
+## Vercel and armeng.royalarm.uk
 
 1. Import `RoyalArm001/AMEnglishapp` from GitHub into Vercel.
 2. Choose **Next.js**, root `./`, production branch `main`, install command `npm ci`, build command `npm run build`.
-3. Add `armeng.royalarm.store` in **Settings → Domains**.
+3. Add `armeng.royalarm.uk` in **Settings → Domains**.
 4. At the DNS provider, create a `CNAME` named `armeng` with the exact target shown by Vercel. The parent domain must have working nameservers.
 5. Wait for **Valid Configuration** and HTTPS. With Git integration enabled, pushes to `main` trigger deployments.
 

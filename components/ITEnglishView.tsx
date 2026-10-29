@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import ProfessionalPracticeView from './ProfessionalPracticeView';
 import {
   CheckCircle2,
   HelpCircle,
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { IT_DIALOGUES, IT_TOPICS } from '../data/it-english';
-import { ITTopicId, UserProgressData } from '../lib/types';
+import { ITTopicId, UserProgressData, SkillType } from '../lib/types';
 import { normalizeEnglishText, startSpeechRecognition } from '../lib/speech';
 
 interface ITEnglishViewProps {
@@ -25,7 +26,8 @@ interface ITEnglishViewProps {
     isCorrect: boolean,
     prompt: string,
     userReply: string,
-    expectedReply: string
+    expectedReply: string,
+    skill?: SkillType
   ) => void;
 }
 
@@ -34,7 +36,7 @@ export default function ITEnglishView({
   onSpeak,
   onCompleteRoleplay,
 }: ITEnglishViewProps) {
-  const [selectedTopicId, setSelectedTopicId] = useState<ITTopicId>('helpdesk');
+  const [selectedTopicId, setSelectedTopicId] = useState<ITTopicId>(IT_DIALOGUES[0].topicId);
   const [activeScenarioId, setActiveScenarioId] = useState<string>(IT_DIALOGUES[0].id);
   const [roleplayMode, setRoleplayMode] = useState<'study' | 'interactive'>('interactive');
   const [currentTurnIdx, setCurrentTurnIdx] = useState<number>(1); // Turn 0 is Employee, Turn 1 is IT Specialist
@@ -47,6 +49,7 @@ export default function ITEnglishView({
   const [showHint, setShowHint] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [stopRecFn, setStopRecFn] = useState<(() => void) | null>(null);
+  useEffect(() => () => { stopRecFn?.(); }, [stopRecFn]);
 
   const selectedTopic =
     IT_TOPICS.find((t) => t.id === selectedTopicId) || IT_TOPICS[0];
@@ -97,10 +100,7 @@ export default function ITEnglishView({
       normUser.includes(normalizeEnglishText(kw))
     );
 
-    const isGood =
-      exactMatch ||
-      (keywords.length > 0 && matchedKeywords.length >= Math.ceil(keywords.length * 0.5)) ||
-      normUser.split(' ').length >= 4;
+    const isGood = exactMatch;
 
     setTurnFeedback({
       isGood,
@@ -155,6 +155,7 @@ export default function ITEnglishView({
 
   return (
     <div className="space-y-8">
+      <ProfessionalPracticeView profession={progress.profile.profession} onSpeak={onSpeak} onComplete={onCompleteRoleplay} />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

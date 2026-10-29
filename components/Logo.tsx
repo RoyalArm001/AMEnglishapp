@@ -17,11 +17,11 @@ const SIZE_MAP = {
 };
 
 /**
- * HayLingo AI Official Brand Logo
+ * HayLingo Official Brand Logo
  * Symbolism:
  * - Two ascending pillars: Left pillar (Armenian roots / Indigo-Violet) and Right pillar (English mastery / Emerald-Cyan).
- * - Central bridge: An interactive AI voice soundwave connecting Armenian speakers to fluent English.
- * - Central star: The AI intelligence spark guiding the learner.
+ * - Central bridge: An interactive voice soundwave connecting Armenian speakers to fluent English.
+ * - Central star: The learning spark guiding the learner.
  */
 export function LogoIcon({ size = 40, className = '' }: { size?: number; className?: string }) {
   const idPrefix = React.useId().replace(/:/g, '');
@@ -34,7 +34,7 @@ export function LogoIcon({ size = 40, className = '' }: { size?: number; classNa
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`shrink-0 ${className}`}
-      aria-label="HayLingo AI Logo"
+      aria-label="HayLingo Logo"
     >
       <defs>
         {/* Background rounded squircle gradient */}

@@ -136,7 +136,7 @@ export default function OpenGraphImage() {
               fontWeight: 500,
             }}
           >
-            26 Interactive Lessons • 210+ Spaced Repetition Words • 108 Exercises • IT & Career English • Voice Recognition & Offline PWA
+            28 Interactive Lessons • 210+ Spaced Repetition Words • 116 Exercises • IT & Career English • Voice Recognition & Offline PWA
           </div>
         </div>
 

@@ -18,6 +18,7 @@ import { LESSON_CATEGORIES, LESSONS_DATA } from '../data/lessons';
 import { VOCABULARY_ITEMS } from '../data/vocabulary';
 import { PLACEMENT_QUESTIONS } from '../data/placement-and-teacher';
 import { CEFRLevel, UserProgressData } from '../lib/types';
+import { buildStudyChart } from '../lib/study-statistics';
 import { getDateStringInTimezone } from '../lib/i18n';
 
 interface LearningHistoryViewProps {
@@ -78,7 +79,7 @@ export default function LearningHistoryView({
   // Active Study Days
   const activeDatesList = useMemo(() => {
     const dates = new Set<string>();
-    dates.add(progress.lastActiveDate);
+    if (progress.lastActiveDate) dates.add(progress.lastActiveDate);
     (progress.history || []).forEach((h) => {
       if (h.date) dates.add(h.date);
     });
@@ -86,44 +87,7 @@ export default function LearningHistoryView({
   }, [progress.history, progress.lastActiveDate]);
 
   // Chart Data (Daily 7 days, Weekly 4 weeks, Monthly 6 months)
-  const chartBars = useMemo(() => {
-    const byDate: Record<string, number> = {};
-    (progress.history || []).forEach((h) => {
-      byDate[h.date] = (byDate[h.date] || 0) + (h.durationMinutes || 1);
-    });
-    const todayStr = getDateStringInTimezone(tz);
-    byDate[todayStr] = Math.max(byDate[todayStr] || 0, progress.dailyStudyMinutes || 5);
-
-    if (chartRange === 'daily') {
-      const out: { label: string; minutes: number }[] = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-        const ds = getDateStringInTimezone(tz, d);
-        out.push({
-          label: ds.slice(5), // MM-DD
-          minutes: byDate[ds] || 0,
-        });
-      }
-      return out;
-    }
-
-    if (chartRange === 'weekly') {
-      return [
-        { label: 'Շաբաթ 1', minutes: Math.round((progress.totalStudyMinutes || 15) * 0.2) },
-        { label: 'Շաբաթ 2', minutes: Math.round((progress.totalStudyMinutes || 15) * 0.25) },
-        { label: 'Շաբաթ 3', minutes: Math.round((progress.totalStudyMinutes || 15) * 0.3) },
-        { label: 'Այս շաբաթ', minutes: Math.max(progress.dailyStudyMinutes, 10) },
-      ];
-    }
-
-    return [
-      { label: 'Հունիս', minutes: 20 },
-      { label: 'Հուլիս', minutes: 35 },
-      { label: 'Օգոստոս', minutes: 40 },
-      { label: 'Սեպտեմբեր', minutes: 55 },
-      { label: 'Հոկտեմբեր', minutes: Math.max(progress.totalStudyMinutes || 25, 25) },
-    ];
-  }, [chartRange, progress.history, progress.dailyStudyMinutes, progress.totalStudyMinutes, tz]);
+  const chartBars = useMemo(() => buildStudyChart(progress.history, chartRange, tz), [progress.history, chartRange, tz]);
 
   const maxChartVal = Math.max(20, ...chartBars.map((b) => b.minutes));
 
@@ -136,7 +100,7 @@ export default function LearningHistoryView({
       ).length;
       const timeSpent = catLessons.reduce((acc, l) => {
         const lp = progress.lessonProgressMap?.[l.id];
-        return acc + (lp?.timeSpentMinutes || (progress.completedLessonIds.includes(l.id) ? l.estimatedMinutes : 0));
+        return acc + (lp?.timeSpentMinutes || 0);
       }, 0);
       const percent =
         catLessons.length > 0 ? Math.round((doneCount / catLessons.length) * 100) : 0;

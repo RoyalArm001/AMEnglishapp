@@ -232,7 +232,8 @@ export function compareSpokenToTarget(
   alternatives: string[] = []
 ): SpeechComparisonResult {
   const normSpoken = normalizeEnglishText(spokenText);
-  const spokenWords = new Set(normSpoken.split(' ').filter(Boolean));
+  const spokenWords = normSpoken.split(' ').filter(Boolean);
+  let cursor = 0;
 
   const candidates = [targetSentence, ...alternatives];
   for (const cand of candidates) {
@@ -250,18 +251,22 @@ export function compareSpokenToTarget(
   const targetWordsRaw = targetSentence.split(/\s+/).filter(Boolean);
   const breakdown: WordComparisonItem[] = targetWordsRaw.map((rawWord) => {
     const clean = normalizeEnglishText(rawWord);
-    return {
-      word: rawWord,
-      matched: clean.length > 0 && spokenWords.has(clean),
-    };
+    const tokens = clean.split(' ').filter(Boolean);
+    const start = spokenWords.findIndex((word, i) => i >= cursor && tokens.every((t, j) => spokenWords[i + j] === t));
+    if (start >= 0) cursor = start + tokens.length;
+    return { word: rawWord, matched: tokens.length > 0 && start >= 0 };
   });
 
   const matchedCount = breakdown.filter((b) => b.matched).length;
   const matchRatio = breakdown.length > 0 ? matchedCount / breakdown.length : 0;
-  const isAcceptable = matchRatio >= 0.7;
+  const targetNegated = /\b(not|never|no)\b/.test(normalizeEnglishText(targetSentence));
+  const spokenNegated = /\b(not|never|no)\b/.test(normSpoken);
+  const isAcceptable = matchRatio >= 0.85 && targetNegated === spokenNegated && spokenWords.length <= breakdown.length * 1.3;
 
   let feedbackAm = '';
-  if (matchRatio >= 0.9) {
+  if (targetNegated !== spokenNegated) {
+    feedbackAm = 'Ժխտումը փոխում է նախադասության իմաստը։ Ստուգեք «not / never / no» բառերը և կրկին փորձեք։';
+  } else if (isAcceptable) {
     feedbackAm = 'Հիանալի է․ ճանաչված բառերը գրեթե ամբողջությամբ համընկնում են։';
   } else if (matchRatio >= 0.7) {
     feedbackAm = 'Լավ արդյունք է․ հիմնական բառերը ճանաչվել են, ուշադրություն դարձրեք ընդգծված բառերին։';

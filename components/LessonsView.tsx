@@ -61,6 +61,7 @@ export default function LessonsView({
   const [activeSentenceIdx, setActiveSentenceIdx] = useState<number>(initialSentenceIdx);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [stopRecognitionFn, setStopRecognitionFn] = useState<(() => void) | null>(null);
+  useEffect(() => () => { stopRecognitionFn?.(); }, [stopRecognitionFn]);
   const [spokenTranscript, setSpokenTranscript] = useState<string>('');
   const [manualTextFallback, setManualTextFallback] = useState<string>('');
   const [showTextFallback, setShowTextFallback] = useState<boolean>(false);
@@ -464,7 +465,7 @@ export default function LessonsView({
                 setSelectedProfessionFilter(e.target.value as ProfessionId);
                 setSelectedCategory('profession');
               }}
-              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold"
+              className="max-w-full min-w-0 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold"
             >
               {PROFESSIONS_LIST.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -562,6 +563,7 @@ export default function LessonsView({
                   {lesson.sentences.length} նախադասություն · {lesson.estimatedMinutes} ր
                 </span>
                 <button
+                  aria-label={`Բացել դասը՝ ${lesson.titleAm}`}
                   onClick={() => handleOpenLesson(lesson.id)}
                   className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
                     isCurrent

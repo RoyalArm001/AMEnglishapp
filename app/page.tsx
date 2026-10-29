@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Award,
@@ -41,10 +41,13 @@ import {
   StudySessionRecord,
   TeacherMessage,
   ThemeMode,
+  SkillType,
   UserProgressData,
   UserSettingsRecord,
 } from '../lib/types';
-import { speakEnglish } from '../lib/speech';
+import { useStudyTimer } from '../lib/use-study-timer';
+import { LESSONS_DATA, LESSON_CATEGORIES } from '../data/lessons';
+import { speakEnglish, compareSpokenToTarget } from '../lib/speech';
 import { computeEffectiveDarkMode, getTimeStringInTimezone, UI_TEXT } from '../lib/i18n';
 import { getRecommendedLessonIdsForProfession } from '../data/professions';
 import OnboardingView from '../components/OnboardingView';
@@ -81,11 +84,11 @@ type NavTabId =
 
 const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] = [
   { id: 'Dashboard', labelAm: UI_TEXT.nav.dashboard, subAm: 'Օրվա ամփոփում', icon: LayoutDashboard },
-  { id: 'Lessons', labelAm: UI_TEXT.nav.lessons, subAm: '16 բաժին · 26 դաս', icon: BookOpen },
+  { id: 'Lessons', labelAm: UI_TEXT.nav.lessons, subAm: `${LESSON_CATEGORIES.length} բաժին · ${LESSONS_DATA.length} դաս`, icon: BookOpen },
   { id: 'Exercises', labelAm: UI_TEXT.nav.exercises, subAm: 'Վարժություններ Ա–Զ', icon: Brain },
   { id: 'Study Assistant', labelAm: UI_TEXT.nav.teacher, subAm: 'Հարց ու պատասխան', icon: MessageCircle },
   { id: 'Voice Practice', labelAm: UI_TEXT.nav.voice, subAm: 'Խոսք և Առավոտյան ռեժիմ', icon: Mic },
-  { id: 'IT English', labelAm: UI_TEXT.nav.itEnglish, subAm: '13 թեմա և Երկխոսություն', icon: Terminal },
+  { id: 'IT English', labelAm: UI_TEXT.nav.itEnglish, subAm: '15 մասնագիտություն · երկխոսություն', icon: Terminal },
   { id: 'Vocabulary', labelAm: UI_TEXT.nav.vocabulary, subAm: '210 բառ և Քարտեր', icon: BookMarked },
   { id: 'Translation', labelAm: UI_TEXT.nav.translation, subAm: 'Հայերեն ↔ Անգլերեն', icon: Languages },
   { id: 'My Progress', labelAm: UI_TEXT.nav.history, subAm: 'Գրաֆիկներ և Սխալներ', icon: History },
@@ -95,9 +98,12 @@ const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] =
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTabId>('Dashboard');
+  const navigateTab = useCallback((tab: string) => setActiveTab(tab as NavTabId), []);
+  const consumeStudyMinutes = useStudyTimer(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [progress, setProgress] = useState<UserProgressData>(DEFAULT_USER_PROGRESS);
   const [hydrated, setHydrated] = useState<boolean>(false);
+  const [storageError, setStorageError] = useState(false);
   const [startInPlacement, setStartInPlacement] = useState<boolean>(false);
   const [lessonSentenceResumeIdx, setLessonSentenceResumeIdx] = useState<number>(0);
 
@@ -105,10 +111,11 @@ export default function HomePage() {
   useEffect(() => {
     const syncData = learningRepository.loadProgressSync();
     setProgress(syncData);
-    setHydrated(true);
+
 
     learningRepository.loadProgressAsync().then((asyncData) => {
       setProgress(asyncData);
+      setHydrated(true);
     });
   }, []);
 
@@ -146,8 +153,8 @@ export default function HomePage() {
 
   const updateAndPersist = (updater: (prev: UserProgressData) => UserProgressData) => {
     setProgress((prev) => {
-      const updated = normalizeAndValidateState(updater(prev));
-      learningRepository.saveProgress(updated);
+      const updated = normalizeAndValidateState(updater(normalizeAndValidateState(prev)));
+      learningRepository.saveProgress(updated).then(() => setStorageError(false)).catch(() => setStorageError(true));
       return updated;
     });
   };
@@ -268,7 +275,7 @@ export default function HomePage() {
         status: existingLp?.status === 'completed' ? 'completed' : 'in-progress',
         lastSentenceIndex: sentenceIdx,
         completedSentenceIndices: existingLp?.completedSentenceIndices || [],
-        timeSpentMinutes: (existingLp?.timeSpentMinutes || 0) + 1,
+        timeSpentMinutes: existingLp?.timeSpentMinutes || 0,
         updatedAt: Date.now(),
       };
       return {
@@ -296,7 +303,7 @@ export default function HomePage() {
         status: existingLp?.status === 'completed' ? 'completed' : 'in-progress',
         lastSentenceIndex: sentenceIdx,
         completedSentenceIndices: completedIndices,
-        timeSpentMinutes: (existingLp?.timeSpentMinutes || 1) + 1,
+        timeSpentMinutes: existingLp?.timeSpentMinutes || 0,
         updatedAt: Date.now(),
       };
       return {
@@ -322,7 +329,9 @@ export default function HomePage() {
   };
 
   const handleCompleteLesson = (lessonId: string) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
+      if (prev.completedLessonIds.includes(lessonId)) return prev;
       const completedLessonIds = Array.from(new Set([...prev.completedLessonIds, lessonId]));
       const readingBoost = Math.min(100, prev.skills.reading + 3);
       const tz = prev.settings?.timezone || 'Asia/Yerevan';
@@ -332,8 +341,8 @@ export default function HomePage() {
         lessonId,
         status: 'completed',
         lastSentenceIndex: 0,
-        completedSentenceIndices: existingLp?.completedSentenceIndices || [0, 1, 2, 3, 4],
-        timeSpentMinutes: (existingLp?.timeSpentMinutes || 0) + 5,
+        completedSentenceIndices: (LESSONS_DATA.find(l => l.id === lessonId)?.sentences || []).map((_, i) => i),
+        timeSpentMinutes: (existingLp?.timeSpentMinutes || 0) + minutes,
         completedAt: Date.now(),
         updatedAt: Date.now(),
       };
@@ -344,15 +353,15 @@ export default function HomePage() {
         activityType: 'lesson',
         referenceId: lessonId,
         titleAm: `Ավարտված դաս՝ ${lessonId}`,
-        durationMinutes: 5,
+        durationMinutes: minutes,
         correctDelta: 1,
         wrongDelta: 0,
       };
       return {
         ...prev,
         completedLessonIds,
-        totalStudyMinutes: (prev.totalStudyMinutes || 0) + 5,
-        dailyStudyMinutes: prev.dailyStudyMinutes + 5,
+        totalStudyMinutes: (prev.totalStudyMinutes || 0) + minutes,
+        dailyStudyMinutes: prev.dailyStudyMinutes + minutes,
         lessonProgressMap: {
           ...(prev.lessonProgressMap || {}),
           [lessonId]: updatedLp,
@@ -375,6 +384,7 @@ export default function HomePage() {
     isCorrect: boolean;
     userAnswer: string;
   }) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const next = recordLearningAttempt(prev, {
         isCorrect,
@@ -385,7 +395,7 @@ export default function HomePage() {
         correctAnswer: exercise.correctAnswer,
         explanationAm: exercise.explanationAm,
         activityTitleAm: `Վարժություն · ${exercise.category}`,
-        minutesAdded: 1,
+        minutesAdded: minutes,
         exerciseId: exercise.id,
         exerciseType: exercise.type,
         category: exercise.category,
@@ -396,6 +406,7 @@ export default function HomePage() {
       return {
         ...next,
         completedExerciseIds,
+        mistakes: isCorrect ? next.mistakes.map(m => m.exerciseId === exercise.id ? {...m,resolved:true} : m) : next.mistakes,
       };
     });
   };
@@ -412,6 +423,7 @@ export default function HomePage() {
     correctAnswer: string;
     explanationAm: string;
   }) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const next = recordLearningAttempt(prev, {
         isCorrect: params.isCorrect,
@@ -422,7 +434,7 @@ export default function HomePage() {
         correctAnswer: params.correctAnswer,
         explanationAm: params.explanationAm,
         activityTitleAm: 'Պարապմունք Անձնական Ուսուցչի հետ',
-        minutesAdded: 2,
+        minutesAdded: minutes,
       });
       return {
         ...next,
@@ -443,6 +455,7 @@ export default function HomePage() {
     spokenText: string,
     targetText: string
   ) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData =>
       recordLearningAttempt(prev, {
         isCorrect,
@@ -453,8 +466,8 @@ export default function HomePage() {
         correctAnswer: targetText,
         explanationAm: 'Խոսակցական վարժության տեքստային համեմատում։',
         activityTitleAm: 'Ձայնային պարապմունք',
-        minutesAdded: 2,
-        matchRatio: isCorrect ? 0.9 : 0.45,
+        minutesAdded: minutes,
+        matchRatio: compareSpokenToTarget(spokenText, targetText).matchRatio,
       })
     );
   };
@@ -464,23 +477,25 @@ export default function HomePage() {
     isGood: boolean,
     prompt: string,
     userReply: string,
-    expectedReply: string
+    expectedReply: string,
+    skill: SkillType = 'speaking'
   ) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const next = recordLearningAttempt(prev, {
         isCorrect: isGood,
-        skill: 'speaking',
+        skill,
         source: 'roleplay',
         prompt,
         userAnswer: userReply,
         correctAnswer: expectedReply,
         explanationAm: 'Աշխատանքային երկխոսության պատասխան։',
         activityTitleAm: `Մասնագիտական երկխոսություն (${scenarioId})`,
-        minutesAdded: 2,
+        minutesAdded: minutes,
       });
       return {
         ...next,
-        completedRoleplayIds: Array.from(new Set([...next.completedRoleplayIds, scenarioId])),
+        completedRoleplayIds: isGood ? Array.from(new Set([...next.completedRoleplayIds, scenarioId])) : next.completedRoleplayIds,
       };
     });
   };
@@ -499,6 +514,7 @@ export default function HomePage() {
     wordId: string,
     grade: 'again' | 'hard' | 'good' | 'easy'
   ) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const nextSRS = calculateNextSRS(wordId, prev.srsWords[wordId], grade);
       const learnedWordIds =
@@ -508,8 +524,9 @@ export default function HomePage() {
       return {
         ...prev,
         learnedWordIds,
-        totalStudyMinutes: (prev.totalStudyMinutes || 0) + 1,
-        dailyStudyMinutes: prev.dailyStudyMinutes + 1,
+        totalStudyMinutes: (prev.totalStudyMinutes || 0) + minutes,
+        dailyStudyMinutes: prev.dailyStudyMinutes + minutes,
+        history: [{id: `vocab-${Date.now()}`,date:getTodayDateString(prev.settings.timezone),timestamp:Date.now(),activityType:'vocabulary' as const,referenceId:wordId,titleAm:'Բառի կրկնում',durationMinutes:minutes,correctDelta:0,wrongDelta:0},...prev.history].slice(0,100),
         srsWords: {
           ...prev.srsWords,
           [wordId]: nextSRS,
@@ -519,6 +536,7 @@ export default function HomePage() {
   };
 
   const handleCompletePlacement = (calculatedLevel: CEFRLevel, scorePercent: number) => {
+    const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const tz = prev.settings?.timezone || 'Asia/Yerevan';
       const newEntry: StudySessionRecord = {
@@ -527,7 +545,7 @@ export default function HomePage() {
         timestamp: Date.now(),
         activityType: 'placement',
         titleAm: `Մակարդակի ստուգում՝ ${calculatedLevel} (${scorePercent}%)`,
-        durationMinutes: 3,
+        durationMinutes: minutes,
         correctDelta: 1,
         wrongDelta: 0,
       };
@@ -535,14 +553,9 @@ export default function HomePage() {
         ...prev,
         level: calculatedLevel,
         placementCompleted: true,
-        totalStudyMinutes: (prev.totalStudyMinutes || 0) + 3,
-        dailyStudyMinutes: prev.dailyStudyMinutes + 3,
-        skills: {
-          reading: Math.max(25, scorePercent),
-          listening: Math.max(25, scorePercent - 5),
-          speaking: Math.max(20, scorePercent - 8),
-          writing: Math.max(25, scorePercent - 3),
-        },
+        totalStudyMinutes: (prev.totalStudyMinutes || 0) + minutes,
+        dailyStudyMinutes: prev.dailyStudyMinutes + minutes,
+        skills: prev.skills,
         history: [newEntry, ...prev.history].slice(0, 100),
       };
     });
@@ -611,6 +624,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+      {storageError && <div role="alert" className="fixed top-0 inset-x-0 z-50 bg-amber-100 text-amber-950 p-3 text-center">Առաջընթացը չի պահպանվել բրաուզերում։ Էջը փակելուց առաջ Կարգավորումներից արտահանեք JSON պահուստը։</div>}
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 justify-between z-30 overflow-y-auto">
         <div className="space-y-4">
@@ -760,7 +774,7 @@ export default function HomePage() {
         <PWAManager
           morningPracticeTime={progress.settings?.preferredMorningTime || '08:30'}
           timezone={progress.settings?.timezone || 'Asia/Yerevan'}
-          onNavigateTab={(tab) => setActiveTab(tab as NavTabId)}
+          onNavigateTab={navigateTab}
         />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
           {/* Top Status Bar */}

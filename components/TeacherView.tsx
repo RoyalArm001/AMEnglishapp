@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CheckCircle2,
   Mic,
@@ -40,7 +40,9 @@ export default function TeacherView({
   onUpdateTeacherState,
 }: TeacherViewProps) {
   const session = progress.teacherSession;
-  const activeQuestion =
+  const storedQuestion = TEACHER_CURRICULUM[session.currentQuestionIndex % TEACHER_CURRICULUM.length];
+  const preferredQuestion = (!session.messages.length || (storedQuestion?.profession && storedQuestion.profession !== progress.profile.profession)) ? TEACHER_CURRICULUM.find(q => q.profession === progress.profile.profession) : undefined;
+  const activeQuestion = preferredQuestion ||
     TEACHER_CURRICULUM[session.currentQuestionIndex % TEACHER_CURRICULUM.length] ||
     TEACHER_CURRICULUM[0];
 
@@ -51,6 +53,7 @@ export default function TeacherView({
   );
   const [isListening, setIsListening] = useState<boolean>(false);
   const [stopRecFn, setStopRecFn] = useState<(() => void) | null>(null);
+  useEffect(() => () => { stopRecFn?.(); }, [stopRecFn]);
 
   const handleSendAnswer = async () => {
     const trimmed = inputText.trim();
@@ -60,6 +63,7 @@ export default function TeacherView({
     setInputText('');
 
     const payload = {
+      profession: progress.profile.profession,
       currentQuestionId: activeQuestion.id,
       userAnswer: trimmed,
       masteredQuestionIds: session.masteredQuestionIds || [],
@@ -87,7 +91,7 @@ export default function TeacherView({
       nextQuestionEn: evalResult.nextQuestion.questionEn,
       nextQuestionPronunciation: evalResult.nextQuestion.questionPronunciation,
       nextQuestionAm: evalResult.nextQuestion.questionAm,
-      isCorrect: evalResult.isFullyCorrect || evalResult.isPartiallyCorrect,
+      isCorrect: evalResult.isFullyCorrect,
       level: evalResult.nextQuestion.level as any,
       topic: evalResult.nextQuestion.topic,
       timestamp: Date.now() + 1,
@@ -103,7 +107,7 @@ export default function TeacherView({
 
     const nextWeak = evalResult.weakTopicDetected
       ? Array.from(new Set([...(session.weakTopics || []), evalResult.weakTopicDetected]))
-      : session.weakTopics || [];
+      : evalResult.isFullyCorrect ? session.weakTopics.filter(topic => topic !== activeQuestion.topic) : session.weakTopics || [];
 
     onUpdateTeacherState({
       newMessages: [...(session.messages || []), userMsg, teacherReplyMsg].slice(-30),
@@ -111,7 +115,7 @@ export default function TeacherView({
       difficultyScore: evalResult.updatedDifficulty,
       masteredQuestionIds: nextMastered,
       weakTopics: nextWeak,
-      isCorrect: evalResult.isFullyCorrect || evalResult.isPartiallyCorrect,
+      isCorrect: evalResult.isFullyCorrect,
       prompt: activeQuestion.questionEn,
       userAnswer: trimmed,
       correctAnswer: evalResult.correctedSentenceEn,

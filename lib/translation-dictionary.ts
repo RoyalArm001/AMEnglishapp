@@ -1,3 +1,4 @@
+import { PROFESSIONAL_DIALOGUES } from '../data/professional-practice';
 import { COMMON_TRANSLATION_GROUPS } from '../data/common-translations';
 import { ALL_LESSON_SENTENCES } from '../data/lessons';
 import { VOCABULARY_ITEMS } from '../data/vocabulary';
@@ -19,6 +20,7 @@ export function normalizeTranslationText(text: string): string {
 }
 
 const entries: TranslationEntry[] = [
+  ...PROFESSIONAL_DIALOGUES.flatMap(d => [d.question,d.answer,d.followUp,d.followUpAnswer].map(([english,pronunciation,armenian])=>({english,pronunciation,armenian,category:"Մասնագիտական պարապմունք"}))),
   ...COMMON_TRANSLATION_GROUPS.flatMap(({ category, pairs }) =>
     pairs.map(([english, armenian]) => ({ english, armenian, category }))),
   ...VOCABULARY_ITEMS.flatMap((word) => [

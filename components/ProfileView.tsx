@@ -206,7 +206,7 @@ export default function ProfileView({
             </div>
             <div className="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-center">
               <div className="text-2xl font-extrabold text-sky-600 dark:text-sky-400">
-                {progress.totalStudyMinutes || progress.dailyStudyMinutes} ր
+                {Math.round(progress.totalStudyMinutes * 10) / 10} ր
               </div>
               <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                 Ընդհանուր ժամանակ

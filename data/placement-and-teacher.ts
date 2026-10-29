@@ -1,3 +1,5 @@
+import { PROFESSIONAL_DIALOGUES } from './professional-practice';
+import type { ProfessionId } from '../lib/types';
 import { CEFRLevel, SkillType } from '../lib/types';
 
 export interface PlacementQuestion {
@@ -292,6 +294,7 @@ export const VOICE_PRACTICE_ITEMS: VoicePracticeItem[] = [
 ];
 
 export interface TeacherCurriculumQuestion {
+  profession?: ProfessionId;
   id: string;
   difficulty: number; // 1 to 10
   level: CEFRLevel;
@@ -529,5 +532,12 @@ export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
     shortFragmentPatterns: [],
     defaultExplanationAm: 'Նպատակը գրագետ հիմնավորելու համար օգտագործեք «so that it does not affect...» կամ «in order to avoid downtime during working hours»։',
   },
+  ...PROFESSIONAL_DIALOGUES.map((d, i): TeacherCurriculumQuestion => ({
+    id: d.id, profession: d.profession, difficulty: Math.min(8, 1 + (i % 10)), level: d.level,
+    topic: d.profession + ' · ' + d.title, skill: 'writing', questionEn: d.question[0],
+    questionPronunciation: d.question[1], questionAm: d.question[2], idealSentenceEn: d.answer[0],
+    idealPronunciation: d.answer[1], acceptedFullSentences: [d.answer[0]], requiredKeywords: [],
+    shortFragmentPatterns: [], defaultExplanationAm: 'Օրինակելի պատասխանը՝ ' + d.answer[2] + ' Համեմատեք բառերի հերթականությունն ու բայի ձևը։',
+  })),
 ];
 

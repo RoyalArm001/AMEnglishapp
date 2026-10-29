@@ -1,3 +1,4 @@
+import { isValidProgressBackup } from './progress-validation';
 import {
   AchievementRecord,
   CEFRLevel,
@@ -117,20 +118,20 @@ export const DEFAULT_USER_PROGRESS: UserProgressData = {
   achievements: DEFAULT_ACHIEVEMENTS,
   correctAnswersCount: 0,
   wrongAnswersCount: 0,
-  totalStudyMinutes: 5,
-  dailyStudyMinutes: 5,
+  totalStudyMinutes: 0,
+  dailyStudyMinutes: 0,
   dailyStudyDate: getDateStringInTimezone(DEFAULT_TIMEZONE),
-  streakDays: 1,
-  lastActiveDate: getDateStringInTimezone(DEFAULT_TIMEZONE),
+  streakDays: 0,
+  lastActiveDate: '',
   lastActiveTimestamp: Date.now(),
   preferredMorningTime: '08:30',
   darkMode: false,
   speechRate: 'normal',
   skills: {
-    reading: 35,
-    listening: 30,
-    speaking: 25,
-    writing: 30,
+    reading: 0,
+    listening: 0,
+    speaking: 0,
+    writing: 0,
   },
   mistakes: [],
   history: [],
@@ -181,7 +182,8 @@ function openIndexedDB(): Promise<IDBDatabase | null> {
           }
         });
       };
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => { request.result.onversionchange = () => request.result.close(); resolve(request.result); };
+      request.onblocked = () => resolve(null);
       request.onerror = () => resolve(null);
     } catch {
       resolve(null);
@@ -267,19 +269,15 @@ export function normalizeAndValidateState(raw: Partial<UserProgressData>): UserP
     updated.dailyStudyMinutes = 0;
   }
 
-  if (updated.lastActiveDate !== todayInTz) {
-    const lastParts = (updated.lastActiveDate || todayInTz).split('-').map(Number);
-    const currParts = todayInTz.split('-').map(Number);
-    const lastUtc = Date.UTC(lastParts[0] || 2026, (lastParts[1] || 1) - 1, lastParts[2] || 1);
-    const currUtc = Date.UTC(currParts[0] || 2026, (currParts[1] || 1) - 1, currParts[2] || 1);
-    const diffDays = Math.round((currUtc - lastUtc) / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) {
-      updated.streakDays = (updated.streakDays || 1) + 1;
-    } else if (diffDays > 1) {
-      updated.streakDays = 1;
-    }
+  // Opening the app is not study. Credit only an actual saved learning activity.
+  const studiedToday = updated.history.some(item => item.date === todayInTz);
+  const daysSinceStudy = updated.lastActiveDate
+    ? Math.round((Date.parse(todayInTz) - Date.parse(updated.lastActiveDate)) / 86400000) : Infinity;
+  if (studiedToday && updated.lastActiveDate !== todayInTz) {
+    updated.streakDays = daysSinceStudy === 1 ? updated.streakDays + 1 : 1;
     updated.lastActiveDate = todayInTz;
+  } else if (!studiedToday && daysSinceStudy > 1) {
+    updated.streakDays = 0;
   }
 
   // Unlock dynamic achievements
@@ -358,6 +356,8 @@ class LocalLearningRepository implements ILearningRepository {
 
   async loadProgressAsync(): Promise<UserProgressData> {
     const syncState = this.loadProgressSync();
+    let hasLocalSnapshot = false;
+    try { const rawLocal = window.localStorage.getItem(SNAPSHOT_STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY_V2); hasLocalSnapshot = Boolean(rawLocal && isValidProgressBackup(JSON.parse(rawLocal))); } catch {}
     const db = await openIndexedDB();
     if (!db) {
       return syncState;
@@ -366,14 +366,16 @@ class LocalLearningRepository implements ILearningRepository {
     return new Promise((resolve) => {
       try {
         const tx = db.transaction([IDB_STORES.users], 'readonly');
+        tx.oncomplete = () => db.close();
+        tx.onabort = () => { db.close(); resolve(syncState); };
         const usersStore = tx.objectStore(IDB_STORES.users);
         const req = usersStore.get('user-main');
         req.onsuccess = () => {
-          if (req.result && req.result.payload) {
+          if (req.result && req.result.payload && isValidProgressBackup(req.result.payload)) {
             const idbPayload = req.result.payload as Partial<UserProgressData>;
             const merged = normalizeAndValidateState({
-              ...syncState,
-              ...idbPayload,
+              ...(!hasLocalSnapshot || Number(idbPayload.lastActiveTimestamp || 0) >= Number(syncState.lastActiveTimestamp || 0)
+                ? { ...syncState, ...idbPayload } : { ...idbPayload, ...syncState }),
             });
             try {
               window.localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(merged));
@@ -383,7 +385,7 @@ class LocalLearningRepository implements ILearningRepository {
             resolve(merged);
           } else {
             // Seed IndexedDB stores with current state
-            this.saveProgress(syncState).then(() => resolve(syncState));
+            this.saveProgress(syncState).then(() => resolve(syncState)).catch(() => resolve(syncState));
           }
         };
         req.onerror = () => resolve(syncState);
@@ -400,6 +402,7 @@ class LocalLearningRepository implements ILearningRepository {
       lastActiveTimestamp: Date.now(),
     });
 
+    let snapshotSaved = false;
     try {
       // Save small settings and fast hydration snapshot in LocalStorage
       window.localStorage.setItem(
@@ -410,14 +413,19 @@ class LocalLearningRepository implements ILearningRepository {
         SNAPSHOT_STORAGE_KEY,
         JSON.stringify(normalized)
       );
+      snapshotSaved = true;
     } catch {
       // Ignore localStorage quota errors
     }
 
     const db = await openIndexedDB();
-    if (!db) return;
+    if (!db) {
+      if (!snapshotSaved) throw new Error('Progress storage is unavailable');
+      return;
+    }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      const fail = () => { db.close(); snapshotSaved ? resolve() : reject(new Error('Progress storage is unavailable')); };
       try {
         const storeNames = Object.values(IDB_STORES);
         const tx = db.transaction(storeNames, 'readwrite');
@@ -520,10 +528,11 @@ class LocalLearningRepository implements ILearningRepository {
           }
         });
 
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => resolve();
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = fail;
+        tx.onabort = fail;
       } catch {
-        resolve();
+        fail();
       }
     });
   }
@@ -582,7 +591,7 @@ class LocalLearningRepository implements ILearningRepository {
       const rawData: Partial<UserProgressData> =
         parsed && typeof parsed === 'object' && parsed.data ? parsed.data : parsed;
 
-      if (!rawData || typeof rawData !== 'object') {
+      if (!isValidProgressBackup(rawData) || (parsed.schemaVersion && parsed.schemaVersion > IDB_SCHEMA_VERSION)) {
         return {
           ok: false,
           errorAm: 'Ֆայլի կառուցվածքը վավեր չէ։ Խնդրում ենք ընտրել HayLingo-ի արտահանված JSON ֆայլ։',
@@ -591,7 +600,7 @@ class LocalLearningRepository implements ILearningRepository {
 
       const restored = normalizeAndValidateState({
         ...rawData,
-        onboardingCompleted: true,
+        onboardingCompleted: Boolean(rawData.onboardingCompleted),
       });
 
       await this.saveProgress(restored);
@@ -697,7 +706,7 @@ export function recordLearningAttempt(
     correctAnswer,
     explanationAm,
     activityTitleAm,
-    minutesAdded = 1,
+    minutesAdded = 0,
     exerciseId,
     exerciseType,
     category,
@@ -705,8 +714,8 @@ export function recordLearningAttempt(
   } = params;
 
   const skillDelta = isCorrect ? 2 : -1;
-  const currentSkill = state.skills[skill] ?? 30;
-  const nextSkill = Math.max(5, Math.min(100, currentSkill + skillDelta));
+  const currentSkill = state.skills[skill] ?? 0;
+  const nextSkill = Math.max(0, Math.min(100, currentSkill + skillDelta));
 
   let mistakes = [...state.mistakes];
   if (!isCorrect && userAnswer.trim()) {
@@ -756,7 +765,7 @@ export function recordLearningAttempt(
   }
 
   let speakingSessions = [...(state.speakingSessions || [])];
-  if (source === 'voice' || source === 'roleplay' || skill === 'speaking') {
+  if (source === 'voice' || skill === 'speaking') {
     const spSession: SpeakingSessionRecord = {
       id: `spk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       promptEn: prompt,

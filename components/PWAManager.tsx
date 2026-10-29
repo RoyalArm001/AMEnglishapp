@@ -125,19 +125,19 @@ export default function PWAManager({
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const checkReminder = () => {
+    const checkReminder = async () => {
       const nowTime = getTimeStringInTimezone(timezone);
       const todayStr = getDateStringInTimezone(timezone);
       const lastNotified = window.localStorage.getItem('haylingo_last_notified_date');
 
-      if (nowTime === morningPracticeTime && lastNotified !== todayStr) {
-        window.localStorage.setItem('haylingo_last_notified_date', todayStr);
-        sendPWANotification(
+      if (nowTime === morningPracticeTime && lastNotified !== todayStr && 'Notification' in window && Notification.permission === 'granted') {
+        const sent = await sendPWANotification(
           'HayLingo — Առավոտյան Ձայնային Պարապմունք',
           `Ժամը ${morningPracticeTime}-ն է։ Սկսեք 5 րոպեանոց առավոտյան անգլերենի պարապմունքը։`,
           '/?tab=voice',
           `haylingo-morning-${todayStr}`
         );
+        if (sent) window.localStorage.setItem('haylingo_last_notified_date', todayStr);
       }
     };
 

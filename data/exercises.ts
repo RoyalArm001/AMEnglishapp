@@ -1,3 +1,4 @@
+import { ADDITIONAL_EXERCISES } from './additional-lessons';
 import { ExerciseItem } from '../lib/types';
 
 export const EXERCISE_ITEMS: ExerciseItem[] = [
@@ -2007,4 +2008,5 @@ export const EXERCISE_ITEMS: ExerciseItem[] = [
     hintAm: 'Օգտագործեք STAR մեթոդը (Իրավիճակ, Գործողություն, Արդյունք)՝ օրինակ՝ «When our primary switch failed, I reconfigured the backup switch to restore connectivity...»։',
     explanationAm: 'Ավագ մասնագետի հարցազրույցներում նման հարցերին պատասխանելիս կարևոր է նշել ոչ միայն արագ լուծումը, այլև հետագա կանխարգելիչ քայլերը (preventive measures & documentation)։'
   }
+  ,...ADDITIONAL_EXERCISES,
 ];

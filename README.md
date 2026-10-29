@@ -1,6 +1,10 @@
 # HayLingo — Սովորիր անգլերեն հայերենով
 
-**English learning for Armenian speakers.**
+![HayLingo app icon](public/favicon.svg)
+
+**English learning for Armenian speakers · v1.1.4**
+
+[Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Իրականացման հաշվետվություն](CODEX_IMPLEMENTATION_REPORT.md)
 
 ## Հայերեն
 
@@ -22,15 +26,16 @@ HayLingo-ն օգնում է անգլերեն սովորել հասկանալի �
 
 | Բովանդակություն | Ներկա ծավալը |
 | --- | ---: |
-| Դասերի բաժիններ / դասեր | 16 / 26 |
-| Դասերի նախադասություններ | 131 |
+| Դասերի բաժիններ / դասեր | 16 / 28 |
+| Դասերի նախադասություններ | 139 |
 | Բառաքարտերի բառեր | 210 |
-| Վարժություններ | 108 |
+| Վարժություններ | 116 |
 | ՏՏ թեմաներ / պատրաստի երկխոսություններ | 13 / 21 |
 | Մասնագիտական ընտրություններ | 15 |
-| Թարգմանության բազայի եզակի զույգեր | 874 |
+| Նոր մասնագիտական երկխոսություններ | 150 (10 յուրաքանչյուր մասնագիտության համար) |
+| Թարգմանության բազայի եզակի զույգեր | 1057 |
 
-Թարգմանության բազան միավորում է բառերը, դրանց օրինակները, դասերն ու երկխոսությունները։ Ավելացված են նաև **152 առօրյա բառ ու արտահայտություն**՝ ողջույնի, ընտանիքի, սննդի, գնումների, ճանապարհորդության, եղանակի, աշխատանքի և ուսուցման մասին։ 874 զույգը չի նշանակում 874 առանձին բառաքարտ․ նույն նյութը օգտագործվում է նաև թարգմանության որոնման համար։
+Թարգմանության բազան միավորում է բառերը, դրանց օրինակները, դասերն ու երկխոսությունները։ Ավելացված են նաև **152 առօրյա բառ ու արտահայտություն**՝ ողջույնի, ընտանիքի, սննդի, գնումների, ճանապարհորդության, եղանակի, աշխատանքի և ուսուցման մասին։ 1057 զույգը չի նշանակում 1057 առանձին բառաքարտ․ նույն նյութը օգտագործվում է նաև թարգմանության որոնման համար։
 
 Հաջորդ զարգացումը բազան թեմաներով և մակարդակներով ընդլայնելն է՝ ավելացնելով ստուգված թարգմանություններ, օրինակներ և վարժություններ։ Առցանց ստացված առաջարկները ինքնաբերաբար չեն դառնում դասի նյութ կամ ճիշտ պատասխան։
 
@@ -66,9 +71,9 @@ Use it for conversations at work, travel, study, or daily life. Choose your leve
 
 ### The learning collection
 
-The collection includes **26 lessons across 16 sections**, **131 lesson sentences**, **210 flashcard words**, **108 exercises**, **13 IT topics**, and **21 scripted dialogues**. Learners can select from **15 professions**.
+The collection includes **28 lessons across 16 sections**, **139 lesson sentences**, **210 flashcard words**, **116 exercises**, **13 IT topics**, and **21 scripted dialogues**. Learners can select from **15 professions**, each with **10 four-turn workplace dialogues**, translation, listening, and spoken or typed practice. The 150 dialogues use shared, progressively harder conversational patterns with profession-specific activities.
 
-The dictionary contains **874 unique bilingual pairs**, combining existing learning material with **152 added everyday words and phrases**. These are translation pairs, not 874 separate flashcards. Growing the collection with checked examples and exercises is the next priority.
+The dictionary contains **1057 unique bilingual pairs**, combining existing learning material with **152 added everyday words and phrases**. These are translation pairs, not 1057 separate flashcards. Growing the collection with checked examples and exercises is the next priority.
 
 ### Translation and privacy
 
@@ -80,6 +85,21 @@ Your profile and study progress are stored locally in your browser. JSON export 
 
 ---
 
-**Նախատեսված հասցե / Intended domain:** `armeng.royalarm.store`
+**Հասցե / Domain:** `armeng.royalarm.uk`
 
 Տեղադրման, թեստերի և Vercel հրապարակման քայլերը՝ [Developer guide](docs/DEVELOPMENT.md)։
+
+## Կառուցված լեզուներն ու տեխնոլոգիաները / Languages and stack
+
+| Շերտ / Layer | Տեխնոլոգիա / Technology |
+| --- | --- |
+| Հիմնական կոդ / Source | TypeScript, TSX (React components) |
+| Վեբ միջավայր / Framework | Next.js 15 App Router, React 18 |
+| Տեսք / Styling | CSS, Tailwind CSS, Framer Motion, Lucide |
+| Բրաուզեր / Browser | Web Speech API, IndexedDB v3, LocalStorage, Service Worker (JavaScript) |
+| Պահուստ / Backup | JSON |
+| Ստուգում / Tests | Node test runner, fake-indexeddb, Playwright + Chrome |
+
+Տվյալները պահվում են մեկ տեղական պրոֆիլում՝ յուրաքանչյուր բրաուզերի համար։ Հիշեցումը աշխատում է բաց հավելվածի բրաուզերային հնարավորություններով. փակ հավելվածի համար երաշխավորված push չկա։ Հմտության միավորները պարապմունքների ցուցանիշներ են, ոչ հավաստագրված լեզվական գնահատական։
+
+Data belongs to one local profile per browser. Reminders depend on browser execution while the app is open. Skill scores are practice indicators, not certified proficiency ratings.

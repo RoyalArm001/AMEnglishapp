@@ -1,6 +1,7 @@
 'use client';
+import { evaluateExerciseAnswer } from '../lib/exercise-validation';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   CheckCircle2,
@@ -55,20 +56,27 @@ export default function ExercisesView({
 
   const [isListening, setIsListening] = useState<boolean>(false);
   const [stopRecFn, setStopRecFn] = useState<(() => void) | null>(null);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (advanceTimer.current) clearTimeout(advanceTimer.current); }, []);
+  useEffect(() => () => { stopRecFn?.(); }, [stopRecFn]);
   const [speechError, setSpeechError] = useState<string>('');
 
   const filteredExercises = useMemo(() => {
     return EXERCISE_ITEMS.filter((ex) => {
       const matchType = selectedType === 'all' || ex.type === selectedType;
-      const matchLevel = selectedLevel === 'all' || ex.level === selectedLevel;
+      const levels: CEFRLevel[] = ['A1','A2','B1','B2','C1','C2'];
+      const difficulty = progress.settings.exerciseDifficulty;
+      const allowed = difficulty === 'easy' ? ['A1','A2'] : difficulty === 'medium' ? ['B1','B2'] : difficulty === 'hard' ? ['C1','C2'] : levels.filter((_,i)=>Math.abs(i-levels.indexOf(progress.level))<=1);
+      const matchLevel = selectedLevel !== 'all' ? ex.level === selectedLevel : allowed.includes(ex.level);
       return matchType && matchLevel;
     });
-  }, [selectedType, selectedLevel]);
+  }, [selectedType, selectedLevel, progress.settings.exerciseDifficulty, progress.level]);
 
   const currentExercise =
     filteredExercises[currentIndex % Math.max(1, filteredExercises.length)] || EXERCISE_ITEMS[0];
 
   const resetStateForNext = () => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
     if (stopRecFn) {
       stopRecFn();
       setStopRecFn(null);
@@ -81,57 +89,15 @@ export default function ExercisesView({
     setSpeechError('');
   };
 
-  const evaluateAnswer = (rawInput: string): boolean => {
-    const normInput = normalizeEnglishText(rawInput);
-    if (!normInput) return false;
-
-    const allValid = [
-      currentExercise.correctAnswer,
-      ...(currentExercise.acceptedAnswers || []),
-    ];
-
-    for (const candidate of allValid) {
-      if (normalizeEnglishText(candidate) === normInput) {
-        return true;
-      }
-    }
-
-    // For fill-in-the-blank, also check if the user typed the full sentence with their word filled in
-    if (currentExercise.type === 'fill-blank' && currentExercise.promptEn.includes('___')) {
-      for (const candidate of allValid) {
-        const fullSentence = currentExercise.promptEn.replace(/___+/g, candidate);
-        if (normalizeEnglishText(fullSentence) === normInput) {
-          return true;
-        }
-      }
-    }
-
-    // For speaking questions, accept if 80%+ words of any accepted answer are present
-    if (currentExercise.type === 'speaking') {
-      const inputTokens = new Set(normInput.split(' ').filter(Boolean));
-      for (const candidate of allValid) {
-        const candTokens = normalizeEnglishText(candidate).split(' ').filter(Boolean);
-        if (candTokens.length >= 2) {
-          const matched = candTokens.filter((t) => inputTokens.has(t)).length;
-          if (matched / candTokens.length >= 0.8) {
-            return true;
-          }
-        }
-      }
-    }
-
-    return false;
-  };
-
   const handleCheck = () => {
     const raw =
       currentExercise.type === 'build-sentence'
         ? selectedWords.map((w) => w.word).join(' ')
         : userInput;
 
-    if (!raw.trim()) return;
+    if (!raw.trim() || checkedResult) return;
 
-    const isCorrect = evaluateAnswer(raw);
+    const isCorrect = evaluateExerciseAnswer(currentExercise, raw);
     setCheckedResult({
       isCorrect,
       submittedText: raw.trim(),
@@ -144,7 +110,7 @@ export default function ExercisesView({
     });
 
     if (progress.settings?.autoAdvanceExercises && isCorrect) {
-      setTimeout(() => {
+      advanceTimer.current = setTimeout(() => {
         resetStateForNext();
         setCurrentIndex((prev) => (prev + 1) % Math.max(1, filteredExercises.length));
       }, 1500);
@@ -153,7 +119,8 @@ export default function ExercisesView({
 
   const handleNextExercise = () => {
     resetStateForNext();
-    setCurrentIndex((prev) => (prev + 1) % Math.max(1, filteredExercises.length));
+    const retry = progress.settings.autoRepeatMistakes ? filteredExercises.findIndex(ex => ex.id !== currentExercise.id && progress.mistakes.some(m => m.exerciseId === ex.id && !m.resolved)) : -1;
+    setCurrentIndex(prev => retry >= 0 ? retry : (prev + 1) % Math.max(1, filteredExercises.length));
   };
 
   const handleToggleWordChip = (word: string, origIdx: number) => {
@@ -259,14 +226,14 @@ export default function ExercisesView({
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
               }`}
             >
-              {lvl === 'all' ? 'Բոլորը' : lvl}
+              {lvl === 'all' ? 'Ըստ կարգավորումների' : lvl}
             </button>
           ))}
         </div>
       </div>
 
       {/* Main Exercise Card */}
-      <motion.div
+      {filteredExercises.length === 0 ? <p role="status">Այս ֆիլտրերով առաջադրանք չկա։ Ընտրեք այլ մակարդակ կամ տեսակ։</p> : <motion.div
         key={currentExercise.id}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -578,7 +545,7 @@ export default function ExercisesView({
             </div>
           </motion.div>
         )}
-      </motion.div>
+      </motion.div>}
     </div>
   );
 }

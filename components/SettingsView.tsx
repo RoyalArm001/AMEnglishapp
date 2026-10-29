@@ -249,7 +249,7 @@ export default function SettingsView({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col xl:flex-row gap-3">
           <select
             value={settings.timezone}
             onChange={(e) =>
@@ -258,7 +258,7 @@ export default function SettingsView({
                 autoDetectTimezone: false,
               })
             }
-            className="flex-1 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm font-semibold"
+            className="min-w-0 max-w-full flex-1 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm font-semibold"
           >
             {SUPPORTED_TIMEZONES.map((tz) => (
               <option key={tz.id} value={tz.id}>

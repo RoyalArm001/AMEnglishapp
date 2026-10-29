@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: '%s | HayLingo',
   },
   description:
-    'Սովորեք անգլերեն արագ և արդյունավետ հայերեն բացատրություններով ու տառադարձմամբ։ 16 բաժին, 26 դաս, 210+ բառ (Spaced Repetition), 108 ինտերակտիվ վարժություն, 15 մասնագիտական ուղի (IT Specialist, Doctor, Driver և այլն), ձայնային պարապմունք և ուսումնական օգնական։ Աշխատում է նաև Offline (PWA)։',
+    'Սովորեք անգլերեն արագ և արդյունավետ հայերեն բացատրություններով ու տառադարձմամբ։ 16 բաժին, 28 դաս, 210+ բառ (Spaced Repetition), 116 ինտերակտիվ վարժություն, 15 մասնագիտական ուղի (IT Specialist, Doctor, Driver և այլն), ձայնային պարապմունք և ուսումնական օգնական։ Աշխատում է նաև Offline (PWA)։',
   applicationName: 'HayLingo',
   authors: [{ name: 'RoyalArm', url: SITE_URL }],
   creator: 'RoyalArm',
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     siteName: 'HayLingo',
     title: 'HayLingo — Անգլերենի Ինտերակտիվ Ուսուցում Հայախոսների Համար',
     description:
-      '26 ինտերակտիվ դասեր հայերեն արտասանությամբ, 210+ բառեր, 108 վարժություններ, IT և մասնագիտական անգլերեն, ձայնային ճանաչում և ուսումնական օգնական (v1.1.0 PWA)։',
+      '26 ինտերակտիվ դասեր հայերեն արտասանությամբ, 210+ բառեր, 116 վարժություններ, IT և մասնագիտական անգլերեն, ձայնային ճանաչում և ուսումնական օգնական (v1.1.0 PWA)։',
     images: [
       {
         url: '/opengraph-image',
@@ -142,7 +142,7 @@ const structuredData = {
       featureList: [
         '16 ուսուցման բաժին և 26 ինտերակտիվ դասեր հայերեն տառադարձմամբ',
         '15 մասնագիտական ուղիներ (IT Specialist, Doctor, Driver, Student և այլն)',
-        '108 ինտերակտիվ վարժություններ (Fill in the blank, Translation, Error Correction, Speaking, Listening)',
+        '116 ինտերակտիվ վարժություններ (Fill in the blank, Translation, Error Correction, Speaking, Listening)',
         '210+ անգլերեն բառեր՝ Flashcards և Spaced Repetition համակարգով',
         'Ձայնային արտասանություն (TTS) և խոսքի ճանաչում (STT)',
         'Անձնական Ուսումնական օգնական և Առավոտյան Ձայնային Պարապմունք',

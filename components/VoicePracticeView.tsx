@@ -44,6 +44,7 @@ export default function VoicePracticeView({
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [stopRecFn, setStopRecFn] = useState<(() => void) | null>(null);
+  useEffect(() => () => { stopRecFn?.(); }, [stopRecFn]);
   const [recognizedText, setRecognizedText] = useState<string>('');
   const [manualText, setManualText] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
@@ -71,7 +72,7 @@ export default function VoicePracticeView({
   };
 
   const handlePlayAudio = (text: string, customRate?: 'slow' | 'normal') => {
-    speakEnglish(text, customRate || progress.speechRate);
+    speakEnglish(text, customRate || progress.speechRate, undefined, {customRateNumeric:progress.settings.voiceSpeedNumeric,selectedVoiceURI:progress.settings.selectedVoiceURI});
   };
 
   const handleToggleMicrophone = () => {

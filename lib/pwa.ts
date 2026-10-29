@@ -1,4 +1,4 @@
-export const APP_VERSION = 'v1.1.3';
+export const APP_VERSION = 'v1.1.4';
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -118,7 +118,7 @@ export async function sendPWANotification(
 
   try {
     if ('serviceWorker' in navigator) {
-      const reg = await navigator.serviceWorker.ready;
+      const reg = await navigator.serviceWorker.getRegistration();
       if (reg?.active) {
         reg.active.postMessage({
           type: 'SHOW_NOTIFICATION',
@@ -176,7 +176,7 @@ export async function refreshPWACache(): Promise<boolean> {
     const keys = await caches.keys();
     await Promise.all(keys.filter((k) => k.startsWith('haylingo-pwa-')).map((k) => caches.delete(k)));
 
-    const cache = await caches.open('haylingo-pwa-v1.1.0-static');
+    const cache = await caches.open(`haylingo-pwa-${APP_VERSION}-static`);
     await cache.addAll(['/', '/manifest.webmanifest', '/icons/icon-192.svg', '/icons/icon-512.svg']);
     return true;
   } catch {

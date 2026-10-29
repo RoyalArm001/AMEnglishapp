@@ -1,3 +1,4 @@
+import { ADDITIONAL_LESSONS } from './additional-lessons';
 import { LessonCategoryMeta, LessonItem, LessonSentence } from '../lib/types';
 import { PROFESSION_LESSONS } from './professions';
 
@@ -1135,6 +1136,7 @@ export const LESSONS_DATA: LessonItem[] = [
     ],
   },
   ...PROFESSION_LESSONS,
+  ...ADDITIONAL_LESSONS,
 ];
 
 export const ALL_LESSON_SENTENCES: LessonSentence[] = LESSONS_DATA.flatMap(

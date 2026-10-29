@@ -1,7 +1,9 @@
+import type { ProfessionId } from './types';
 import { TEACHER_CURRICULUM, TeacherCurriculumQuestion } from '../data/placement-and-teacher';
 import { normalizeEnglishText } from './speech';
 
 export interface TeacherEvaluationRequest {
+  profession?: ProfessionId;
   currentQuestionId: string;
   userAnswer: string;
   masteredQuestionIds: string[];
@@ -47,7 +49,7 @@ const GLOBAL_GRAMMAR_RULES: {
   },
   {
     test: (s) => /\bdepend(s)?\s+from\b/i.test(s),
-    fix: (s) => s.replace(/\bdepend(s)?\s+from\b/gi, 'depends on'),
+    fix: (s) => s.replace(/\b(depend(?:s)?)\s+from\b/gi, '$1 on'),
     noteAm: '«Կախված լինել»-ը անգլերենում միշտ «depend on» է, ոչ թե «depend from»։',
   },
   {
@@ -66,12 +68,16 @@ export function selectNextCurriculumQuestion(
   currentId: string,
   masteredIds: string[],
   weakTopics: string[],
-  targetDifficulty: number
+  targetDifficulty: number,
+  profession?: ProfessionId
 ): TeacherCurriculumQuestion {
-  const unmastered = TEACHER_CURRICULUM.filter(
+  const curriculum = profession ? TEACHER_CURRICULUM.filter(q => q.profession === profession || !q.profession) : TEACHER_CURRICULUM;
+  const preferred = profession ? curriculum.filter(q => q.profession === profession) : [];
+  const source = preferred.length ? preferred : curriculum;
+  const unmastered = source.filter(
     (q) => q.id !== currentId && !masteredIds.includes(q.id)
   );
-  const pool = unmastered.length > 0 ? unmastered : TEACHER_CURRICULUM.filter((q) => q.id !== currentId);
+  const pool = unmastered.length > 0 ? unmastered : source.filter((q) => q.id !== currentId);
 
   // Prioritize weak topics if any match
   const weakMatches = pool.filter((q) => weakTopics.includes(q.topic));
@@ -108,7 +114,8 @@ export function evaluateWithRuleBasedTeacher(
       currentQ.id,
       updatedMastered,
       req.weakTopics,
-      nextDiff
+      nextDiff,
+      req.profession
     );
 
     return {
@@ -135,13 +142,14 @@ export function evaluateWithRuleBasedTeacher(
   // 2. Check specific short fragment patterns for this question (e.g., "Restart router" -> "I restart the router.")
   for (const frag of currentQ.shortFragmentPatterns) {
     if (frag.pattern.test(raw)) {
-      const nextDiff = Math.min(10, req.difficultyScore + 1);
-      const updatedMastered = Array.from(new Set([...req.masteredQuestionIds, currentQ.id]));
+      const nextDiff = req.difficultyScore;
+      const updatedMastered = req.masteredQuestionIds;
       const nextQ = selectNextCurriculumQuestion(
         currentQ.id,
         updatedMastered,
         req.weakTopics,
-        nextDiff
+        nextDiff,
+        req.profession
       );
 
       return {
@@ -153,7 +161,7 @@ export function evaluateWithRuleBasedTeacher(
         correctedSentenceEn: frag.correctedEn,
         explanationAm: frag.explanationAm,
         updatedDifficulty: nextDiff,
-        masteredQuestionId: currentQ.id,
+        weakTopicDetected: currentQ.topic,
         nextQuestion: {
           id: nextQ.id,
           level: nextQ.level,
@@ -175,7 +183,8 @@ export function evaluateWithRuleBasedTeacher(
         currentQ.id,
         req.masteredQuestionIds,
         Array.from(new Set([...req.weakTopics, currentQ.topic])),
-        nextDiff
+        nextDiff,
+        req.profession
       );
 
       return {
@@ -184,7 +193,7 @@ export function evaluateWithRuleBasedTeacher(
         isFullyCorrect: false,
         isPartiallyCorrect: true,
         feedbackEn: `Good try! The correct sentence is: "${fixed}" (or "${currentQ.idealSentenceEn}")`,
-        correctedSentenceEn: currentQ.idealSentenceEn,
+        correctedSentenceEn: fixed,
         explanationAm: rule.noteAm,
         updatedDifficulty: nextDiff,
         weakTopicDetected: currentQ.topic,
@@ -200,53 +209,6 @@ export function evaluateWithRuleBasedTeacher(
     }
   }
 
-  // 4. Check keyword presence (user understood the meaning, e.g., partial sentence or minor grammar issue)
-  const matchedKeywords = currentQ.requiredKeywords.filter((kw) =>
-    normUser.includes(normalizeEnglishText(kw))
-  );
-  const wordCount = normUser.split(' ').filter(Boolean).length;
-
-  if (matchedKeywords.length > 0) {
-    const hasSubject = /^(i|we|you|they|he|she|it|the|my|our|can|could|let)\b/i.test(raw);
-    const isCompleteEnough = hasSubject && wordCount >= 4;
-    const nextDiff = isCompleteEnough
-      ? Math.min(10, req.difficultyScore + 1)
-      : req.difficultyScore;
-    const updatedMastered = isCompleteEnough
-      ? Array.from(new Set([...req.masteredQuestionIds, currentQ.id]))
-      : req.masteredQuestionIds;
-    const nextQ = selectNextCurriculumQuestion(
-      currentQ.id,
-      updatedMastered,
-      req.weakTopics,
-      nextDiff
-    );
-
-    return {
-      mode: 'rule-based',
-      providerLabelAm: 'Պատրաստի հարցաշար և կանոններով ստուգում',
-      isFullyCorrect: isCompleteEnough,
-      isPartiallyCorrect: !isCompleteEnough,
-      feedbackEn: isCompleteEnough
-        ? `Very good! Another natural way to say it is: "${currentQ.idealSentenceEn}"`
-        : `Good! The correct full sentence is: "${currentQ.idealSentenceEn}"`,
-      correctedSentenceEn: currentQ.idealSentenceEn,
-      explanationAm: isCompleteEnough
-        ? `Միտքը ճիշտ է և հասկանալի։ Որպես օրինակելի տարբերակ հիշեք նաև՝ «${currentQ.idealSentenceEn}»։`
-        : `Դուք ճիշտ բառեր եք օգտագործել (${matchedKeywords.join(', ')}), սակայն ամբողջական նախադասության համար անհրաժեշտ է նաև ենթակա և ստորոգյալ՝ «${currentQ.idealSentenceEn}»։`,
-      updatedDifficulty: nextDiff,
-      masteredQuestionId: isCompleteEnough ? currentQ.id : undefined,
-      nextQuestion: {
-        id: nextQ.id,
-        level: nextQ.level,
-        topic: nextQ.topic,
-        questionEn: nextQ.questionEn,
-        questionPronunciation: nextQ.questionPronunciation,
-        questionAm: nextQ.questionAm,
-      },
-    };
-  }
-
   // 5. Fallback when answer is off-topic or needs full correction
   const nextDiff = Math.max(1, req.difficultyScore - 1);
   const updatedWeak = Array.from(new Set([...req.weakTopics, currentQ.topic]));
@@ -254,7 +216,8 @@ export function evaluateWithRuleBasedTeacher(
     currentQ.id,
     req.masteredQuestionIds,
     updatedWeak,
-    nextDiff
+    nextDiff,
+    req.profession
   );
 
   return {

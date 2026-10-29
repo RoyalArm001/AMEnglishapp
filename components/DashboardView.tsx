@@ -76,7 +76,7 @@ export default function DashboardView({
 
   const totalAnswers = progress.correctAnswersCount + progress.wrongAnswersCount;
   const accuracyPercent =
-    totalAnswers > 0 ? Math.round((progress.correctAnswersCount / totalAnswers) * 100) : 100;
+    totalAnswers > 0 ? Math.round((progress.correctAnswersCount / totalAnswers) * 100) : 0;
 
   const dailyGoalMinutes = progress.settings?.dailyGoalMinutes || 15;
   const dailyGoalPercent = Math.min(
@@ -251,7 +251,7 @@ export default function DashboardView({
                 <Target size={16} className="text-emerald-600" /> Օրական ուսուցման ժամանակ
               </span>
               <span className="text-emerald-600 dark:text-emerald-400">
-                {progress.dailyStudyMinutes} / {dailyGoalMinutes} րոպե ({dailyGoalPercent}%)
+                {Math.round(progress.dailyStudyMinutes * 10) / 10} / {dailyGoalMinutes} րոպե ({dailyGoalPercent}%)
               </span>
             </div>
             <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -323,7 +323,7 @@ export default function DashboardView({
             <span className="text-xs font-semibold">Օրական ժամանակ</span>
             <Clock size={18} className="text-sky-500" />
           </div>
-          <div className="text-2xl font-extrabold">{progress.dailyStudyMinutes} ր</div>
+          <div className="text-2xl font-extrabold">{Math.round(progress.dailyStudyMinutes * 10) / 10} ր</div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Այսօրվա ուսուցումը</div>
         </div>
 
@@ -429,7 +429,7 @@ export default function DashboardView({
             <div className="mt-4">
               <h3 className="font-bold text-base">Ինտերակտիվ Առաջադրանքներ (A–F)</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                108 վարժություն՝ լրացում, թարգմանություն, սխալի ուղղում, լսողական և ձայնային։
+                116 վարժություն՝ լրացում, թարգմանություն, սխալի ուղղում, լսողական և ձայնային։
               </p>
             </div>
           </button>
