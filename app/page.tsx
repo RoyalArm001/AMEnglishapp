@@ -756,7 +756,7 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="flex-1 lg:pl-72">
+      <main className="flex-1 lg:pl-72 pb-24 lg:pb-8">
         <PWAManager
           morningPracticeTime={progress.settings?.preferredMorningTime || '08:30'}
           timezone={progress.settings?.timezone || 'Asia/Yerevan'}
@@ -908,6 +908,92 @@ export default function HomePage() {
           )}
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation Bar (PWA Native App Experience) */}
+      <nav
+        aria-label="Հիմնական բաժիններ"
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around shadow-lg"
+      >
+        <button
+          onClick={() => {
+            setStartInPlacement(false);
+            setActiveTab('Dashboard');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'Dashboard'
+              ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <LayoutDashboard size={20} />
+          <span className="text-[10px] mt-0.5">Վահանակ</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setStartInPlacement(false);
+            setActiveTab('Lessons');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'Lessons'
+              ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <BookOpen size={20} />
+          <span className="text-[10px] mt-0.5">Դասեր</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setStartInPlacement(false);
+            setActiveTab('Exercises');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'Exercises'
+              ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Brain size={20} />
+          <span className="text-[10px] mt-0.5">Վարժանք</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setStartInPlacement(false);
+            setActiveTab('Voice Practice');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'Voice Practice'
+              ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Mic size={20} />
+          <span className="text-[10px] mt-0.5">Ձայնային</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setStartInPlacement(false);
+            setActiveTab('Profile');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'Profile'
+              ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <User size={20} />
+          <span className="text-[10px] mt-0.5">Պրոֆիլ</span>
+        </button>
+      </nav>
     </div>
   );
 }

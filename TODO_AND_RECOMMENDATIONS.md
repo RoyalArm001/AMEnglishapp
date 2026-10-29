@@ -1,11 +1,13 @@
-# HayLingo (v1.1.2) — Չկատարված (Հետագա Փուլի) Աշխատանքներ և Զարգացման Առաջարկներ
+# HayLingo (v1.1.3) — Չկատարված (Հետագա Փուլի) Աշխատանքներ և Զարգացման Առաջարկներ
 
-> **Տարբերակների համարակալման կանոն (Versioning Policy):** Ընթացիկ տարբերակ՝ **`v1.1.2`**։ Հաջորդ թարմացումները համարակալվում են վերջին թվի աճով մինչև `9` (`v1.1.0` → `v1.1.1` → `v1.1.2` → ... → `v1.1.9`), որից հետո հերթականությամբ անցնում են հաջորդ ենթատարբերակին (`v1.2.0` → `v1.2.1` ... `v1.2.9` → `v1.3.0`)։
+> **Տարբերակների համարակալման կանոն (Versioning Policy):** Ընթացիկ տարբերակ՝ **`v1.1.3`**։ Հաջորդ թարմացումները համարակալվում են վերջին թվի աճով մինչև `9` (`v1.1.0` → `v1.1.1` → `v1.1.2` → `v1.1.3` → ... → `v1.1.9`), որից հետո հերթականությամբ անցնում են հաջորդ ենթատարբերակին (`v1.2.0` → `v1.2.1` ... `v1.2.9` → `v1.3.0`)։
 >
-> **Թարմացում `v1.1.2`-ում արդեն կատարված է.**
-> - ✅ **Հատուկ մշակված պրոֆեսիոնալ վեկտորային լոգո (HayLingo AI Brand Logo)** (`components/Logo.tsx`, `public/icons/icon-192.svg`, `public/icons/icon-512.svg`, `public/favicon.svg`, `app/icon.tsx`, `app/apple-icon.tsx`, `app/opengraph-image.tsx`)՝ հայ-անգլերեն երկլեզու կամրջի, AI ձայնային հաճախականությունների և ուսուցման աստղի սիմվոլիզմով։
+> **Թարմացում `v1.1.3`-ում արդեն կատարված է.**
+> - ✅ **PWA Mobile Bottom Navigation Bar** (`app/page.tsx`)՝ հեռախոսների համար բնիկ (native app) ներքևի արագ նավիգացիոն գոտի (Վահանակ, Դասեր, Վարժանք, Ձայնային, Պրոֆիլ)։
+> - ✅ **Favicon SVG ինտեգրացիա** (`app/layout.tsx`, `public/favicon.svg`) բրաուզերի tabs-ում վեկտորային մաքուր պատկերման համար։
+> - ✅ **Հատուկ մշակված պրոֆեսիոնալ վեկտորային լոգո (HayLingo AI Brand Logo)** (`components/Logo.tsx`, `public/icons/icon-192.svg`, `public/icons/icon-512.svg`, `public/favicon.svg`, `app/icon.tsx`, `app/apple-icon.tsx`, `app/opengraph-image.tsx`)։
 > - ✅ **SEO ամբողջական բարելավում** (`app/layout.tsx` JSON-LD Schema.org `WebSite` + `WebApplication` + `Course`, OpenGraph & Twitter Cards `app/opengraph-image.tsx`, `app/robots.ts`, `app/sitemap.ts`)։
-> - ✅ **Լիարժեք PWA (Progressive Web App) կառուցվածք** (`app/manifest.ts` shortcuts-ով, `public/sw.js` Offline Service Worker, `lib/pwa.ts`, `components/PWAManager.tsx`՝ Install Prompt, iOS Home Screen ուղեցույց, Offline/Online կարգավիճակի ցուցիչ, Առավոտյան պարապմունքի PWA ծանուցումներ, Offline քեշի կառավարում և Web Share API)։
+> - ✅ **Լիարժեք PWA (Progressive Web App) կառուցվածք** (`app/manifest.ts` shortcuts-ով, `public/sw.js` Offline Service Worker, `lib/pwa.ts`, `components/PWAManager.tsx`)։
 
 Այս ֆայլում ամփոփված են բոլոր այն աշխատանքները, որոնք կա՛մ կախված են արտաքին միջավայրից (սերվեր, դոմեյն, API բանալիներ), կա՛մ նախատեսված են հաջորդ փուլի համար, ինչպես նաև ներկայացված են հավելվածի զարգացման մասնագիտական առաջարկներ։
 

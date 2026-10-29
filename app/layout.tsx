@@ -101,10 +101,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/icons/icon-192.svg', type: 'image/svg+xml' },
       { url: '/icon', sizes: '192x192', type: 'image/png' },
     ],
-    shortcut: ['/icons/icon-192.svg'],
+    shortcut: ['/favicon.svg'],
     apple: [{ url: '/apple-icon', sizes: '180x180', type: 'image/png' }],
   },
 };
