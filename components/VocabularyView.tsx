@@ -113,8 +113,8 @@ export default function VocabularyView({
       <div className="flex flex-wrap gap-2">
         {[
           { id: 'list', label: `📚 Բոլոր բառերը (${VOCABULARY_ITEMS.length})`, icon: BookMarked },
-          { id: 'flashcards', label: '🃏 Քարտեր (Flashcards)', icon: Layers },
-          { id: 'srs', label: `🔄 Spaced Repetition Կրկնություն (${srsQueue.length})`, icon: Repeat },
+          { id: 'flashcards', label: '🃏 Քարտեր', icon: Layers },
+          { id: 'srs', label: `🔄 Ինտերվալային կրկնություն (${srsQueue.length})`, icon: Repeat },
           { id: 'favorites', label: `⭐ Ընտրյալներ (${progress.favoriteWordIds.length})`, icon: Star },
         ].map((t) => {
           const Icon = t.icon;
@@ -255,28 +255,28 @@ export default function VocabularyView({
                 onClick={() => handleSRSGrade('again')}
                 className="p-3 rounded-2xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-700 dark:text-rose-300 font-bold text-xs"
               >
-                🔁 Կրկնել հիմա (Again)
+                🔁 Կրկնել հիմա
                 <span className="block text-[10px] opacity-75 mt-0.5">10 րոպեից</span>
               </button>
               <button
                 onClick={() => handleSRSGrade('hard')}
                 className="p-3 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-300 font-bold text-xs"
               >
-                😓 Դժվար էր (Hard)
+                😓 Դժվար էր
                 <span className="block text-[10px] opacity-75 mt-0.5">1 օրից</span>
               </button>
               <button
                 onClick={() => handleSRSGrade('good')}
                 className="p-3 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold text-xs"
               >
-                👍 Լավ (Good)
+                👍 Լավ
                 <span className="block text-[10px] opacity-75 mt-0.5">3 օրից</span>
               </button>
               <button
                 onClick={() => handleSRSGrade('easy')}
                 className="p-3 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-700 dark:text-sky-300 font-bold text-xs"
               >
-                ⚡ Հեշտ (Easy)
+                ⚡ Հեշտ
                 <span className="block text-[10px] opacity-75 mt-0.5">7+ օրից</span>
               </button>
             </div>

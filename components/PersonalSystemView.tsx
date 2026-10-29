@@ -234,7 +234,7 @@ export default function PersonalSystemView({
                   key: 'writing',
                   title: '✍️ Writing (Գրավոր և Քերականություն)',
                   score: progress.skills.writing,
-                  actionTab: 'My AI Teacher',
+                  actionTab: 'Study Assistant',
                   actionLabel: 'Գրել ուսուցչին',
                 },
               ].map((sk) => (

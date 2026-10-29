@@ -47,7 +47,7 @@ export default function TeacherView({
   const [inputText, setInputText] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [providerLabel, setProviderLabel] = useState<string>(
-    'Կանոնահեն Ադապտիվ Ուսուցիչ (Առանց API բանալու)'
+    'Պատրաստի հարցաշար և կանոններով ստուգում'
   );
   const [isListening, setIsListening] = useState<boolean>(false);
   const [stopRecFn, setStopRecFn] = useState<(() => void) | null>(null);
@@ -67,23 +67,7 @@ export default function TeacherView({
       difficultyScore: session.difficultyScore || 2,
     };
 
-    let evalResult = evaluateWithRuleBasedTeacher(payload);
-
-    try {
-      const res = await fetch('/api/teacher', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.feedbackEn && data.nextQuestion) {
-          evalResult = data;
-        }
-      }
-    } catch {
-      // Fallback to local rule-based evaluation if offline
-    }
+    const evalResult = evaluateWithRuleBasedTeacher(payload);
 
     setProviderLabel(evalResult.providerLabelAm);
 
@@ -158,13 +142,13 @@ export default function TeacherView({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
-            MY AI TEACHER · ԱՆՁՆԱԿԱՆ ԱՆԳԼԵՐԵՆԻ ՈՒՍՈՒՑԻՉ
+            ՈՒՍՈՒՄՆԱԿԱՆ ՕԳՆԱԿԱՆ
           </span>
           <h1 className="text-2xl md:text-3xl font-bold mt-1">
-            Անհատական ուսուցիչ՝ քերականական ուղղումներով
+            Հարց ու պատասխան՝ հայերեն բացատրություններով
           </h1>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Ուսուցիչը միաժամանակ տալիս է մեկ հարց, ուղղում է քերականական սխալները, բացատրում հայերեն և աստիճանաբար բարդացնում հարցերը։
+            Պարապեք պատրաստի հարցաշարով։ Օգնականը համեմատում է պատասխանը օրինակների ու կանոնների հետ և ցույց տալիս հայերեն բացատրությունը։ Այն ազատ զրույց չի վարում և չի հայտնաբերում բոլոր հնարավոր սխալները։
           </p>
         </div>
 

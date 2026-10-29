@@ -159,14 +159,14 @@ export default function ITEnglishView({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-            IT SPECIALIST ENGLISH · ԱՇԽԱՏԱՆՔԱՅԻՆ ԱՆԳԼԵՐԵՆ ՏՏ ՄԱՍՆԱԳԵՏՆԵՐԻ ՀԱՄԱՐ
+            ՄԱՍՆԱԳԻՏԱԿԱՆ ԵՎ ՏՏ ԱՆԳԼԵՐԵՆ · ԱՇԽԱՏԱՆՔԱՅԻՆ ԻՐԱՎԻՃԱԿՆԵՐ
           </span>
           <h1 className="text-2xl md:text-3xl font-bold mt-1">
-            IT Անգլերեն՝ 13 Թեմաներ և {IT_DIALOGUES.length} Աշխատանքային Երկխոսություններ
+            ՏՏ Անգլերեն՝ 13 Թեմաներ և {IT_DIALOGUES.length} Աշխատանքային Երկխոսություններ
           </h1>
         </div>
         <span className="px-3.5 py-1.5 rounded-full bg-sky-500/10 text-sky-700 dark:text-sky-300 text-xs font-bold">
-          Ավարտած Roleplay՝ {progress.completedRoleplayIds.length} / {IT_DIALOGUES.length}
+          Ավարտած երկխոսություն՝ {progress.completedRoleplayIds.length} / {IT_DIALOGUES.length}
         </span>
       </div>
 
@@ -231,11 +231,11 @@ export default function ITEnglishView({
                   {phrase.english}
                 </p>
                 <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                  <span className="text-xs uppercase text-slate-400 block">Pronunciation:</span>
+                  <span className="text-xs uppercase text-slate-400 block">Կարդացվում է:</span>
                   {phrase.pronunciation}
                 </p>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  <span className="text-xs uppercase text-slate-400 block">Armenian:</span>
+                  <span className="text-xs uppercase text-slate-400 block">Հայերեն:</span>
                   {phrase.armenian}
                 </p>
               </div>
@@ -259,7 +259,7 @@ export default function ITEnglishView({
               ԱՇԽԱՏԱՆՔԱՅԻՆ ԻՐԱՎԻՃԱԿԻ ԴԵՐԱՅԻՆ ԽԱՂ (WORKPLACE ROLEPLAY)
             </span>
             <h3 className="text-xl md:text-2xl font-bold mt-1">
-              AI-ն՝ Աշխատակից (Employee), Դուք՝ ՏՏ Մասնագետ (IT Specialist)
+              Պատրաստի երկխոսության զրուցակիցը՝ աշխատակից (Employee), Դուք՝ ՏՏ Մասնագետ (IT Specialist)
             </h3>
           </div>
 

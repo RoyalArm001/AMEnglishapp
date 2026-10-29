@@ -10,7 +10,7 @@ export interface TeacherEvaluationRequest {
 }
 
 export interface TeacherEvaluationResponse {
-  mode: 'rule-based' | 'cloud-ai';
+  mode: 'rule-based';
   providerLabelAm: string;
   isFullyCorrect: boolean;
   isPartiallyCorrect: boolean;
@@ -113,7 +113,7 @@ export function evaluateWithRuleBasedTeacher(
 
     return {
       mode: 'rule-based',
-      providerLabelAm: 'Կանոնահեն Ադապտիվ Ուսուցիչ (Local Rule Engine)',
+      providerLabelAm: 'Պատրաստի հարցաշար և կանոններով ստուգում',
       isFullyCorrect: true,
       isPartiallyCorrect: false,
       feedbackEn: `Excellent! "${currentQ.idealSentenceEn}" is a complete and grammatically correct sentence.`,
@@ -146,7 +146,7 @@ export function evaluateWithRuleBasedTeacher(
 
       return {
         mode: 'rule-based',
-        providerLabelAm: 'Կանոնահեն Ադապտիվ Ուսուցիչ (Local Rule Engine)',
+        providerLabelAm: 'Պատրաստի հարցաշար և կանոններով ստուգում',
         isFullyCorrect: false,
         isPartiallyCorrect: true,
         feedbackEn: `Good! The correct sentence is: "${frag.correctedEn}"`,
@@ -180,7 +180,7 @@ export function evaluateWithRuleBasedTeacher(
 
       return {
         mode: 'rule-based',
-        providerLabelAm: 'Կանոնահեն Ադապտիվ Ուսուցիչ (Local Rule Engine)',
+        providerLabelAm: 'Պատրաստի հարցաշար և կանոններով ստուգում',
         isFullyCorrect: false,
         isPartiallyCorrect: true,
         feedbackEn: `Good try! The correct sentence is: "${fixed}" (or "${currentQ.idealSentenceEn}")`,
@@ -224,7 +224,7 @@ export function evaluateWithRuleBasedTeacher(
 
     return {
       mode: 'rule-based',
-      providerLabelAm: 'Կանոնահեն Ադապտիվ Ուսուցիչ (Local Rule Engine)',
+      providerLabelAm: 'Պատրաստի հարցաշար և կանոններով ստուգում',
       isFullyCorrect: isCompleteEnough,
       isPartiallyCorrect: !isCompleteEnough,
       feedbackEn: isCompleteEnough
@@ -259,7 +259,7 @@ export function evaluateWithRuleBasedTeacher(
 
   return {
     mode: 'rule-based',
-    providerLabelAm: 'Կանոնահեն Ադապտիվ Ուսուցիչ (Local Rule Engine)',
+    providerLabelAm: 'Պատրաստի հարցաշար և կանոններով ստուգում',
     isFullyCorrect: false,
     isPartiallyCorrect: false,
     feedbackEn: `Let's correct this together. The right sentence is: "${currentQ.idealSentenceEn}"`,

@@ -5,7 +5,7 @@ import { CEFRLevel, LearningGoalId, ProficiencyTier, ThemeMode } from './types';
  * Կայքի ինտերֆեյսը 100% հայերեն է, իսկ անգլերենը կիրառվում է միայն ուսումնական նյութերում։
  */
 export const UI_TEXT = {
-  appName: 'HayLingo AI',
+  appName: 'HayLingo',
   appSubtitle: 'Անգլերենի ինտերակտիվ ուսուցում',
   mandatoryFields: {
     english: 'English:',
@@ -16,7 +16,8 @@ export const UI_TEXT = {
     dashboard: 'Գլխավոր վահանակ',
     lessons: 'Անգլերենի դասեր',
     exercises: 'Առաջադրանքներ',
-    teacher: 'Անձնական ուսուցիչ',
+    teacher: 'Ուսումնական օգնական',
+    translation: 'Թարգմանություն',
     voice: 'Ձայնային պարապմունք',
     itEnglish: 'Մասնագիտական և ՏՏ',
     vocabulary: 'Բառապաշար',
@@ -43,7 +44,7 @@ export const UI_TEXT = {
     deleteAllData: 'Պրոֆիլի և տվյալների ամբողջական ջնջում',
   },
   onboarding: {
-    welcomeBadge: 'ԲԱՐԻ ԳԱԼՈՒՍՏ HAYLINGO AI',
+    welcomeBadge: 'ԲԱՐԻ ԳԱԼՈՒՍՏ HAYLINGO',
     title: 'Ստեղծենք Ձեր անհատական ուսուցման պրոֆիլը',
     subtitle:
       'Լրացրեք Ձեր տվյալները, որպեսզի համակարգը հարմարեցնի դասերը, մասնագիտական բառապաշարը և վարժությունների դժվարությունը։',
@@ -250,3 +251,4 @@ export function computeEffectiveDarkMode(params: {
     return isDark;
   }
 }
+

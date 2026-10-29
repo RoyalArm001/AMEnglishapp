@@ -450,14 +450,14 @@ export default function DashboardView({
           </button>
 
           <button
-            onClick={() => onNavigate('My AI Teacher')}
+            onClick={() => onNavigate('Study Assistant')}
             className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition shadow-sm flex flex-col justify-between"
           >
             <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 w-fit">
               <Sparkles size={22} />
             </div>
             <div className="mt-4">
-              <h3 className="font-bold text-base">Անձնական Ուսուցիչ (AI Teacher)</h3>
+              <h3 className="font-bold text-base">Ուսումնական օգնական</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Հարց ու պատասխան, քերականական սխալների ուղղում և հայերեն բացատրություն։
               </p>

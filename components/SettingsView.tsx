@@ -2,14 +2,18 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Bell,
   CheckCircle2,
   Clock,
   Download,
   Globe,
   Mic,
   Moon,
+  RefreshCw,
+  Share2,
   ShieldAlert,
   Sliders,
+  Smartphone,
   Sun,
   Trash2,
   Upload,
@@ -35,6 +39,15 @@ import {
   getAvailableEnglishVoices,
   startSpeechRecognition,
 } from '../lib/speech';
+import {
+  APP_VERSION,
+  getNotificationPermissionState,
+  getPWACacheStats,
+  isStandalonePWA,
+  refreshPWACache,
+  sendPWANotification,
+  shareProgressPWA,
+} from '../lib/pwa';
 
 interface SettingsViewProps {
   progress: UserProgressData;
@@ -63,6 +76,13 @@ export default function SettingsView({
     messageAm: string;
   } | null>(null);
   const [confirmWipe, setConfirmWipe] = useState<boolean>(false);
+  const [isStandalone, setIsStandalone] = useState<boolean>(false);
+  const [notifPerm, setNotifPerm] = useState<string>('default');
+  const [cacheStats, setCacheStats] = useState<{ cacheCount: number; cachedEntries: number }>({
+    cacheCount: 0,
+    cachedEntries: 0,
+  });
+  const [pwaFeedback, setPwaFeedback] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -74,6 +94,10 @@ export default function SettingsView({
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
     }
+
+    setIsStandalone(isStandalonePWA());
+    setNotifPerm(getNotificationPermissionState());
+    getPWACacheStats().then(setCacheStats);
   }, []);
 
   const currentLocalDate = getDateStringInTimezone(settings.timezone);
@@ -577,6 +601,125 @@ export default function SettingsView({
           </span>
         </div>
       </section>
+
+      {/* G. PWA Հավելված, Offline Քեշ և Ծանուցումներ (v1.1.0) */}
+      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <Smartphone size={20} className="text-indigo-600" />
+            <div>
+              <h2 className="text-lg font-bold">
+                Է. PWA Հավելված, Offline Քեշ և Ծանուցումներ ({APP_VERSION})
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Progressive Web App ֆունկցիոնալություն՝ անցանց աշխատանք, ծանուցումներ և արագ կիսվելու հնարավորություն
+              </p>
+            </div>
+          </div>
+
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-bold ${
+              isStandalone
+                ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
+                : 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30'
+            }`}
+          >
+            {isStandalone ? '📲 Տեղադրված PWA (Standalone)' : '🌐 Բրաուզերային ռեժիմ (PWA Ready)'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <span className="text-slate-500 dark:text-slate-400">Հավելվածի տարբերակ</span>
+            <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+              HayLingo {APP_VERSION}
+            </p>
+          </div>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <span className="text-slate-500 dark:text-slate-400">Offline քեշավորված ռեսուրսներ</span>
+            <p className="text-sm font-bold">
+              {cacheStats.cachedEntries} ֆայլ ({cacheStats.cacheCount} պահոց)
+            </p>
+          </div>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <span className="text-slate-500 dark:text-slate-400">Ծանուցումների կարգավիճակ</span>
+            <p className="text-sm font-bold">
+              {notifPerm === 'granted'
+                ? '✅ Միացված է'
+                : notifPerm === 'denied'
+                ? '🚫 Արգելափակված է բրաուզերում'
+                : '🔔 Սպասում է թույլտվության'}
+            </p>
+          </div>
+        </div>
+
+        {pwaFeedback && (
+          <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 text-xs font-semibold text-indigo-800 dark:text-indigo-200">
+            {pwaFeedback}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={async () => {
+              const ok = await sendPWANotification(
+                'HayLingo — Ծանուցումներն Ակտիվ Են',
+                `Առավոտյան պարապմունքի հիշեցումը կուղարկվի ժամը ${settings.preferredMorningTime}-ին։`,
+                '/?tab=voice',
+                'haylingo-test-notif'
+              );
+              setNotifPerm(getNotificationPermissionState());
+              setPwaFeedback(
+                ok
+                  ? '✅ PWA ծանուցումը հաջողությամբ ուղարկվեց։'
+                  : '⚠️ Խնդրում ենք բրաուզերում թույլատրել ծանուցումները (Notifications)։'
+              );
+            }}
+            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 transition"
+          >
+            <Bell size={15} /> Միացնել / Թեստավորել Ծանուցումը
+          </button>
+
+          <button
+            type="button"
+            onClick={async () => {
+              const ok = await refreshPWACache();
+              const stats = await getPWACacheStats();
+              setCacheStats(stats);
+              setPwaFeedback(
+                ok
+                  ? '✅ Offline PWA քեշը հաջողությամբ թարմացվեց։'
+                  : '⚠️ Offline քեշի թարմացումը հասանելի չէ այս միջավայրում։'
+              );
+            }}
+            className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center gap-2 transition"
+          >
+            <RefreshCw size={15} /> Թարմացնել Offline Քեշը
+          </button>
+
+          <button
+            type="button"
+            onClick={async () => {
+              const res = await shareProgressPWA({
+                streakDays: progress.streakDays,
+                learnedWordsCount: progress.learnedWordIds.length,
+                completedLessonsCount: progress.completedLessonIds.length,
+                level: progress.level,
+              });
+              if (res === 'shared') {
+                setPwaFeedback('✅ Առաջընթացը հաջողությամբ կիսվեց։');
+              } else if (res === 'copied') {
+                setPwaFeedback('📋 Առաջընթացի տեքստը պատճենվեց (Clipboard)։');
+              }
+            }}
+            className="px-4 py-2.5 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold text-xs flex items-center gap-2 transition"
+          >
+            <Share2 size={15} /> Կիսվել Առաջընթացով (Web Share)
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
+

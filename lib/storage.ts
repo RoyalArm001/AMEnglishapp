@@ -89,7 +89,7 @@ export const DEFAULT_ACHIEVEMENTS: AchievementRecord[] = [
     id: 'ach-welcome',
     code: 'FIRST_STEP',
     titleAm: 'Առաջին քայլը',
-    descriptionAm: 'Սկսել եք անգլերենի ուսուցման ճանապարհը HayLingo AI-ում։',
+    descriptionAm: 'Սկսել եք անգլերենի ուսուցման ճանապարհը HayLingo-ում։',
     icon: '🚀',
     unlockedAt: Date.now(),
   },
@@ -568,7 +568,7 @@ class LocalLearningRepository implements ILearningRepository {
     const exportBundle = {
       schemaVersion: IDB_SCHEMA_VERSION,
       exportedAt: new Date().toISOString(),
-      app: 'HayLingo AI',
+      app: 'HayLingo',
       data: normalizeAndValidateState(data),
     };
     return JSON.stringify(exportBundle, null, 2);
@@ -585,7 +585,7 @@ class LocalLearningRepository implements ILearningRepository {
       if (!rawData || typeof rawData !== 'object') {
         return {
           ok: false,
-          errorAm: 'Ֆայլի կառուցվածքը վավեր չէ։ Խնդրում ենք ընտրել HayLingo AI-ի արտահանված JSON ֆայլ։',
+          errorAm: 'Ֆայլի կառուցվածքը վավեր չէ։ Խնդրում ենք ընտրել HayLingo-ի արտահանված JSON ֆայլ։',
         };
       }
 

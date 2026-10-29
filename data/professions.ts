@@ -564,3 +564,4 @@ export function getRecommendedLessonIdsForProfession(profession: ProfessionId): 
       ];
   }
 }
+

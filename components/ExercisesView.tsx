@@ -27,13 +27,13 @@ interface ExercisesViewProps {
 }
 
 const EXERCISE_TYPE_META: { id: ExerciseType | 'all'; code: string; labelAm: string }[] = [
-  { id: 'all', code: 'Բոլորը', labelAm: 'Բոլոր տեսակները (A–F)' },
-  { id: 'fill-blank', code: 'Exercise A', labelAm: 'Լրացնել բաց թողնված բառը' },
-  { id: 'translate', code: 'Exercise B', labelAm: 'Թարգմանել անգլերեն' },
-  { id: 'correct-mistake', code: 'Exercise C', labelAm: 'Գտնել և ուղղել սխալը' },
-  { id: 'build-sentence', code: 'Exercise D', labelAm: 'Հավաքել նախադասություն' },
-  { id: 'listening', code: 'Exercise E', labelAm: 'Լսողական վարժություն' },
-  { id: 'speaking', code: 'Exercise F', labelAm: 'Ձայնային պատասխան' },
+  { id: 'all', code: 'Բոլորը', labelAm: 'Բոլոր տեսակները (Ա–Զ)' },
+  { id: 'fill-blank', code: 'Վարժություն Ա', labelAm: 'Լրացնել բաց թողնված բառը' },
+  { id: 'translate', code: 'Վարժություն Բ', labelAm: 'Թարգմանել անգլերեն' },
+  { id: 'correct-mistake', code: 'Վարժություն Գ', labelAm: 'Գտնել և ուղղել սխալը' },
+  { id: 'build-sentence', code: 'Վարժություն Դ', labelAm: 'Հավաքել նախադասություն' },
+  { id: 'listening', code: 'Վարժություն Ե', labelAm: 'Լսողական վարժություն' },
+  { id: 'speaking', code: 'Վարժություն Զ', labelAm: 'Ձայնային պատասխան' },
 ];
 
 export default function ExercisesView({
@@ -142,6 +142,13 @@ export default function ExercisesView({
       isCorrect,
       userAnswer: raw.trim(),
     });
+
+    if (progress.settings?.autoAdvanceExercises && isCorrect) {
+      setTimeout(() => {
+        resetStateForNext();
+        setCurrentIndex((prev) => (prev + 1) % Math.max(1, filteredExercises.length));
+      }, 1500);
+    }
   };
 
   const handleNextExercise = () => {
@@ -497,14 +504,16 @@ export default function ExercisesView({
               </button>
             )}
 
-            <button
-              type="button"
-              onClick={() => setShowHint(!showHint)}
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs md:text-sm font-semibold flex items-center gap-1.5 transition"
-            >
-              <HelpCircle size={16} className="text-amber-500" />
-              {showHint ? 'Թաքցնել հուշումը (Hide Hint)' : 'Hint (Հուշում)'}
-            </button>
+            {progress.settings?.hintsEnabled !== false && (
+              <button
+                type="button"
+                onClick={() => setShowHint(!showHint)}
+                className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs md:text-sm font-semibold flex items-center gap-1.5 transition"
+              >
+                <HelpCircle size={16} className="text-amber-500" />
+                {showHint ? 'Թաքցնել հուշումը' : 'Հուշում'}
+              </button>
+            )}
           </div>
         </div>
 
