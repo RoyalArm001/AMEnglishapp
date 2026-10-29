@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://armeng.royalarm.store';
+  const baseUrl = 'https://armeng.royalarm.uk';
 
   return {
     rules: [

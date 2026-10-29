@@ -1,4 +1,4 @@
-export const APP_VERSION = 'v1.1.0';
+export const APP_VERSION = 'v1.1.1';
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -191,7 +191,7 @@ export async function shareProgressPWA(params: {
   level: string;
 }): Promise<'shared' | 'copied' | 'failed'> {
   const shareText = `Ես սովորում եմ անգլերեն HayLingo-ով (${params.level} մակարդակ)․ 🔥 ${params.streakDays} օր անընդմեջ, 📚 ${params.completedLessonsCount} ավարտած դաս և 🧠 ${params.learnedWordsCount} սովորած բառ։`;
-  const shareUrl = 'https://armeng.royalarm.store';
+  const shareUrl = 'https://armeng.royalarm.uk';
 
   if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
     try {

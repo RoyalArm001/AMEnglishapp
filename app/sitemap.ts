@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://armeng.royalarm.store';
+  const baseUrl = 'https://armeng.royalarm.uk';
   const now = new Date();
 
   const sections = [

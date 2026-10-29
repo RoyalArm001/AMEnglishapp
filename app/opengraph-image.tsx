@@ -51,7 +51,7 @@ export default function OpenGraphImage() {
                 HayLingo
               </div>
               <div style={{ display: 'flex', fontSize: 16, color: '#a5b4fc', fontWeight: 600 }}>
-                armeng.royalarm.store • v1.1.0 PWA
+                armeng.royalarm.uk • v1.1.1 PWA
               </div>
             </div>
           </div>

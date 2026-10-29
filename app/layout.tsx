@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 
-const SITE_URL = 'https://armeng.royalarm.store';
+const SITE_URL = 'https://armeng.royalarm.uk';
 
 export const viewport: Viewport = {
   width: 'device-width',
