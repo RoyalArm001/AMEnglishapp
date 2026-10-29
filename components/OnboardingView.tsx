@@ -12,6 +12,7 @@ import {
   ProficiencyTier,
   UserProfileRecord,
 } from '../lib/types';
+import Logo from './Logo';
 
 interface OnboardingViewProps {
   initialProfile: UserProfileRecord;
@@ -110,6 +111,7 @@ export default function OnboardingView({
       >
         {/* Top Hero Banner */}
         <div className="p-6 md:p-8 bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white">
+          <Logo size="lg" className="mb-4" />
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-xs font-bold mb-3">
             <Sparkles size={14} /> {UI_TEXT.onboarding.welcomeBadge}
           </div>

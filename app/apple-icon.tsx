@@ -17,36 +17,103 @@ export default function AppleIcon() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #059669 100%)',
-          borderRadius: '38px',
-          color: '#ffffff',
-          fontFamily: 'sans-serif',
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #062e24 100%)',
+          borderRadius: '42px',
+          border: '3px solid rgba(129, 140, 248, 0.45)',
+          position: 'relative',
         }}
       >
+        {/* AI Learning Star (Geometric Diamond) */}
         <div
           style={{
             display: 'flex',
-            fontSize: 68,
-            fontWeight: 900,
-            letterSpacing: '-2px',
-            lineHeight: 1,
+            width: '10px',
+            height: '10px',
+            background: 'linear-gradient(135deg, #fde68a, #f59e0b)',
+            transform: 'rotate(45deg)',
+            marginBottom: '6px',
+            boxShadow: '0 0 6px rgba(245, 158, 11, 0.8)',
           }}
-        >
-          HL
-        </div>
+        />
+
+        {/* Stylized H Emblem with Soundwave Bridge */}
         <div
           style={{
             display: 'flex',
-            marginTop: 6,
-            padding: '4px 10px',
-            borderRadius: 999,
-            background: 'rgba(15, 23, 42, 0.45)',
-            fontSize: 15,
-            fontWeight: 800,
-            letterSpacing: '1.5px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            width: '100px',
+            height: '92px',
           }}
         >
-          HAYLINGO
+          {/* Left Pillar (Armenian) */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '0px',
+              width: '20px',
+              height: '92px',
+              borderRadius: '10px',
+              background: 'linear-gradient(180deg, #a5b4fc 0%, #6366f1 50%, #4338ca 100%)',
+            }}
+          />
+
+          {/* Right Pillar (English) */}
+          <div
+            style={{
+              position: 'absolute',
+              right: '12px',
+              top: '0px',
+              width: '20px',
+              height: '92px',
+              borderRadius: '10px',
+              background: 'linear-gradient(180deg, #6ee7b7 0%, #10b981 50%, #047857 100%)',
+            }}
+          />
+
+          {/* Center Bridge */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '26px',
+              top: '37px',
+              width: '48px',
+              height: '18px',
+              borderRadius: '9px',
+              background: 'linear-gradient(90deg, #6366f1 0%, #38bdf8 50%, #10b981 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '3.5px',
+            }}
+          >
+            <div
+              style={{
+                width: '3.5px',
+                height: '28px',
+                borderRadius: '1.75px',
+                background: '#ffffff',
+              }}
+            />
+            <div
+              style={{
+                width: '4.5px',
+                height: '38px',
+                borderRadius: '2.25px',
+                background: '#ffffff',
+              }}
+            />
+            <div
+              style={{
+                width: '3.5px',
+                height: '28px',
+                borderRadius: '1.75px',
+                background: '#ffffff',
+              }}
+            />
+          </div>
         </div>
       </div>
     ),

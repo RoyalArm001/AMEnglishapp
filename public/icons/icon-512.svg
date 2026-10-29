@@ -1,14 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg512" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4f46e5" />
-      <stop offset="50%" stop-color="#7c3aed" />
-      <stop offset="100%" stop-color="#059669" />
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#062e24" />
     </linearGradient>
+    <linearGradient id="border512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#a78bfa" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.95" />
+    </linearGradient>
+    <linearGradient id="left512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c7d2fe" />
+      <stop offset="35%" stop-color="#818cf8" />
+      <stop offset="70%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+    <linearGradient id="right512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a7f3d0" />
+      <stop offset="35%" stop-color="#34d399" />
+      <stop offset="70%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="wave512" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="star512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <radialGradient id="glow512" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.45" />
+      <stop offset="60%" stop-color="#10b981" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <filter id="shadow512" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000000" flood-opacity="0.55" />
+    </filter>
   </defs>
-  <rect width="512" height="512" rx="116" fill="url(#bg512)" />
-  <circle cx="256" cy="256" r="196" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="8" />
-  <path d="M256 104L96 178l160 74 128-59.5V298h32V178L256 104zm-96 126v70c0 38 43 69 96 69s96-31 96-69v-70l-96 49-96-49z" fill="#ffffff" />
-  <rect x="126" y="368" width="260" height="58" rx="29" fill="rgba(15,23,42,0.5)" />
-  <text x="256" y="406" font-family="Arial, sans-serif" font-weight="800" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="3">HAYLINGO</text>
+
+  <!-- Squircle Base -->
+  <rect x="16" y="16" width="480" height="480" rx="124" fill="url(#bg512)" stroke="url(#border512)" stroke-width="8" />
+  <circle cx="256" cy="256" r="204" fill="url(#glow512)" />
+
+  <g filter="url(#shadow512)">
+    <!-- Left Pillar (Armenian foundation) -->
+    <path d="M138 112 C138 103.2 145.2 96 154 96 L186 96 C194.8 96 202 103.2 202 112 L202 400 C202 408.8 194.8 416 186 416 L154 416 C145.2 416 138 408.8 138 400 Z" fill="url(#left512)" />
+    <circle cx="170" cy="124" r="9" fill="#ffffff" fill-opacity="0.9" />
+
+    <!-- Right Pillar (English fluency) -->
+    <path d="M310 112 C310 103.2 317.2 96 326 96 L358 96 C366.8 96 374 103.2 374 112 L374 400 C374 408.8 366.8 416 358 416 L326 416 C317.2 416 310 408.8 310 400 Z" fill="url(#right512)" />
+    <circle cx="342" cy="124" r="9" fill="#ffffff" fill-opacity="0.9" />
+
+    <!-- Center Bridge -->
+    <rect x="186" y="230" width="140" height="52" rx="26" fill="url(#wave512)" />
+
+    <!-- Speech soundwave frequency bars -->
+    <rect x="222" y="196" width="14" height="120" rx="7" fill="#ffffff" fill-opacity="0.95" />
+    <rect x="249" y="170" width="15" height="172" rx="7.5" fill="#ffffff" />
+    <rect x="276" y="196" width="14" height="120" rx="7" fill="#ffffff" fill-opacity="0.95" />
+
+    <!-- AI Learning Star -->
+    <path d="M256 90 L265.5 116 L291 125.5 L265.5 135 L256 161 L246.5 135 L221 125.5 L246.5 116 Z" fill="url(#star512)" />
+    <circle cx="256" cy="125.5" r="6.5" fill="#ffffff" />
+  </g>
 </svg>

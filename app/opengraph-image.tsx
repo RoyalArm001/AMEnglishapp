@@ -30,28 +30,71 @@ export default function OpenGraphImage() {
             justifyContent: 'space-between',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <div
               style={{
-                width: 68,
-                height: 68,
-                borderRadius: 20,
-                background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+                width: 76,
+                height: 76,
+                borderRadius: 24,
+                background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #062e24 100%)',
+                border: '2px solid rgba(129, 140, 248, 0.5)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 32,
-                fontWeight: 900,
+                position: 'relative',
               }}
             >
-              HL
+              {/* Pillar Left */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '14px',
+                  width: '9px',
+                  height: '48px',
+                  borderRadius: '5px',
+                  background: 'linear-gradient(180deg, #a5b4fc, #6366f1)',
+                }}
+              />
+              {/* Pillar Right */}
+              <div
+                style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '14px',
+                  width: '9px',
+                  height: '48px',
+                  borderRadius: '5px',
+                  background: 'linear-gradient(180deg, #6ee7b7, #10b981)',
+                }}
+              />
+              {/* Bridge */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '22px',
+                  top: '32px',
+                  width: '32px',
+                  height: '12px',
+                  borderRadius: '6px',
+                  background: 'linear-gradient(90deg, #6366f1, #38bdf8, #10b981)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '2px',
+                }}
+              >
+                <div style={{ width: '2.5px', height: '18px', background: '#ffffff', borderRadius: '1px' }} />
+                <div style={{ width: '3px', height: '24px', background: '#ffffff', borderRadius: '1.5px' }} />
+                <div style={{ width: '2.5px', height: '18px', background: '#ffffff', borderRadius: '1px' }} />
+              </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', fontSize: 32, fontWeight: 900, letterSpacing: '-0.5px' }}>
+              <div style={{ display: 'flex', fontSize: 34, fontWeight: 900, letterSpacing: '-0.5px' }}>
                 HayLingo
               </div>
               <div style={{ display: 'flex', fontSize: 16, color: '#a5b4fc', fontWeight: 600 }}>
-                armeng.royalarm.uk • v1.1.1 PWA
+                armeng.royalarm.uk • v1.1.2 PWA
               </div>
             </div>
           </div>

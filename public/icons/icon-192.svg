@@ -1,14 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4f46e5" />
-      <stop offset="50%" stop-color="#7c3aed" />
-      <stop offset="100%" stop-color="#059669" />
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#062e24" />
     </linearGradient>
+    <linearGradient id="border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#a78bfa" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.9" />
+    </linearGradient>
+    <linearGradient id="left" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a5b4fc" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+    <linearGradient id="right" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.4" />
+      <stop offset="60%" stop-color="#10b981" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
   </defs>
-  <rect width="192" height="192" rx="44" fill="url(#bg)" />
-  <circle cx="96" cy="96" r="72" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3" />
-  <path d="M96 38L36 66l60 28 48-22.4V112h12V66L96 38zm-36 47.6v26.4c0 14.4 16.2 26 36 26s36-11.6 36-26V85.6L96 104 60 85.6z" fill="#ffffff" />
-  <rect x="52" y="138" width="88" height="22" rx="11" fill="rgba(15,23,42,0.45)" />
-  <text x="96" y="153" font-family="Arial, sans-serif" font-weight="800" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="1">HAYLINGO</text>
+
+  <!-- Squircle Base -->
+  <rect x="6" y="6" width="180" height="180" rx="46" fill="url(#bg)" stroke="url(#border)" stroke-width="3" />
+  <circle cx="96" cy="96" r="76" fill="url(#glow)" />
+
+  <g filter="url(#shadow)">
+    <!-- Left Pillar (Armenian foundation) -->
+    <path d="M52 42 C52 38.7 54.7 36 58 36 L70 36 C73.3 36 76 38.7 76 42 L76 150 C76 153.3 73.3 156 70 156 L58 156 C54.7 156 52 153.3 52 150 Z" fill="url(#left)" />
+    <circle cx="64" cy="46" r="3.5" fill="#ffffff" fill-opacity="0.85" />
+
+    <!-- Right Pillar (English fluency) -->
+    <path d="M116 42 C116 38.7 118.7 36 122 36 L134 36 C137.3 36 140 38.7 140 42 L140 150 C140 153.3 137.3 156 134 156 L122 156 C118.7 156 116 153.3 116 150 Z" fill="url(#right)" />
+    <circle cx="128" cy="46" r="3.5" fill="#ffffff" fill-opacity="0.85" />
+
+    <!-- Center Bridge -->
+    <rect x="70" y="86" width="52" height="20" rx="10" fill="url(#wave)" />
+
+    <!-- Speech soundwave bars -->
+    <rect x="83" y="74" width="5.5" height="44" rx="2.75" fill="#ffffff" fill-opacity="0.95" />
+    <rect x="93" y="64" width="6" height="64" rx="3" fill="#ffffff" />
+    <rect x="103.5" y="74" width="5.5" height="44" rx="2.75" fill="#ffffff" fill-opacity="0.95" />
+
+    <!-- AI Learning Star -->
+    <path d="M96 34 L99.5 44 L109 47.5 L99.5 51 L96 61 L92.5 51 L83 47.5 L92.5 44 Z" fill="url(#star)" />
+    <circle cx="96" cy="47.5" r="2.5" fill="#ffffff" />
+  </g>
 </svg>

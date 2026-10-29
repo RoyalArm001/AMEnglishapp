@@ -59,6 +59,7 @@ import LearningHistoryView from '../components/LearningHistoryView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
 import PWAManager from '../components/PWAManager';
+import Logo, { LogoIcon } from '../components/Logo';
 import { APP_VERSION } from '../lib/pwa';
 
 const TranslationView = dynamic(() => import('../components/TranslationView'), {
@@ -614,25 +615,8 @@ export default function HomePage() {
       <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 justify-between z-30 overflow-y-auto">
         <div className="space-y-4">
           {/* Brand Logo */}
-          <div className="flex items-center justify-between px-2 pt-1">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-extrabold text-lg flex items-center justify-center shadow-sm">
-                H
-              </div>
-              <div>
-                <div className="font-extrabold text-lg tracking-tight leading-none flex items-center gap-1.5">
-                  <span>
-                    Hay<span className="text-emerald-600 dark:text-emerald-400">Lingo</span>
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded-md bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold">
-                    {APP_VERSION}
-                  </span>
-                </div>
-                <div className="text-[11px] font-semibold text-slate-400 mt-0.5">
-                  {UI_TEXT.appSubtitle}
-                </div>
-              </div>
-            </div>
+          <div className="px-2 pt-1">
+            <Logo size="md" badgeText={APP_VERSION} />
           </div>
 
           {/* Navigation Menu */}
@@ -702,11 +686,9 @@ export default function HomePage() {
       </aside>
 
       {/* Mobile Header */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between">
+      <header className="lg:hidden sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white font-extrabold flex items-center justify-center">
-            H
-          </div>
+          <LogoIcon size={34} />
           <div>
             <div className="font-extrabold text-base leading-none">
               Hay<span className="text-emerald-600 dark:text-emerald-400">Lingo</span>
