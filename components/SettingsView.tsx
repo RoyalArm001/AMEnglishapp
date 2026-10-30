@@ -388,6 +388,27 @@ export default function SettingsView({
               ))}
             </select>
           </div>
+
+          <div className="sm:col-span-2 pt-1">
+            <label htmlFor="auto-play-audio-setting" className="flex items-center gap-3 cursor-pointer p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <input
+                type="checkbox"
+                id="auto-play-audio-setting"
+                aria-label="Ավտոմատ արտասանություն"
+                checked={Boolean(settings.autoPlayAudio)}
+                onChange={(e) => onUpdateSettings({ autoPlayAudio: e.target.checked })}
+                className="w-4 h-4 accent-sky-600 rounded"
+              />
+              <div>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  Ավտոմատ արտասանություն
+                </span>
+                <p className="text-[11px] text-slate-400">
+                  Դասերում հաջորդ նախադասությանն անցնելիս ավտոմատ հնչեցնել անգլերեն արտասանությունը։
+                </p>
+              </div>
+            </label>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">

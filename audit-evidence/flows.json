@@ -1,0 +1,588 @@
+[
+  {
+    "name": "dailywords",
+    "result": {
+      "wrong": [
+        {
+          "id": "dwa-1793363902491-5kdr",
+          "userId": "user-main",
+          "wordId": "dw-a2-9",
+          "date": "2026-10-30",
+          "userAnswer": "wrong-audit",
+          "isCorrect": false,
+          "attemptNumber": 1,
+          "hintsUsed": 0,
+          "timestamp": 1793363902491
+        }
+      ],
+      "steps": [
+        1,
+        2,
+        3
+      ],
+      "completed": true
+    }
+  },
+  {
+    "name": "conversation-conv-1-morning",
+    "result": {
+      "id": "conv-conv-1-morning",
+      "userId": "user-main",
+      "topicId": "conv-1-morning",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Good morning! Yes, I slept very well, thank you.",
+          "isCorrect": true,
+          "timestamp": 1793363907029
+        }
+      ],
+      "updatedAt": 1793363907029
+    }
+  },
+  {
+    "name": "conversation-conv-2-first-day",
+    "result": {
+      "id": "conv-conv-2-first-day",
+      "userId": "user-main",
+      "topicId": "conv-2-first-day",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Thank you! I am excited to start.",
+          "isCorrect": true,
+          "timestamp": 1793363907379
+        }
+      ],
+      "updatedAt": 1793363907379
+    }
+  },
+  {
+    "name": "conversation-conv-3-colleagues",
+    "result": {
+      "id": "conv-conv-3-colleagues",
+      "userId": "user-main",
+      "topicId": "conv-3-colleagues",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Nice to meet you, Sarah! I am Aram, the new software engineer.",
+          "isCorrect": true,
+          "timestamp": 1793363907692
+        }
+      ],
+      "updatedAt": 1793363907692
+    }
+  },
+  {
+    "name": "conversation-conv-4-help",
+    "result": {
+      "id": "conv-conv-4-help",
+      "userId": "user-main",
+      "topicId": "conv-4-help",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Yes, please! Could you spare a couple of minutes?",
+          "isCorrect": true,
+          "timestamp": 1793363907989
+        }
+      ],
+      "updatedAt": 1793363907989
+    }
+  },
+  {
+    "name": "conversation-conv-5-problem",
+    "result": {
+      "id": "conv-conv-5-problem",
+      "userId": "user-main",
+      "topicId": "conv-5-problem",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "An outdated package version caused a TypeScript compilation error.",
+          "isCorrect": true,
+          "timestamp": 1793363908224
+        }
+      ],
+      "updatedAt": 1793363908224
+    }
+  },
+  {
+    "name": "conversation-conv-6-cafe",
+    "result": {
+      "id": "conv-conv-6-cafe",
+      "userId": "user-main",
+      "topicId": "conv-6-cafe",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "A table for one by the window, please.",
+          "isCorrect": true,
+          "timestamp": 1793363908489
+        }
+      ],
+      "updatedAt": 1793363908489
+    }
+  },
+  {
+    "name": "conversation-conv-7-shop",
+    "result": {
+      "id": "conv-conv-7-shop",
+      "userId": "user-main",
+      "topicId": "conv-7-shop",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Hi! I am looking for a warm winter jacket.",
+          "isCorrect": true,
+          "timestamp": 1793363908739
+        }
+      ],
+      "updatedAt": 1793363908739
+    }
+  },
+  {
+    "name": "conversation-conv-8-directions",
+    "result": {
+      "id": "conv-conv-8-directions",
+      "userId": "user-main",
+      "topicId": "conv-8-directions",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Yes, please! How do I get to the National History Museum?",
+          "isCorrect": true,
+          "timestamp": 1793363908989
+        }
+      ],
+      "updatedAt": 1793363908989
+    }
+  },
+  {
+    "name": "conversation-conv-9-phone",
+    "result": {
+      "id": "conv-conv-9-phone",
+      "userId": "user-main",
+      "topicId": "conv-9-phone",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Good morning. May I speak with Mr. Mark Davis in IT support, please?",
+          "isCorrect": true,
+          "timestamp": 1793363909239
+        }
+      ],
+      "updatedAt": 1793363909239
+    }
+  },
+  {
+    "name": "conversation-conv-10-meeting",
+    "result": {
+      "id": "conv-conv-10-meeting",
+      "userId": "user-main",
+      "topicId": "conv-10-meeting",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "I can go first. I completed the user authentication redesign yesterday.",
+          "isCorrect": true,
+          "timestamp": 1793363909489
+        }
+      ],
+      "updatedAt": 1793363909489
+    }
+  },
+  {
+    "name": "conversation-conv-11-it-support",
+    "result": {
+      "id": "conv-conv-11-it-support",
+      "userId": "user-main",
+      "topicId": "conv-11-it-support",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Hello Alex, I am unable to connect to the office Wi-Fi network.",
+          "isCorrect": true,
+          "timestamp": 1793363909756
+        }
+      ],
+      "updatedAt": 1793363909756
+    }
+  },
+  {
+    "name": "conversation-conv-12-evening",
+    "result": {
+      "id": "conv-conv-12-evening",
+      "userId": "user-main",
+      "topicId": "conv-12-evening",
+      "currentTurnIndex": 1,
+      "isCompleted": false,
+      "completedTurns": 1,
+      "history": [
+        {
+          "turnNumber": 0,
+          "stepIndex": 0,
+          "userReply": "Yes, I just sent my final email and I am closing my laptop.",
+          "isCorrect": true,
+          "timestamp": 1793363910005
+        }
+      ],
+      "updatedAt": 1793363910005
+    }
+  },
+  {
+    "name": "conversation-invalid-fragment",
+    "result": {
+      "fragment": "I",
+      "last": {
+        "turnNumber": 1,
+        "stepIndex": 1,
+        "userReply": "I",
+        "isCorrect": true,
+        "timestamp": 1793363910257
+      }
+    }
+  },
+  {
+    "name": "dailyquestions",
+    "result": {
+      "id": "dq-2026-10-30",
+      "userId": "user-main",
+      "date": "2026-10-30",
+      "totalQuestions": 10,
+      "currentIndex": 1,
+      "isCompleted": false,
+      "score": 10,
+      "questions": [
+        {
+          "id": "dw-tr-3",
+          "type": "translate-am-en",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "IT Specialist"
+          ],
+          "questionEn": "Translate into English: «Իմ համակարգիչը չի միանում այսօր առավոտյան։»",
+          "questionPronunciation": "Թրանսլեյթ ինթու Ինգլիշ: Իմ համակարգիչը չի միանում...",
+          "questionAm": "Իմ համակարգիչը չի միանում այսօր առավոտյան։",
+          "correctAnswer": "My computer does not turn on this morning.",
+          "acceptableAnswers": [
+            "My computer does not turn on this morning.",
+            "My computer doesn't turn on this morning.",
+            "My computer is not turning on this morning.",
+            "My computer won't turn on this morning."
+          ],
+          "requiredKeywords": [
+            "computer",
+            "turn",
+            "on",
+            "morning"
+          ],
+          "explanationAm": "«Does not turn on» կամ «is not turning on» ճիշտ է նկարագրում համակարգչի չմիանալու վիճակը։",
+          "hintAm": "Համակարգիչ միացնել/անջատել անգլերենում «turn on / turn off» է։"
+        },
+        {
+          "id": "dq-cm-4",
+          "type": "correct-mistake",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "Customer Support"
+          ],
+          "questionEn": "Correct the sentence: «Can you to explain me the process again?»",
+          "questionPronunciation": "Քըրեքթ դը սենթընս: Քան յու թու էքսփլեյն...",
+          "questionAm": "Ուղղեք սխալ նախադասությունը՝ «Can you to explain me the process again?»",
+          "correctAnswer": "Can you explain the process to me again?",
+          "acceptableAnswers": [
+            "Can you explain the process to me again?",
+            "Can you explain to me the process again?"
+          ],
+          "requiredKeywords": [
+            "can",
+            "you",
+            "explain",
+            "process",
+            "me",
+            "again"
+          ],
+          "explanationAm": "1) «Can» մոդալ բայից հետո «to» չի գրվում։ 2) «Explain» բայը պահանջում է «explain [something] to [someone]»։",
+          "hintAm": "«Can»-ից հետո «to» պետք չէ, և գրվում է «explain ... to me»։"
+        },
+        {
+          "id": "dq-fb-3",
+          "type": "fill-blank",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "Doctor"
+          ],
+          "questionEn": "The doctor advised the patient to ___ plenty of warm water.",
+          "questionPronunciation": "Դը դոքթոր էդվայզդ դը փեյշընթ թու ___ փլենթի օվ ուորմ ուոթեր։",
+          "questionAm": "Բժիշկը խորհուրդ տվեց հիվանդին շատ գոլ ջուր խմել։",
+          "options": [
+            "drink",
+            "drank",
+            "drinking",
+            "drinks"
+          ],
+          "correctAnswer": "drink",
+          "acceptableAnswers": [
+            "drink",
+            "The doctor advised the patient to drink plenty of warm water."
+          ],
+          "requiredKeywords": [
+            "drink"
+          ],
+          "explanationAm": "«advise someone to [do something]» կառույցից հետո գալիս է բայի հիմնական ձևը՝ drink։",
+          "hintAm": "«to» մասնիկից հետո դրվում է բայի սկզբնական ձևը։"
+        },
+        {
+          "id": "dq-sp-3",
+          "type": "speaking-mic",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "IT Specialist"
+          ],
+          "questionEn": "Speak into your microphone: «I am checking your computer for recent security updates.»",
+          "questionPronunciation": "Այ եմ չեքինգ յոր քոմփյութըր ֆոր րիսընթ սիքյուրիթի ափդեյթս։",
+          "questionAm": "Արտասանեք խոսափողով՝ «I am checking your computer for recent security updates.»",
+          "correctAnswer": "I am checking your computer for recent security updates.",
+          "acceptableAnswers": [
+            "I am checking your computer for recent security updates.",
+            "I'm checking your computer for recent security updates."
+          ],
+          "requiredKeywords": [
+            "checking",
+            "computer",
+            "security",
+            "updates"
+          ],
+          "explanationAm": "ՏՏ աջակցության հիմնական նախադասություն՝ «I am checking your computer...»։",
+          "hintAm": "Արտասանեք՝ «I am checking your computer for recent security updates.»"
+        },
+        {
+          "id": "dw-tr-4",
+          "type": "translate-am-en",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "Hotel / Tourism Worker",
+            "Customer Support"
+          ],
+          "questionEn": "Translate into English: «Որտե՞ղ է գտնվում մոտակա բանկոմատը։»",
+          "questionPronunciation": "Թրանսլեյթ ինթու Ինգլիշ: Որտե՞ղ է գտնվում...",
+          "questionAm": "Որտե՞ղ է գտնվում մոտակա բանկոմատը։",
+          "correctAnswer": "Where is the nearest ATM located?",
+          "acceptableAnswers": [
+            "Where is the nearest ATM located?",
+            "Where is the nearest ATM?",
+            "Where can I find the nearest ATM?"
+          ],
+          "requiredKeywords": [
+            "where",
+            "nearest",
+            "atm"
+          ],
+          "explanationAm": "«The nearest ATM» նշանակում է ամենամոտ բանկոմատը (գերադրական աստիճան)։",
+          "hintAm": "Օգտագործեք «Where is the nearest ATM?» արտահայտությունը։"
+        },
+        {
+          "id": "dq-lw-4",
+          "type": "listening-write",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "Hotel / Tourism Worker"
+          ],
+          "questionEn": "Listen to the audio and type the sentence: «Your room is on the fourth floor next to the elevator.»",
+          "questionPronunciation": "Յոր րում իզ օն դը ֆորթ ֆլոր նեքսթ թու դի էլիվեյթըր։",
+          "questionAm": "Լսեք ձայնագրությունը և գրեք նախադասությունը անգլերեն։",
+          "correctAnswer": "Your room is on the fourth floor next to the elevator.",
+          "acceptableAnswers": [
+            "Your room is on the fourth floor next to the elevator.",
+            "Your room is on the 4th floor next to the elevator."
+          ],
+          "requiredKeywords": [
+            "room",
+            "fourth",
+            "floor",
+            "elevator"
+          ],
+          "explanationAm": "Հարկերի համար օգտագործվում է «on the [ordinal] floor» (on the fourth floor)։",
+          "hintAm": "Your room is on the fourth floor next to the elevator."
+        },
+        {
+          "id": "dq-cm-3",
+          "type": "correct-mistake",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "IT Specialist"
+          ],
+          "questionEn": "Correct the sentence: «Yesterday we discuss about the database backup.»",
+          "questionPronunciation": "Քըրեքթ դը սենթընս: Յեսթըրդեյ ուի դիսքաս...",
+          "questionAm": "Ուղղեք սխալ նախադասությունը՝ «Yesterday we discuss about the database backup.»",
+          "correctAnswer": "Yesterday we discussed the database backup.",
+          "acceptableAnswers": [
+            "Yesterday we discussed the database backup.",
+            "We discussed the database backup yesterday."
+          ],
+          "requiredKeywords": [
+            "yesterday",
+            "discussed",
+            "database",
+            "backup"
+          ],
+          "explanationAm": "1) «Yesterday»-ը պահանջում է Past Simple՝ «discussed»։ 2) «Discuss» բայից հետո «about» նախդիր չի դրվում (discuss something)։",
+          "hintAm": "1) Դրեք անցյալ ժամանակով (discussed)։ 2) Հանեք «about» նախդիրը։"
+        },
+        {
+          "id": "dq-sp-4",
+          "type": "speaking-mic",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "Customer Support"
+          ],
+          "questionEn": "Speak into your microphone: «Thank you for waiting, how may I assist you today?»",
+          "questionPronunciation": "Թենք յու ֆոր ուեյթինգ, հաու մեյ այ էսիսթ յու թուդեյ;",
+          "questionAm": "Արտասանեք խոսափողով՝ «Thank you for waiting, how may I assist you today?»",
+          "correctAnswer": "Thank you for waiting, how may I assist you today?",
+          "acceptableAnswers": [
+            "Thank you for waiting, how may I assist you today?",
+            "Thank you for waiting how may I assist you today"
+          ],
+          "requiredKeywords": [
+            "thank",
+            "waiting",
+            "assist",
+            "today"
+          ],
+          "explanationAm": "Հաճախորդներին ողջունելու դասական քաղաքավարի ձևակերպում։",
+          "hintAm": "Ասեք՝ «Thank you for waiting, how may I assist you today?»"
+        },
+        {
+          "id": "dq-aq-3",
+          "type": "answer-question",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "IT Specialist",
+            "Software Developer"
+          ],
+          "questionEn": "Which programming language do you use the most in your daily projects?",
+          "questionPronunciation": "Ուիչ փրոգրամինգ լանգուիջ դու յու յուզ դը մոուսթ ին յոր դեյլի փրոջեքթս;",
+          "questionAm": "Ո՞ր ծրագրավորման լեզուն եք ամենաշատն օգտագործում ձեր ամենօրյա նախագծերում։",
+          "correctAnswer": "I mostly use TypeScript and JavaScript in my daily projects.",
+          "acceptableAnswers": [
+            "I mostly use TypeScript and JavaScript in my daily projects.",
+            "I primarily use Python for my projects.",
+            "I use JavaScript and TypeScript.",
+            "I use C# and SQL the most."
+          ],
+          "requiredKeywords": [
+            "use",
+            "typescript",
+            "javascript",
+            "python",
+            "language",
+            "projects"
+          ],
+          "explanationAm": "Նշեք ձեր օգտագործած լեզուն՝ «I mostly use [Language] in my projects»։",
+          "hintAm": "Օգտագործեք «I mostly use [TypeScript/Python/JavaScript]...»։"
+        },
+        {
+          "id": "dq-lw-3",
+          "type": "listening-write",
+          "level": "A2",
+          "difficultyRank": 2,
+          "professions": [
+            "IT Specialist"
+          ],
+          "questionEn": "Listen to the audio and type the sentence: «Please restart your router to refresh the connection.»",
+          "questionPronunciation": "Փլիզ րիսթարթ յոր ռաութըր թու րիֆրեշ դը քընեքշըն։",
+          "questionAm": "Լսեք ձայնագրությունը և գրեք նախադասությունը անգլերեն։",
+          "correctAnswer": "Please restart your router to refresh the connection.",
+          "acceptableAnswers": [
+            "Please restart your router to refresh the connection."
+          ],
+          "requiredKeywords": [
+            "restart",
+            "router",
+            "refresh",
+            "connection"
+          ],
+          "explanationAm": "«Restart your router to refresh the connection» (Վերագործարկեք երթուղիչը կապը թարմացնելու համար)։",
+          "hintAm": "Please restart your router to refresh the connection."
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "dw-tr-3",
+          "userAnswer": "My computer does not turn on this morning.",
+          "isCorrect": true,
+          "explanationAm": "«Does not turn on» կամ «is not turning on» ճիշտ է նկարագրում համակարգչի չմիանալու վիճակը։",
+          "timestamp": 1793363910443
+        }
+      ],
+      "updatedAt": 1793363910443
+    }
+  },
+  {
+    "name": "production-read-only",
+    "result": {
+      "status": 200,
+      "title": "HayLingo — Անգլերենի Ինտերակտիվ Ուսուցում Հայախոսների Համար (A1–C2)",
+      "versions": [
+        "v1.1.2"
+      ],
+      "onboarding": true
+    }
+  }
+]

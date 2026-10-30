@@ -2,6 +2,15 @@
 
 Փոփոխությունների վայրը նշված է յուրաքանչյուր տարբերակի տակ։ Տարբերակի համարը պահվում է `package.json`, `lib/pwa.ts` և `public/sw.js` ֆայլերում։
 
+## v1.2.2 — 2026-10-30 — E2E Ուղղումներ, Արտադրական Օպտիմալացում և Տվյալների Լիարժեքություն
+
+- **E2E Թեստերի Ուղղում.** `components/SettingsView.tsx`-ում ավելացվել է «Ավտոմատ արտասանություն» (`autoPlayAudio`) կարգավորման UI վերահսկիչը, որը կապված է `LessonsView.tsx`-ի ավտոմատ հնչեցման հետ։
+- **PWA Service Worker Offline Նավիգացիա.** `public/sw.js`-ում navigation request-ների fallback-ը թարմացվել է `{ ignoreSearch: true }` տարբերակով, ինչը երաշխավորում է, որ ցանկացած SPA URL query (`/?tab=lessons` և այլն) անցանց ռեժիմում ակնթարթորեն բեռնվում է քեշավորված shell-ից։
+- **Արտադրական Օպտիմալացում (Code Splitting).** `app/page.tsx`-ում ծանր ուսումնական բաժինները (`BookLibraryView`, `GrammarAcademyView`, `AccentAcademyView`, `DailyQuestionsView`, `DailyConversationsView`, `ITEnglishView`, `TeacherView`, `VoicePracticeView`, `LearningHistoryView`) վերածվել են `dynamic()` lazy-load բաղադրիչների։ First Load JS-ը կրճատվել է **450 kB**-ից մինչև **295 kB** (-34.4%), իսկ հիմնական էջի չափը՝ **347 kB**-ից **192 kB** (-44.7%)։
+- **Desktop / Mobile / Auto Ռեժիմների Ձեռքով Կառավարում.** `lib/use-display-settings.ts`-ում ներդրվել է հստակ գերակայություն. օգտատիրոջ ձեռքով ընտրած `desktop` կամ `mobile` ռեժիմն անմիջապես ակտիվացնում է համապատասխան դասավորությունը, իսկ `auto` ռեժիմը հետևում է էկրանի չափսերին։
+- **SQLite Տվյալների Լիարժեք Պահուստավորում.** `lib/sqlite-server.ts`-ում ավելացվել է `cefr_level` դաշտը `user_profile` և `haylingo_meta` աղյուսակներում, որպեսզի օգտատիրոջ CEFR մակարդակը (`A1`–`C2`) անխաթար պահպանվի SQLite `.db` արտահանման և ներմուծման ընթացքում։
+- **Ավտոմատացված Թեստեր.** `tests/final-fix-verification.test.cjs` ֆայլով հաստատվել է SQLite ամբողջական round-trip-ը, Wake Lock-ը, Display Mode-ը և `autoPlayAudio` դրոշակը։ Ընդհանուր միավորային և ինտեգրացիոն թեստերը կազմում են **93/93 Passed (100%)**։
+
 ## v1.2.0 — 2026-10-30 — էկրանի և տառաչափի կարգավորումներ
 
 - Screen Wake Lock՝ դասի lifecycle, hide/show, release, retry և հայերեն fallback. `lib/wake-lock.ts`, `lib/use-wake-lock.ts`, `app/page.tsx`։

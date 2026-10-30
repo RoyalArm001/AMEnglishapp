@@ -1,0 +1,1739 @@
+[
+  {
+    "section": 2,
+    "n": 1,
+    "requirement": "Հիշեցումների առանձին կարգավորումները։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 2,
+    "requirement": "Ժամի ընտրությունը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 3,
+    "requirement": "Timezone-ի ճիշտ օգտագործումը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 4,
+    "requirement": "Ամենօրյա կրկնության տրամաբանությունը։",
+    "status": "FAIL",
+    "evidence": "repeatDaily դաշտը PWAManager scheduler-ը չի կարդում։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Օրվա կրկնությունը հնարավոր չէ անջատել առանձին կարգավորմամբ։"
+  },
+  {
+    "section": 2,
+    "n": 5,
+    "requirement": "Notification permission-ը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 6,
+    "requirement": "Ծանուցման միացում/անջատումը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 7,
+    "requirement": "Ծանուցման վրա սեղմելիս ճիշտ էջի բացումը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 8,
+    "requirement": "Service Worker-ի աշխատանքը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 9,
+    "requirement": "Բազմակի ծանուցումների կանխարգելումը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 10,
+    "requirement": "Օգտատիրոջ հիշեցման ժամի պահպանումը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդի ստուգում; Settings էջի browser smoke; SW regression։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Իրական OS ծանուցում/սեղմում ամբողջությամբ չի փորձարկվել։"
+  },
+  {
+    "section": 2,
+    "n": 11,
+    "requirement": "Հավելվածը բաց վիճակում։",
+    "status": "NOT TESTED",
+    "evidence": "notifications.json՝ mock փորձը հաղորդագրություն չարձանագրեց։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Փորձը միանշանակ չէ. սա ինքնին scheduler-ի ձախողման ապացույց չէ։"
+  },
+  {
+    "section": 2,
+    "n": 12,
+    "requirement": "Հավելվածը background-ում։",
+    "status": "NOT TESTED",
+    "evidence": "Չկա իրական background/փակ browser/տեղադրված սարքի փորձ։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Փակ հավելվածում ճշգրիտ տեղական ժամով առաքում չի երաշխավորվում։"
+  },
+  {
+    "section": 2,
+    "n": 13,
+    "requirement": "Բրաուզերը փակ վիճակում։",
+    "status": "NOT TESTED",
+    "evidence": "Չկա իրական background/փակ browser/տեղադրված սարքի փորձ։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Փակ հավելվածում ճշգրիտ տեղական ժամով առաքում չի երաշխավորվում։"
+  },
+  {
+    "section": 2,
+    "n": 14,
+    "requirement": "Տեղադրված Mobile PWA-ի դեպքում։",
+    "status": "NOT TESTED",
+    "evidence": "Չկա իրական background/փակ browser/տեղադրված սարքի փորձ։",
+    "file": "components/PWAManager.tsx; components/SettingsView.tsx; lib/pwa.ts; public/sw.js",
+    "problem": "Փակ հավելվածում ճշգրիտ տեղական ժամով առաքում չի երաշխավորվում։"
+  },
+  {
+    "section": 3,
+    "n": 1,
+    "requirement": "Օրական 3 բառի առաջադրանքի ստեղծումը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 2,
+    "requirement": "Մեկ բառի ցուցադրումը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 3,
+    "requirement": "Սխալ պատասխանի դեպքում առաջ չանցնելը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 4,
+    "requirement": "Անսահման կրկնակի փորձերը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդում retry, exact/synonym match, աստիճանական հուշում և մակարդակով ընտրություն կան։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "Անսահման փորձերի, բոլոր հոմանիշների/մակարդակների առանձին browser coverage չկա։"
+  },
+  {
+    "section": 3,
+    "n": 5,
+    "requirement": "Ճիշտ պատասխանի ընդունումը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 6,
+    "requirement": "Մեծատառերի և փոքրատառերի մշակումը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 7,
+    "requirement": "Հոմանիշների ճիշտ ճանաչումը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդում retry, exact/synonym match, աստիճանական հուշում և մակարդակով ընտրություն կան։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "Անսահման փորձերի, բոլոր հոմանիշների/մակարդակների առանձին browser coverage չկա։"
+  },
+  {
+    "section": 3,
+    "n": 8,
+    "requirement": "Հուշումների աշխատանքը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդում retry, exact/synonym match, աստիճանական հուշում և մակարդակով ընտրություն կան։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "Անսահման փորձերի, բոլոր հոմանիշների/մակարդակների առանձին browser coverage չկա։"
+  },
+  {
+    "section": 3,
+    "n": 9,
+    "requirement": "Սխալների պատմությունը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 10,
+    "requirement": "3 ճիշտ պատասխանից հետո ավարտը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 11,
+    "requirement": "Առաջընթացի պահպանումը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 12,
+    "requirement": "F5 Refresh-ից հետո նույն բառից շարունակելը։",
+    "status": "PASS",
+    "evidence": "flows.json dailywords՝ սխալ փորձը պահպանվել է, uppercase ճիշտ պատասխաններից completedCount=1,2,3, completed=true; refresh-ից նույն հարցը։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "—"
+  },
+  {
+    "section": 3,
+    "n": 13,
+    "requirement": "Հաջորդ օրերին դժվար բառերի կրկնումը։",
+    "status": "FAIL",
+    "evidence": "getDailyWordsChallenge-ը ընդունում է միայն date/level/count։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "SRS-ում պահված դժվար բառերը հաջորդ օրվա ընտրության մուտք չեն։"
+  },
+  {
+    "section": 3,
+    "n": 14,
+    "requirement": "A1–C2 մակարդակների տարբերությունը։",
+    "status": "PARTIAL",
+    "evidence": "Կոդում retry, exact/synonym match, աստիճանական հուշում և մակարդակով ընտրություն կան։",
+    "file": "components/DailyWordsView.tsx; data/daily-questions-and-words.ts",
+    "problem": "Անսահման փորձերի, բոլոր հոմանիշների/մակարդակների առանձին browser coverage չկա։"
+  },
+  {
+    "section": 4,
+    "n": 1,
+    "requirement": "Երկար պատմությունները։",
+    "status": "FAIL",
+    "evidence": "results.json books՝ 15 նյութ, 4–24 նախադասություն, 43–334 բառ։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Պահանջված երկար պատմությունների/ամբողջական երկար գրքերի ծավալը չկա։"
+  },
+  {
+    "section": 4,
+    "n": 2,
+    "requirement": "Բանաստեղծությունները։",
+    "status": "PASS",
+    "evidence": "LIBRARY_POEMS.length=10; տվյալների ուղղակի հաշվարկ։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 3,
+    "requirement": "Բազմագլուխ գրքերը։",
+    "status": "FAIL",
+    "evidence": "Բազմագլուխ նյութերը 3 են, նվազագույնը՝ 5։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 4,
+    "requirement": "Գրքերի ընդհանուր գլուխները։",
+    "status": "PASS",
+    "evidence": "Ընդհանուր գլուխները՝ 20։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 5,
+    "requirement": "Առնվազն 10 երկար պատմություն։",
+    "status": "PASS",
+    "evidence": "LIBRARY_POEMS.length=10; տվյալների ուղղակի հաշվարկ։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 6,
+    "requirement": "Առնվազն 10 բանաստեղծություն։",
+    "status": "FAIL",
+    "evidence": "Բազմագլուխ նյութերը 3 են, նվազագույնը՝ 5։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 7,
+    "requirement": "Առնվազն 5 բազմագլուխ գիրք կամ հավաքածու։",
+    "status": "FAIL",
+    "evidence": "results.json books՝ 15 նյութ, 4–24 նախադասություն, 43–334 բառ։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Պահանջված երկար պատմությունների/ամբողջական երկար գրքերի ծավալը չկա։"
+  },
+  {
+    "section": 4,
+    "n": 8,
+    "requirement": "Վերնագիր և հեղինակ։",
+    "status": "PASS",
+    "evidence": "Բոլոր 15 գրքերը բացվել են browser-ում; վերնագիր/հեղինակ/մակարդակ և chapter button-ների քանակը հաշվվել են։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 9,
+    "requirement": "Անգլերենի մակարդակ։",
+    "status": "PASS",
+    "evidence": "Բոլոր 15 գրքերը բացվել են browser-ում; վերնագիր/հեղինակ/մակարդակ և chapter button-ների քանակը հաշվվել են։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 10,
+    "requirement": "Ամբողջական տեքստ։",
+    "status": "FAIL",
+    "evidence": "results.json books՝ 15 նյութ, 4–24 նախադասություն, 43–334 բառ։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Պահանջված երկար պատմությունների/ամբողջական երկար գրքերի ծավալը չկա։"
+  },
+  {
+    "section": 4,
+    "n": 11,
+    "requirement": "Գլուխների ընտրություն։",
+    "status": "PASS",
+    "evidence": "Բոլոր 15 գրքերը բացվել են browser-ում; վերնագիր/հեղինակ/մակարդակ և chapter button-ների քանակը հաշվվել են։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 12,
+    "requirement": "Ընթերցման դիրքի պահպանում։",
+    "status": "FAIL",
+    "evidence": "Գլուխ 2 ընտրելուց հետո reload-ը վերադառնում է Գլուխ 1; Chapter click-ը չի պահպանում record։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Միայն նախադասության click-ն է պահպանում դիրքը։"
+  },
+  {
+    "section": 4,
+    "n": 13,
+    "requirement": "Գիրքը շարունակելու հնարավորություն։",
+    "status": "FAIL",
+    "evidence": "Գլուխ 2 ընտրելուց հետո reload-ը վերադառնում է Գլուխ 1; Chapter click-ը չի պահպանում record։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Միայն նախադասության click-ն է պահպանում դիրքը։"
+  },
+  {
+    "section": 4,
+    "n": 14,
+    "requirement": "Առանձին բառի թարգմանություն։",
+    "status": "PARTIAL",
+    "evidence": "Բառարան, թարգմանության toggle, TTS և տեղական 3 font չափեր կան։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Բաց բառերի մեծ մասի համար թարգմանություն չկա; գլոբալ անկախ տառաչափերը չեն կիրառվել ամբողջ reader-ին։"
+  },
+  {
+    "section": 4,
+    "n": 15,
+    "requirement": "Նախադասության թարգմանություն։",
+    "status": "PARTIAL",
+    "evidence": "Բառարան, թարգմանության toggle, TTS և տեղական 3 font չափեր կան։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Բաց բառերի մեծ մասի համար թարգմանություն չկա; գլոբալ անկախ տառաչափերը չեն կիրառվել ամբողջ reader-ին։"
+  },
+  {
+    "section": 4,
+    "n": 16,
+    "requirement": "Text-to-Speech։",
+    "status": "PARTIAL",
+    "evidence": "Բառարան, թարգմանության toggle, TTS և տեղական 3 font չափեր կան։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Բաց բառերի մեծ մասի համար թարգմանություն չկա; գլոբալ անկախ տառաչափերը չեն կիրառվել ամբողջ reader-ին։"
+  },
+  {
+    "section": 4,
+    "n": 17,
+    "requirement": "Slow Reading։",
+    "status": "MISSING",
+    "evidence": "Reader audio handler-ը միշտ normal է; Slow կառավարում չկա։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "—"
+  },
+  {
+    "section": 4,
+    "n": 18,
+    "requirement": "Font Size։",
+    "status": "PARTIAL",
+    "evidence": "Բառարան, թարգմանության toggle, TTS և տեղական 3 font չափեր կան։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Բաց բառերի մեծ մասի համար թարգմանություն չկա; գլոբալ անկախ տառաչափերը չեն կիրառվել ամբողջ reader-ին։"
+  },
+  {
+    "section": 4,
+    "n": 19,
+    "requirement": "Light/Dark Mode։",
+    "status": "PARTIAL",
+    "evidence": "Բաժինը բացվել է երկու viewport-ում։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Նոր reader-ի մեծ մասի գույները hardcoded dark են։"
+  },
+  {
+    "section": 4,
+    "n": 20,
+    "requirement": "Screen Wake Lock։",
+    "status": "FAIL",
+    "evidence": "results.json book-wake՝ active=2, Pause-ից հետո=1, ընդհանուր OFF-ից հետո=1։",
+    "file": "components/BookLibraryView.tsx; data/books-and-poetry.ts",
+    "problem": "Reader-ի առանձին hook-ը շրջանցում է ընդհանուր կարգավորումն ու դասի Pause-ը։"
+  },
+  {
+    "section": 5,
+    "n": 1,
+    "requirement": "Pronouns",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 2,
+    "requirement": "Am / Is / Are",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 3,
+    "requirement": "Have / Has",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 4,
+    "requirement": "Do / Does / Did",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 5,
+    "requirement": "Articles",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 6,
+    "requirement": "Present Simple",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 7,
+    "requirement": "Present Continuous",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 8,
+    "requirement": "Past Simple",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 9,
+    "requirement": "Past Continuous",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 10,
+    "requirement": "Future Simple",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 11,
+    "requirement": "Present Perfect",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 12,
+    "requirement": "Prepositions",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 13,
+    "requirement": "Questions and Negatives",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 14,
+    "requirement": "Modal Verbs",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 15,
+    "requirement": "Conditionals",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 16,
+    "requirement": "Passive Voice",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 17,
+    "requirement": "Reported Speech",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 18,
+    "requirement": "Advanced Grammar",
+    "status": "PASS",
+    "evidence": "results.json grammar-*՝ բոլոր 18 թեմաների 4-ական ճիշտ պատասխաններն ընդունվել են, isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 19,
+    "requirement": "Հայերեն բացատրություն։",
+    "status": "PASS",
+    "evidence": "18 թեմայի data structure և browser-rendered դասեր; 72 վարժություն։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 20,
+    "requirement": "Անգլերեն օրինակ։",
+    "status": "PASS",
+    "evidence": "18 թեմայի data structure և browser-rendered դասեր; 72 վարժություն։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 21,
+    "requirement": "Հայերեն տառերով արտասանություն։",
+    "status": "PASS",
+    "evidence": "18 թեմայի data structure և browser-rendered դասեր; 72 վարժություն։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 22,
+    "requirement": "Հայերեն թարգմանություն։",
+    "status": "PASS",
+    "evidence": "18 թեմայի data structure և browser-rendered դասեր; 72 վարժություն։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 23,
+    "requirement": "Ինտերակտիվ առաջադրանք։",
+    "status": "PASS",
+    "evidence": "18 թեմայի data structure և browser-rendered դասեր; 72 վարժություն։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 24,
+    "requirement": "Ճիշտ/սխալ պատասխանների ստուգում։",
+    "status": "PARTIAL",
+    "evidence": "Ճիշտ պատասխանի browser checks; սխալի ճյուղը ցուցադրում է հայերեն ուղղում։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "Բոլոր սխալ պատասխանների ընդունման/մերժման adversarial թեստ չի կատարվել; սխալը չի գրանցվում ընդհանուր պատմության մեջ։"
+  },
+  {
+    "section": 5,
+    "n": 25,
+    "requirement": "Սխալների ուղղում։",
+    "status": "PARTIAL",
+    "evidence": "Ճիշտ պատասխանի browser checks; սխալի ճյուղը ցուցադրում է հայերեն ուղղում։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "Բոլոր սխալ պատասխանների ընդունման/մերժման adversarial թեստ չի կատարվել; սխալը չի գրանցվում ընդհանուր պատմության մեջ։"
+  },
+  {
+    "section": 5,
+    "n": 26,
+    "requirement": "Ավարտի գրանցում։",
+    "status": "PASS",
+    "evidence": "Բոլոր 18 grammarAttemptsMap գրառումները isCompleted=true։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "—"
+  },
+  {
+    "section": 5,
+    "n": 27,
+    "requirement": "Առաջընթացի պահպանում։",
+    "status": "FAIL",
+    "evidence": "step=2 URL-ն բացվելուց վերագրվում է step=0; completed flags պահպանվում են։",
+    "file": "components/GrammarAcademyView.tsx; data/grammar-academy.ts",
+    "problem": "Ընթացիկ վարժությունը reset է արվում effect-ում։"
+  },
+  {
+    "section": 6,
+    "n": 1,
+    "requirement": "American English ընտրություն։",
+    "status": "PASS",
+    "evidence": "Browser UK switch/reload՝ accentPreference.accent=uk; US/UK ընտրիչները առկա են։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 2,
+    "requirement": "British English ընտրություն։",
+    "status": "PASS",
+    "evidence": "Browser UK switch/reload՝ accentPreference.accent=uk; US/UK ընտրիչները առկա են։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 3,
+    "requirement": "en-US / en-GB համապատասխան ձայներ։",
+    "status": "PARTIAL",
+    "evidence": "Ընտրվում է համապատասխան voice URI; կիրառվում է settings.voiceSpeedNumeric։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "en-US բացակայության հաղորդագրություն չկա; ճանաչման lang-ը միշտ en-US է; առանձին Slow UI չկա։"
+  },
+  {
+    "section": 6,
+    "n": 4,
+    "requirement": "Ձայնի արագության փոփոխություն։",
+    "status": "PARTIAL",
+    "evidence": "Ընտրվում է համապատասխան voice URI; կիրառվում է settings.voiceSpeedNumeric։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "en-US բացակայության հաղորդագրություն չկա; ճանաչման lang-ը միշտ en-US է; առանձին Slow UI չկա։"
+  },
+  {
+    "section": 6,
+    "n": 5,
+    "requirement": "TH, R, W/V հնչյուններ։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 6,
+    "requirement": "Short/Long Vowels։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 7,
+    "requirement": "Word Stress։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 8,
+    "requirement": "Sentence Stress։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 9,
+    "requirement": "Intonation։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 10,
+    "requirement": "Connected Speech։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 11,
+    "requirement": "Minimal Pairs։",
+    "status": "PASS",
+    "evidence": "data/accent-academy.ts՝ բոլոր 10 պահանջված մոդուլները, 60 առաջադրանք։ Սա բովանդակության առկայության ստուգում է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 12,
+    "requirement": "Speaking Exercises։",
+    "status": "PARTIAL",
+    "evidence": "STT պատասխանների ու բառերի համեմատության UI առկա է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "Իրական միկրոֆոնով ձայնային փորձ չի կատարվել։"
+  },
+  {
+    "section": 6,
+    "n": 13,
+    "requirement": "Microphone։",
+    "status": "NOT TESTED",
+    "evidence": "Headless browser + ֆիզիկական միկրոֆոնի փորձի բացակայություն։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 14,
+    "requirement": "Speech Recognition։",
+    "status": "NOT TESTED",
+    "evidence": "Headless browser + ֆիզիկական միկրոֆոնի փորձի բացակայություն։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 6,
+    "n": 15,
+    "requirement": "Արտասանության կրկնություն։",
+    "status": "PARTIAL",
+    "evidence": "STT պատասխանների ու բառերի համեմատության UI առկա է։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "Իրական միկրոֆոնով ձայնային փորձ չի կատարվել։"
+  },
+  {
+    "section": 6,
+    "n": 16,
+    "requirement": "Կարգավորումների պահպանում։",
+    "status": "PASS",
+    "evidence": "Browser UK switch/reload՝ accentPreference.accent=uk; US/UK ընտրիչները առկա են։",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "problem": "—"
+  },
+  {
+    "section": 7,
+    "n": 1,
+    "requirement": "Դասի մեկնարկ → Wake Lock ակտիվ։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 2,
+    "requirement": "Դասի ավարտ → Wake Lock ազատված։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 3,
+    "requirement": "Pause → ազատված։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 4,
+    "requirement": "Resume → նորից ակտիվ։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 5,
+    "requirement": "Settings OFF → ազատված։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 6,
+    "requirement": "Settings ON → ակտիվ դասի ժամանակ պահանջված։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 7,
+    "requirement": "Background → ճիշտ մշակում։",
+    "status": "PASS",
+    "evidence": "Mock controller tests՝ hide/show, unsupported, denial, dispose և ուշացած request։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "PASS-ը mock lifecycle-ի համար է, ոչ իրական Battery Saver սարքի։"
+  },
+  {
+    "section": 7,
+    "n": 8,
+    "requirement": "Foreground → հնարավորության դեպքում վերականգնում։",
+    "status": "PASS",
+    "evidence": "Mock controller tests՝ hide/show, unsupported, denial, dispose և ուշացած request։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "PASS-ը mock lifecycle-ի համար է, ոչ իրական Battery Saver սարքի։"
+  },
+  {
+    "section": 7,
+    "n": 9,
+    "requirement": "F5 Refresh → ուսումնական վիճակի և Wake Lock-ի ճիշտ վերականգնում։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 10,
+    "requirement": "Չաջակցվող բրաուզեր → fallback։",
+    "status": "PASS",
+    "evidence": "Mock controller tests՝ hide/show, unsupported, denial, dispose և ուշացած request։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "PASS-ը mock lifecycle-ի համար է, ոչ իրական Battery Saver սարքի։"
+  },
+  {
+    "section": 7,
+    "n": 11,
+    "requirement": "Battery Saver → ճիշտ error handling։",
+    "status": "PASS",
+    "evidence": "Mock controller tests՝ hide/show, unsupported, denial, dispose և ուշացած request։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "PASS-ը mock lifecycle-ի համար է, ոչ իրական Battery Saver սարքի։"
+  },
+  {
+    "section": 7,
+    "n": 12,
+    "requirement": "Արագ էջափոխություն → duplicate request չկա։",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit/E2E suite-ը հիմնական դասերում lifecycle-ը ստուգում է; reader-ում վերարտադրված հակասություն։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "Գրադարանում երկրորդ lock-ը չի ենթարկվում Pause/OFF-ին։"
+  },
+  {
+    "section": 7,
+    "n": 13,
+    "requirement": "Component unmount → cleanup։",
+    "status": "PASS",
+    "evidence": "Mock controller tests՝ hide/show, unsupported, denial, dispose և ուշացած request։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "PASS-ը mock lifecycle-ի համար է, ոչ իրական Battery Saver սարքի։"
+  },
+  {
+    "section": 7,
+    "n": 14,
+    "requirement": "Mobile PWA → համատեղելիություն։",
+    "status": "NOT TESTED",
+    "evidence": "Տեղադրված Android/iOS PWA ֆիզիկական սարքի փորձ չկա։",
+    "file": "lib/wake-lock.ts; lib/use-wake-lock.ts; components/BookLibraryView.tsx",
+    "problem": "—"
+  },
+  {
+    "section": 8,
+    "n": 1,
+    "requirement": "Desktop Mode",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 2,
+    "requirement": "Mobile Mode",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 3,
+    "requirement": "Auto Mode",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 4,
+    "requirement": "Responsive Layout",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 5,
+    "requirement": "Sidebar",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 6,
+    "requirement": "Mobile Navigation",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 7,
+    "requirement": "Keyboard Navigation",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 8,
+    "requirement": "14px",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 9,
+    "requirement": "16px",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 10,
+    "requirement": "18px",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 11,
+    "requirement": "22px",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 12,
+    "requirement": "26px",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 8,
+    "n": 13,
+    "requirement": "Custom Slider՝ 14–30px",
+    "status": "PARTIAL",
+    "evidence": "Գործող display E2E՝ auto/mobile/desktop, keyboard, fonts, refresh։ Նոր բոլոր 17 էջերը բացվել են desktop/mobile-ում՝ առանց overflow-ի։",
+    "file": "components/DisplaySettings.tsx; app/globals.css",
+    "problem": "Նոր գրադարան/քերականություն/ակցենտ էջերը չեն օգտագործում բոլոր data-learning-text անկախ չափերը; նոր քարտերից մի քանիսը keyboard button չեն։"
+  },
+  {
+    "section": 9,
+    "n": 1,
+    "requirement": "URL-ի ճիշտ պահպանում։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 2,
+    "requirement": "F5 Refresh։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 3,
+    "requirement": "Browser Back։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 4,
+    "requirement": "Browser Forward։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 5,
+    "requirement": "Կայքը փակելուց հետո վերաբացումը։",
+    "status": "NOT TESTED",
+    "evidence": "Իրական browser փակել/վերաբացել պրոֆիլով չի փորձարկվել։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "—"
+  },
+  {
+    "section": 9,
+    "n": 6,
+    "requirement": "Ընտրված դասի վերականգնում։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 7,
+    "requirement": "Ընթացիկ առաջադրանքի վերականգնում։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 8,
+    "requirement": "Անավարտ զրույցի շարունակություն։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 9,
+    "requirement": "Գրքի վերջին գլխի վերականգնում։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 9,
+    "n": 10,
+    "requirement": "Ընթերցման դիրքի պահպանում։",
+    "status": "PARTIAL",
+    "evidence": "URL/LocalStorage և IndexedDB առաջընթացի կոդ կա; grammar/books refresh սխալները վերարտադրված են։",
+    "file": "lib/page-memory.ts; app/page.tsx",
+    "problem": "replaceState-ը առանձին history entry չի ստեղծում; բոլոր էջերի Back/Forward ընթացքը չի հաստատվել։"
+  },
+  {
+    "section": 10,
+    "n": 1,
+    "requirement": "Ամենօրյա հարցերի ստեղծումը։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 2,
+    "requirement": "Հարցերի քանակի կարգավորումը։",
+    "status": "PARTIAL",
+    "evidence": "Օրվա hash ընտրություն, level/profession filter և history UI։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Քանակը կանչում hardcoded է; փոքր pool-ի դեպքում ամբողջ մակարդակների pool է վերցվում; նախորդ օրերի պարտադիր չկրկնման մեխանիզմ չկա։"
+  },
+  {
+    "section": 10,
+    "n": 3,
+    "requirement": "Մասնագիտությանը համապատասխան հարցերը։",
+    "status": "PARTIAL",
+    "evidence": "Օրվա hash ընտրություն, level/profession filter և history UI։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Քանակը կանչում hardcoded է; փոքր pool-ի դեպքում ամբողջ մակարդակների pool է վերցվում; նախորդ օրերի պարտադիր չկրկնման մեխանիզմ չկա։"
+  },
+  {
+    "section": 10,
+    "n": 4,
+    "requirement": "Պատասխանների ստուգումը։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 5,
+    "requirement": "Սխալների պահպանումը։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 6,
+    "requirement": "Աստիճանական բարդացումը։",
+    "status": "PARTIAL",
+    "evidence": "Օրվա hash ընտրություն, level/profession filter և history UI։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Քանակը կանչում hardcoded է; փոքր pool-ի դեպքում ամբողջ մակարդակների pool է վերցվում; նախորդ օրերի պարտադիր չկրկնման մեխանիզմ չկա։"
+  },
+  {
+    "section": 10,
+    "n": 7,
+    "requirement": "Հարցերի կրկնության կանխարգելումը։",
+    "status": "PARTIAL",
+    "evidence": "Օրվա hash ընտրություն, level/profession filter և history UI։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Քանակը կանչում hardcoded է; փոքր pool-ի դեպքում ամբողջ մակարդակների pool է վերցվում; նախորդ օրերի պարտադիր չկրկնման մեխանիզմ չկա։"
+  },
+  {
+    "section": 10,
+    "n": 8,
+    "requirement": "Օրվա արդյունքները։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 9,
+    "requirement": "Նախորդ օրերի պատմությունը։",
+    "status": "PARTIAL",
+    "evidence": "Օրվա hash ընտրություն, level/profession filter և history UI։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Քանակը կանչում hardcoded է; փոքր pool-ի դեպքում ամբողջ մակարդակների pool է վերցվում; նախորդ օրերի պարտադիր չկրկնման մեխանիզմ չկա։"
+  },
+  {
+    "section": 10,
+    "n": 10,
+    "requirement": "Բոլոր խոսակցական թեմաները։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 11,
+    "requirement": "Մեկ հարցի ցուցադրումը։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 12,
+    "requirement": "Գրավոր պատասխանները։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 13,
+    "requirement": "Ձայնային պատասխանները։",
+    "status": "NOT TESTED",
+    "evidence": "Ֆիզիկական ձայնային մուտք չի կատարվել։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "—"
+  },
+  {
+    "section": 10,
+    "n": 14,
+    "requirement": "Հայերեն բացատրությունները։",
+    "status": "PARTIAL",
+    "evidence": "Հայերեն sample/grammar tips և session map կան։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Բոլոր turn-երի pause/refresh/adversarial համակցությունները չեն փորձարկվել։"
+  },
+  {
+    "section": 10,
+    "n": 15,
+    "requirement": "Զրույցի պատմությունը։",
+    "status": "PARTIAL",
+    "evidence": "flows.json՝ 12 թեմայի առաջին օրինակելի գրավոր պատասխան, dailyquestions առաջին ճիշտ պատասխան; սխալների/պատմության կոդ կա։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Զրույցում I մեկ տառը ընդունվել է ճիշտ; daily questions keyword fallback-ը թույլ է։"
+  },
+  {
+    "section": 10,
+    "n": 16,
+    "requirement": "Անավարտ զրույցի շարունակությունը։",
+    "status": "PARTIAL",
+    "evidence": "Հայերեն sample/grammar tips և session map կան։",
+    "file": "components/DailyQuestionsView.tsx; components/DailyConversationsView.tsx",
+    "problem": "Բոլոր turn-երի pause/refresh/adversarial համակցությունները չեն փորձարկվել։"
+  },
+  {
+    "section": 11,
+    "n": 1,
+    "requirement": "Արտահանվում է իրական `.db` ֆայլ։",
+    "status": "PASS",
+    "evidence": "Իրական create/parse SQLite roundtrip և POST API=200; header SQLite format 3; parser-ի PRAGMA integrity_check անցել է։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "—"
+  },
+  {
+    "section": 11,
+    "n": 2,
+    "requirement": "Ֆայլը JSON չէ՝ պարզապես վերանվանված։",
+    "status": "PASS",
+    "evidence": "Իրական create/parse SQLite roundtrip և POST API=200; header SQLite format 3; parser-ի PRAGMA integrity_check անցել է։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "—"
+  },
+  {
+    "section": 11,
+    "n": 3,
+    "requirement": "Բացվում է SQLite reader-ով։",
+    "status": "PASS",
+    "evidence": "Իրական create/parse SQLite roundtrip և POST API=200; header SQLite format 3; parser-ի PRAGMA integrity_check անցել է։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "—"
+  },
+  {
+    "section": 11,
+    "n": 4,
+    "requirement": "Անցնում է `PRAGMA integrity_check`։",
+    "status": "PASS",
+    "evidence": "Իրական create/parse SQLite roundtrip և POST API=200; header SQLite format 3; parser-ի PRAGMA integrity_check անցել է։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "—"
+  },
+  {
+    "section": 11,
+    "n": 5,
+    "requirement": "Պարունակում է բոլոր անհրաժեշտ աղյուսակները։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 11,
+    "n": 6,
+    "requirement": "Պահպանում է օգտատիրոջ բոլոր տվյալները։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 11,
+    "n": 7,
+    "requirement": "Ներմուծման ժամանակ ստուգում է schema-ն։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 11,
+    "n": 8,
+    "requirement": "Սխալ ֆայլերը մերժվում են։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 11,
+    "n": 9,
+    "requirement": "Restore-ը ճիշտ է վերականգնում տվյալները։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 11,
+    "n": 10,
+    "requirement": "Ներմուծման ձախողումը չի վնասում գործող բազան։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 11,
+    "n": 11,
+    "requirement": "Նոր Grammar, Books, Accent և Daily Words տվյալները նույնպես ներառված են։",
+    "status": "FAIL",
+    "evidence": "results.json sqlite/foreignSqlite; sqlite parser-ը foreign schema-ն վերադարձնում է ok:true,data:{}։",
+    "file": "lib/sqlite-server.ts; lib/sqlite-db.ts; lib/storage.ts",
+    "problem": "27 top-level դաշտ դուրս է մնում; import-ը normalize է անում և saveProgress-ով փոխարինում տվյալները. onboarding/առաջընթացի կորստի վտանգ։ Invalid non-SQLite header-ը մերժվում է։"
+  },
+  {
+    "section": 12,
+    "n": 1,
+    "requirement": "Onboarding",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 2,
+    "requirement": "User Profile",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 3,
+    "requirement": "Profession Selection",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 4,
+    "requirement": "Dashboard",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 5,
+    "requirement": "Lessons",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 6,
+    "requirement": "Vocabulary",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 7,
+    "requirement": "Flashcards",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 8,
+    "requirement": "Spaced Repetition",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 9,
+    "requirement": "Exercises A–F",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 10,
+    "requirement": "IT English",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 11,
+    "requirement": "Rule-Based Teacher",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 12,
+    "requirement": "Listening",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 13,
+    "requirement": "Speaking",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 14,
+    "requirement": "Morning Practice",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 15,
+    "requirement": "Settings",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 16,
+    "requirement": "Learning History",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 17,
+    "requirement": "Achievements",
+    "status": "PARTIAL",
+    "evidence": "Գործող unit logic + համապատասխան էջի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Յուրաքանչյուր գործողության ամբողջական browser փորձ չկա; ֆիզիկական speech և achievements լրիվ end-to-end չեն ստուգվել։"
+  },
+  {
+    "section": 12,
+    "n": 18,
+    "requirement": "IndexedDB",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 19,
+    "requirement": "PWA",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 12,
+    "n": 20,
+    "requirement": "Offline Mode",
+    "status": "PARTIAL",
+    "evidence": "Unit tests և existing learning E2E; բոլոր հիմնական էջերի browser smoke։",
+    "file": "app/page.tsx; tests/e2e/learning.spec.ts; tests/progress.test.cjs",
+    "problem": "Վերջնական E2E մանրամասն արդյունքները ստորև. smoke-ը չի ապացուցում յուրաքանչյուր կոճակը։"
+  },
+  {
+    "section": 14,
+    "n": 1,
+    "requirement": "`npm run lint`",
+    "status": "MISSING",
+    "evidence": "npm run lint → Missing script: lint։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "—"
+  },
+  {
+    "section": 14,
+    "n": 2,
+    "requirement": "`npx tsc --noEmit`",
+    "status": "PASS",
+    "evidence": "tsc/build exit 0; npm audit total=0։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Կախվածությունների audit-ը չի բացառում անհայտ խոցելիությունները։"
+  },
+  {
+    "section": 14,
+    "n": 3,
+    "requirement": "`npm test`",
+    "status": "FAIL",
+    "evidence": "76 unit tests՝ 75 PASS, 1 CANCELLED timeout 15s; exit 1։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Display recovery test-ը schema 3-ով է բացում այժմ v4 բազան և չի մշակում error-ը։"
+  },
+  {
+    "section": 14,
+    "n": 4,
+    "requirement": "`npm run build`",
+    "status": "PASS",
+    "evidence": "tsc/build exit 0; npm audit total=0։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Կախվածությունների audit-ը չի բացառում անհայտ խոցելիությունները։"
+  },
+  {
+    "section": 14,
+    "n": 5,
+    "requirement": "Playwright E2E tests",
+    "status": "PARTIAL",
+    "evidence": "Playwright ամբողջ հավաքածուն գործարկվել է; արդյունքները կցված JSON-ում։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "—"
+  },
+  {
+    "section": 14,
+    "n": 6,
+    "requirement": "TypeScript errors",
+    "status": "PASS",
+    "evidence": "tsc/build exit 0; npm audit total=0։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Կախվածությունների audit-ը չի բացառում անհայտ խոցելիությունները։"
+  },
+  {
+    "section": 14,
+    "n": 7,
+    "requirement": "Console errors",
+    "status": "PASS",
+    "evidence": "17 էջ × 2 viewport՝ առանց pageerror, առանց horizontal overflow; build-ը հաստատել է imports-ը։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "—"
+  },
+  {
+    "section": 14,
+    "n": 8,
+    "requirement": "Broken links",
+    "status": "PARTIAL",
+    "evidence": "Կոդի/նավիգացիայի review, SW tests, DOM smoke; React escaped text։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Լիարժեք penetration/accessibility/արտաքին broken-link scan չի կատարվել; clickable div և label կապերի բացեր կան։"
+  },
+  {
+    "section": 14,
+    "n": 9,
+    "requirement": "Missing components",
+    "status": "PASS",
+    "evidence": "17 էջ × 2 viewport՝ առանց pageerror, առանց horizontal overflow; build-ը հաստատել է imports-ը։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "—"
+  },
+  {
+    "section": 14,
+    "n": 10,
+    "requirement": "XSS risks",
+    "status": "PARTIAL",
+    "evidence": "Կոդի/նավիգացիայի review, SW tests, DOM smoke; React escaped text։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Լիարժեք penetration/accessibility/արտաքին broken-link scan չի կատարվել; clickable div և label կապերի բացեր կան։"
+  },
+  {
+    "section": 14,
+    "n": 11,
+    "requirement": "Unsafe database imports",
+    "status": "FAIL",
+    "evidence": "Foreign SQLite schema accepted; իրական restore-ը կորցնում է դաշտեր։ Production v1.1.2 ≠ source v1.2.1։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Մինչև critical bugs-ի լուծումն ու նոր verification-ը production-ready չէ։"
+  },
+  {
+    "section": 14,
+    "n": 12,
+    "requirement": "Dependency vulnerabilities",
+    "status": "PASS",
+    "evidence": "tsc/build exit 0; npm audit total=0։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Կախվածությունների audit-ը չի բացառում անհայտ խոցելիությունները։"
+  },
+  {
+    "section": 14,
+    "n": 13,
+    "requirement": "Mobile responsiveness",
+    "status": "PASS",
+    "evidence": "17 էջ × 2 viewport՝ առանց pageerror, առանց horizontal overflow; build-ը հաստատել է imports-ը։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "—"
+  },
+  {
+    "section": 14,
+    "n": 14,
+    "requirement": "Accessibility",
+    "status": "PARTIAL",
+    "evidence": "Կոդի/նավիգացիայի review, SW tests, DOM smoke; React escaped text։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Լիարժեք penetration/accessibility/արտաքին broken-link scan չի կատարվել; clickable div և label կապերի բացեր կան։"
+  },
+  {
+    "section": 14,
+    "n": 15,
+    "requirement": "PWA service worker",
+    "status": "PARTIAL",
+    "evidence": "Կոդի/նավիգացիայի review, SW tests, DOM smoke; React escaped text։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Լիարժեք penetration/accessibility/արտաքին broken-link scan չի կատարվել; clickable div և label կապերի բացեր կան։"
+  },
+  {
+    "section": 14,
+    "n": 16,
+    "requirement": "Vercel deployment readiness",
+    "status": "FAIL",
+    "evidence": "Foreign SQLite schema accepted; իրական restore-ը կորցնում է դաշտեր։ Production v1.1.2 ≠ source v1.2.1։",
+    "file": "package.json; package-lock.json; app; lib; components",
+    "problem": "Մինչև critical bugs-ի լուծումն ու նոր verification-ը production-ready չէ։"
+  },
+  {
+    "section": 6,
+    "n": 17,
+    "requirement": "STT համընկնումը չներկայացնել որպես ճշգրիտ ակցենտի գնահատում",
+    "status": "PARTIAL",
+    "file": "components/AccentAcademyView.tsx; data/accent-academy.ts; lib/speech.ts",
+    "evidence": "Տոկոսը անվանված է «Ճանաչման համընկնում», բայց հաջողության տեքստը՝ «Հիանալի արտասանություն»։",
+    "problem": "Անհրաժեշտ է ավելի հստակ տարանջատել բառային ճանաչումն ու phonetic գնահատումը։"
+  },
+  {
+    "section": 13,
+    "n": 1,
+    "requirement": "AI INTEGRATION — PLANNED / NOT CONNECTED",
+    "status": "PLANNED",
+    "file": "lib/teacher-engine.ts; app/api",
+    "evidence": "Rule-based teacher-ի unit tests; արտաքին AI provider connection չկա։",
+    "problem": "Գնահատականի denominator-ից բացառված է։"
+  }
+]

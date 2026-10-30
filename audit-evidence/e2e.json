@@ -1,0 +1,2564 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\AppS\\AMEnglishApp\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--reporter=list,json",
+      "--output=audit-evidence/e2e-artifacts"
+    ],
+    "configFile": "E:\\AppS\\AMEnglishApp\\playwright.config.ts",
+    "rootDir": "E:/AppS/AMEnglishApp/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/AppS/AMEnglishApp/audit-evidence/e2e-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "E:/AppS/AMEnglishApp/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "E:/AppS/AMEnglishApp/audit-evidence/e2e-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "tablet",
+        "name": "tablet",
+        "testDir": "E:/AppS/AMEnglishApp/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "E:/AppS/AMEnglishApp/audit-evidence/e2e-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "E:/AppS/AMEnglishApp/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "E:\\AppS\\AMEnglishApp\\tests\\e2e",
+        "snapshotDir": "E:\\AppS\\AMEnglishApp\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3015",
+          "channel": "chrome",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "tablet",
+        "testDir": "E:\\AppS\\AMEnglishApp\\tests\\e2e",
+        "snapshotDir": "E:\\AppS\\AMEnglishApp\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3015",
+          "channel": "chrome",
+          "viewport": {
+            "width": 820,
+            "height": 1180
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "tablet"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "E:\\AppS\\AMEnglishApp\\tests\\e2e",
+        "snapshotDir": "E:\\AppS\\AMEnglishApp\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3015",
+          "channel": "chrome",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "npm start -- --hostname 127.0.0.1 --port 3015",
+      "url": "http://127.0.0.1:3015",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "display-settings.spec.ts",
+      "file": "display-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "wake lock starts for learning, stops on lesson completion and leaving the section",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1609,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:22.319Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-941962de069d5857587d",
+          "file": "display-settings.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "wake lock handles visibility, system release and denied request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1065,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:24.170Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-ce2e0fd22f6cbb3a8e2f",
+          "file": "display-settings.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "unsupported API and disabled setting allow normal learning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1290,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:25.245Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-6231c4f74b1efddb24ba",
+          "file": "display-settings.spec.ts",
+          "line": 61,
+          "column": 5
+        },
+        {
+          "title": "reading listening speaking questions and conversations share the study lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2313,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:26.555Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-130afeb9bdad8299626b",
+          "file": "display-settings.spec.ts",
+          "line": 70,
+          "column": 5
+        },
+        {
+          "title": "desktop mobile and auto layouts persist and keyboard navigation works",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2198,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:28.877Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-2dcbdc4b9443768d6114",
+          "file": "display-settings.spec.ts",
+          "line": 81,
+          "column": 5
+        },
+        {
+          "title": "independent font controls update live preview and recover from IndexedDB after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1771,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:31.086Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-f099f1b3e0e24d284e6f",
+          "file": "display-settings.spec.ts",
+          "line": 96,
+          "column": 5
+        },
+        {
+          "title": "30px fonts remain usable across learning pages in desktop mode and dark theme",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3829,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:32.869Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-b53f574c1669873b61f0",
+          "file": "display-settings.spec.ts",
+          "line": 113,
+          "column": 5
+        },
+        {
+          "title": "pause resume live setting and F5 restore the actual study state and sentence",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2095,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:36.706Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-36a8189e69d31a1390d3",
+          "file": "display-settings.spec.ts",
+          "line": 126,
+          "column": 5
+        },
+        {
+          "title": "standalone PWA lifecycle releases on pagehide and restores only an active session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1114,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:38.810Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-86379c2b452ae8ba5202",
+          "file": "display-settings.spec.ts",
+          "line": 148,
+          "column": 5
+        },
+        {
+          "title": "pending requests never show active and rapid OFF ON cannot duplicate locks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1190,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:39.932Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-89ca71c7c14e733e5bba",
+          "file": "display-settings.spec.ts",
+          "line": 160,
+          "column": 5
+        },
+        {
+          "title": "listening and daily questions start on user activity without overriding pause",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1908,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:41.134Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-61b78a73d790a5bc7cf2",
+          "file": "display-settings.spec.ts",
+          "line": 174,
+          "column": 5
+        },
+        {
+          "title": "wake lock starts for learning, stops on lesson completion and leaving the section",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3307,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:34.118Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-8e046faaea6d4f2f8185",
+          "file": "display-settings.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "wake lock handles visibility, system release and denied request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1104,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:37.672Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-eee5cdd3732c1f4382ea",
+          "file": "display-settings.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "unsupported API and disabled setting allow normal learning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1306,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:38.791Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-9f52ec587724859adbf9",
+          "file": "display-settings.spec.ts",
+          "line": 61,
+          "column": 5
+        },
+        {
+          "title": "reading listening speaking questions and conversations share the study lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2291,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:40.108Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-699c01f99d01990ac2ec",
+          "file": "display-settings.spec.ts",
+          "line": 70,
+          "column": 5
+        },
+        {
+          "title": "desktop mobile and auto layouts persist and keyboard navigation works",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2250,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:42.408Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-ff5ac0057855ce7f79b3",
+          "file": "display-settings.spec.ts",
+          "line": 81,
+          "column": 5
+        },
+        {
+          "title": "independent font controls update live preview and recover from IndexedDB after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1637,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:44.669Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-c2c7a48e2ed19af28e4e",
+          "file": "display-settings.spec.ts",
+          "line": 96,
+          "column": 5
+        },
+        {
+          "title": "30px fonts remain usable across learning pages in desktop mode and dark theme",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3644,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:46.318Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-daafc80987b550952254",
+          "file": "display-settings.spec.ts",
+          "line": 113,
+          "column": 5
+        },
+        {
+          "title": "pause resume live setting and F5 restore the actual study state and sentence",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3156,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:49.969Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-ec544f0dc22676f4f0f5",
+          "file": "display-settings.spec.ts",
+          "line": 126,
+          "column": 5
+        },
+        {
+          "title": "standalone PWA lifecycle releases on pagehide and restores only an active session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 990,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:53.133Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-ab2ad943841f88af246b",
+          "file": "display-settings.spec.ts",
+          "line": 148,
+          "column": 5
+        },
+        {
+          "title": "pending requests never show active and rapid OFF ON cannot duplicate locks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1151,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:54.133Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-a089568fd4ba74824e7f",
+          "file": "display-settings.spec.ts",
+          "line": 160,
+          "column": 5
+        },
+        {
+          "title": "listening and daily questions start on user activity without overriding pause",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1985,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:55.293Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-4279bfbcd967e7c61a5f",
+          "file": "display-settings.spec.ts",
+          "line": 174,
+          "column": 5
+        },
+        {
+          "title": "wake lock starts for learning, stops on lesson completion and leaving the section",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3380,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:51.996Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-557b4c88692531700b8d",
+          "file": "display-settings.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "wake lock handles visibility, system release and denied request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1269,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:55.645Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-af9af82e6a48b82547b1",
+          "file": "display-settings.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "unsupported API and disabled setting allow normal learning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1510,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:56.943Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-f8aa24a3735d3c4b5b3a",
+          "file": "display-settings.spec.ts",
+          "line": 61,
+          "column": 5
+        },
+        {
+          "title": "reading listening speaking questions and conversations share the study lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2659,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:58.487Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-358c822c31fcc7eca58d",
+          "file": "display-settings.spec.ts",
+          "line": 70,
+          "column": 5
+        },
+        {
+          "title": "desktop mobile and auto layouts persist and keyboard navigation works",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2553,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:01.185Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-18784c7e2d1de218d497",
+          "file": "display-settings.spec.ts",
+          "line": 81,
+          "column": 5
+        },
+        {
+          "title": "independent font controls update live preview and recover from IndexedDB after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2117,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:03.762Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-f034176191b95192ac15",
+          "file": "display-settings.spec.ts",
+          "line": 96,
+          "column": 5
+        },
+        {
+          "title": "30px fonts remain usable across learning pages in desktop mode and dark theme",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5595,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:05.915Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-7adc858957e6fe631b78",
+          "file": "display-settings.spec.ts",
+          "line": 113,
+          "column": 5
+        },
+        {
+          "title": "pause resume live setting and F5 restore the actual study state and sentence",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3373,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:11.539Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-a67122d61c9ab011eee7",
+          "file": "display-settings.spec.ts",
+          "line": 126,
+          "column": 5
+        },
+        {
+          "title": "standalone PWA lifecycle releases on pagehide and restores only an active session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1169,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:14.932Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-af557d4c51d8556ed9bd",
+          "file": "display-settings.spec.ts",
+          "line": 148,
+          "column": 5
+        },
+        {
+          "title": "pending requests never show active and rapid OFF ON cannot duplicate locks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1284,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:16.122Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-00bbaf06002db5f3f260",
+          "file": "display-settings.spec.ts",
+          "line": 160,
+          "column": 5
+        },
+        {
+          "title": "listening and daily questions start on user activity without overriding pause",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3588,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:17.427Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dec1242bd46cc8bc0d1b-95762090a2622353399e",
+          "file": "display-settings.spec.ts",
+          "line": 174,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "learning.spec.ts",
+      "file": "learning.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "profile persists after reload without horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 996,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:43.063Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-0d356049f2ead30f4f25",
+          "file": "learning.spec.ts",
+          "line": 10,
+          "column": 5
+        },
+        {
+          "title": "local translator works and reverse direction stays in the app",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1341,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:44.068Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-f6f4c5e522195c230f5a",
+          "file": "learning.spec.ts",
+          "line": 15,
+          "column": 5
+        },
+        {
+          "title": "PWA manifest and service worker are available",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 929,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:45.421Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-6bda790351560ac4c756",
+          "file": "learning.spec.ts",
+          "line": 24,
+          "column": 5
+        },
+        {
+          "title": "theme and exercise settings persist after reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 30078,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                        "column": 63,
+                        "line": 32
+                      },
+                      "message": "Error: locator.check: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Ավտոմատ արտասանություն', { exact: true })\u001b[22m\n\n\n  30 |  await page.goto('/?tab=settings');\n  31 |  await page.getByRole('button',{name:/Գիշերային — Dark Mode/}).click();\n> 32 |  await page.getByLabel('Ավտոմատ արտասանություն',{exact:true}).check();\n     |                                                               ^\n  33 |  await page.reload();\n  34 |  await expect(page.locator('html')).toHaveClass(/dark/);\n  35 |  await expect(page.getByLabel('Ավտոմատ արտասանություն',{exact:true})).toBeChecked();\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:32:63"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:46.361Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts\\learning-theme-and-exercise-settings-persist-after-reload-desktop\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-7595f4b5f4c466a04035",
+          "file": "learning.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "lesson position resumes and completion is recorded only once",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2474,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:17.124Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-96461f08f4877037cdd0",
+          "file": "learning.spec.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "title": "professional exercises reject wrong answers and save a correct answer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1368,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:19.917Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-b86f802ef38fd83f80d8",
+          "file": "learning.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "all main views load without JavaScript errors or horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2477,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:21.298Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-9ebd26e656362b401a02",
+          "file": "learning.spec.ts",
+          "line": 82,
+          "column": 5
+        },
+        {
+          "title": "unsupported microphone provides a usable text fallback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1228,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:23.792Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-0c351c065ed2886cb5f2",
+          "file": "learning.spec.ts",
+          "line": 92,
+          "column": 5
+        },
+        {
+          "title": "previously loaded lessons remain usable offline",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6205,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:105:104",
+                    "location": {
+                      "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                      "column": 104,
+                      "line": 105
+                    },
+                    "snippet": "  103 |  await expect.poll(()=>page.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);\n  104 |  // The second visit loads route chunks under service-worker control.\n> 105 |  await page.reload();await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n      |                                                                                                        ^\n  106 |  await context.setOffline(true);await page.reload();\n  107 |  await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n  108 |  await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                        "column": 104,
+                        "line": 105
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n\n\n  103 |  await expect.poll(()=>page.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);\n  104 |  // The second visit loads route chunks under service-worker control.\n> 105 |  await page.reload();await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n      |                                                                                                        ^\n  106 |  await context.setOffline(true);await page.reload();\n  107 |  await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n  108 |  await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:105:104"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:25.052Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts\\learning-previously-loaded-lessons-remain-usable-offline-desktop\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                    "column": 104,
+                    "line": 105
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-c89a6223a00a4bdb9a44",
+          "file": "learning.spec.ts",
+          "line": 101,
+          "column": 5
+        },
+        {
+          "title": "profile persists after reload without horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 890,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:57.293Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-974c7bd986dacdeee471",
+          "file": "learning.spec.ts",
+          "line": 10,
+          "column": 5
+        },
+        {
+          "title": "local translator works and reverse direction stays in the app",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1302,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:58.192Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-1433619d385d8bb062ce",
+          "file": "learning.spec.ts",
+          "line": 15,
+          "column": 5
+        },
+        {
+          "title": "PWA manifest and service worker are available",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 851,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:59.503Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-12b16d6909bf34828ae7",
+          "file": "learning.spec.ts",
+          "line": 24,
+          "column": 5
+        },
+        {
+          "title": "theme and exercise settings persist after reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 30055,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                        "column": 63,
+                        "line": 32
+                      },
+                      "message": "Error: locator.check: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Ավտոմատ արտասանություն', { exact: true })\u001b[22m\n\n\n  30 |  await page.goto('/?tab=settings');\n  31 |  await page.getByRole('button',{name:/Գիշերային — Dark Mode/}).click();\n> 32 |  await page.getByLabel('Ավտոմատ արտասանություն',{exact:true}).check();\n     |                                                               ^\n  33 |  await page.reload();\n  34 |  await expect(page.locator('html')).toHaveClass(/dark/);\n  35 |  await expect(page.getByLabel('Ավտոմատ արտասանություն',{exact:true})).toBeChecked();\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:32:63"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:00.365Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts\\learning-theme-and-exercise-settings-persist-after-reload-tablet\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-1e5b47fc53ccc0b416b3",
+          "file": "learning.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "lesson position resumes and completion is recorded only once",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6251,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:31.070Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-aef849d4d1d3b243fc80",
+          "file": "learning.spec.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "title": "professional exercises reject wrong answers and save a correct answer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1742,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:37.604Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-4fe545842ea09433d143",
+          "file": "learning.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "all main views load without JavaScript errors or horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2280,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:39.392Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-7ddcfafa817a28dc933c",
+          "file": "learning.spec.ts",
+          "line": 82,
+          "column": 5
+        },
+        {
+          "title": "unsupported microphone provides a usable text fallback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1164,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:41.704Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-1d6c936f67645f2c2773",
+          "file": "learning.spec.ts",
+          "line": 92,
+          "column": 5
+        },
+        {
+          "title": "previously loaded lessons remain usable offline",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6135,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:105:104",
+                    "location": {
+                      "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                      "column": 104,
+                      "line": 105
+                    },
+                    "snippet": "  103 |  await expect.poll(()=>page.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);\n  104 |  // The second visit loads route chunks under service-worker control.\n> 105 |  await page.reload();await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n      |                                                                                                        ^\n  106 |  await context.setOffline(true);await page.reload();\n  107 |  await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n  108 |  await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                        "column": 104,
+                        "line": 105
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n\n\n  103 |  await expect.poll(()=>page.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);\n  104 |  // The second visit loads route chunks under service-worker control.\n> 105 |  await page.reload();await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n      |                                                                                                        ^\n  106 |  await context.setOffline(true);await page.reload();\n  107 |  await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n  108 |  await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:105:104"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:42.900Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts\\learning-previously-loaded-lessons-remain-usable-offline-tablet\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                    "column": 104,
+                    "line": 105
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-74345b9e5367a1492520",
+          "file": "learning.spec.ts",
+          "line": 101,
+          "column": 5
+        },
+        {
+          "title": "profile persists after reload without horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 957,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:21.065Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-280ea09a6d4eb17a83ac",
+          "file": "learning.spec.ts",
+          "line": 10,
+          "column": 5
+        },
+        {
+          "title": "local translator works and reverse direction stays in the app",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1734,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:22.055Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-ccf7543c92a2cfb05aec",
+          "file": "learning.spec.ts",
+          "line": 15,
+          "column": 5
+        },
+        {
+          "title": "PWA manifest and service worker are available",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 956,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:23.827Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-f5e1bbb62ac37a8522ce",
+          "file": "learning.spec.ts",
+          "line": 24,
+          "column": 5
+        },
+        {
+          "title": "theme and exercise settings persist after reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 30043,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                        "column": 63,
+                        "line": 32
+                      },
+                      "message": "Error: locator.check: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Ավտոմատ արտասանություն', { exact: true })\u001b[22m\n\n\n  30 |  await page.goto('/?tab=settings');\n  31 |  await page.getByRole('button',{name:/Գիշերային — Dark Mode/}).click();\n> 32 |  await page.getByLabel('Ավտոմատ արտասանություն',{exact:true}).check();\n     |                                                               ^\n  33 |  await page.reload();\n  34 |  await expect(page.locator('html')).toHaveClass(/dark/);\n  35 |  await expect(page.getByLabel('Ավտոմատ արտասանություն',{exact:true})).toBeChecked();\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:32:63"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:24.818Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts\\learning-theme-and-exercise-settings-persist-after-reload-mobile\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-e718759c3e8cfb8e8bc4",
+          "file": "learning.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "lesson position resumes and completion is recorded only once",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5891,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:39:55.375Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-3b24d7700a1d68a12ebf",
+          "file": "learning.spec.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "title": "professional exercises reject wrong answers and save a correct answer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1296,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:40:01.532Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-2b4430180a0e0d6dfcef",
+          "file": "learning.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "all main views load without JavaScript errors or horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1872,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:40:02.837Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-0998a40688ee8d01c8c6",
+          "file": "learning.spec.ts",
+          "line": 82,
+          "column": 5
+        },
+        {
+          "title": "unsupported microphone provides a usable text fallback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1096,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:40:04.719Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-1b3e4ab212c184c53bdb",
+          "file": "learning.spec.ts",
+          "line": 92,
+          "column": 5
+        },
+        {
+          "title": "previously loaded lessons remain usable offline",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6097,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:105:104",
+                    "location": {
+                      "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                      "column": 104,
+                      "line": 105
+                    },
+                    "snippet": "  103 |  await expect.poll(()=>page.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);\n  104 |  // The second visit loads route chunks under service-worker control.\n> 105 |  await page.reload();await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n      |                                                                                                        ^\n  106 |  await context.setOffline(true);await page.reload();\n  107 |  await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n  108 |  await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                        "column": 104,
+                        "line": 105
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Հաջորդ նախադասությունը', exact: true })\u001b[22m\n\n\n  103 |  await expect.poll(()=>page.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);\n  104 |  // The second visit loads route chunks under service-worker control.\n> 105 |  await page.reload();await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n      |                                                                                                        ^\n  106 |  await context.setOffline(true);await page.reload();\n  107 |  await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();\n  108 |  await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();\n    at E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts:105:104"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:40:05.825Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\AppS\\AMEnglishApp\\audit-evidence\\e2e-artifacts\\learning-previously-loaded-lessons-remain-usable-offline-mobile\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\AppS\\AMEnglishApp\\tests\\e2e\\learning.spec.ts",
+                    "column": 104,
+                    "line": 105
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0ec79b0c4f511f16424-c762d03cc7bda625ca85",
+          "file": "learning.spec.ts",
+          "line": 101,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "wake-lock-native.spec.ts",
+      "file": "wake-lock-native.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native Chrome wake lock reports the real browser result and releases on pause",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "native-wake-result",
+                  "description": "active"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:31.888Z",
+                  "annotations": [
+                    {
+                      "type": "native-wake-result",
+                      "description": "active"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "native-wake-result",
+                      "contentType": "application/json",
+                      "body": "eyJzdXBwb3J0ZWQiOnRydWUsInN0YXR1cyI6ImFjdGl2ZSIsInByb2plY3QiOiJkZXNrdG9wIn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fe67e6a3ba5fd0844f9f-7735ac1c8ca9e507487b",
+          "file": "wake-lock-native.spec.ts",
+          "line": 3,
+          "column": 5
+        },
+        {
+          "title": "native Chrome wake lock reports the real browser result and releases on pause",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "native-wake-result",
+                  "description": "active"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1340,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:49.862Z",
+                  "annotations": [
+                    {
+                      "type": "native-wake-result",
+                      "description": "active"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "native-wake-result",
+                      "contentType": "application/json",
+                      "body": "eyJzdXBwb3J0ZWQiOnRydWUsInN0YXR1cyI6ImFjdGl2ZSIsInByb2plY3QiOiJ0YWJsZXQifQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fe67e6a3ba5fd0844f9f-e41011046ea75da1b151",
+          "file": "wake-lock-native.spec.ts",
+          "line": 3,
+          "column": 5
+        },
+        {
+          "title": "native Chrome wake lock reports the real browser result and releases on pause",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "native-wake-result",
+                  "description": "active"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1400,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:40:12.571Z",
+                  "annotations": [
+                    {
+                      "type": "native-wake-result",
+                      "description": "active"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "native-wake-result",
+                      "contentType": "application/json",
+                      "body": "eyJzdXBwb3J0ZWQiOnRydWUsInN0YXR1cyI6ImFjdGl2ZSIsInByb2plY3QiOiJtb2JpbGUifQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fe67e6a3ba5fd0844f9f-97328527e9ca27cacfac",
+          "file": "wake-lock-native.spec.ts",
+          "line": 3,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T12:36:20.634Z",
+    "duration": 233967.96000000002,
+    "expected": 57,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}

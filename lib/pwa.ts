@@ -1,4 +1,4 @@
-export const APP_VERSION = 'v1.2.1';
+export const APP_VERSION = 'v1.2.2';
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];

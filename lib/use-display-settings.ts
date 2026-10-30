@@ -7,7 +7,15 @@ export function useDisplaySettings(settings: UserSettingsRecord) {
     const root = document.documentElement;
     root.dataset.displayMode = settings.displayMode;
     const query = window.matchMedia('(min-width: 1024px)');
-    const apply = () => { root.dataset.layout = settings.displayMode !== 'mobile' && query.matches ? 'desktop' : 'mobile'; };
+    const apply = () => {
+      if (settings.displayMode === 'desktop') {
+        root.dataset.layout = 'desktop';
+      } else if (settings.displayMode === 'mobile') {
+        root.dataset.layout = 'mobile';
+      } else {
+        root.dataset.layout = query.matches ? 'desktop' : 'mobile';
+      }
+    };
     apply();
     query.addEventListener('change', apply);
     return () => query.removeEventListener('change', apply);

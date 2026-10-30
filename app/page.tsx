@@ -63,19 +63,38 @@ import OnboardingView from '../components/OnboardingView';
 import DashboardView from '../components/DashboardView';
 import LessonsView from '../components/LessonsView';
 import ExercisesView from '../components/ExercisesView';
-import TeacherView from '../components/TeacherView';
-import VoicePracticeView from '../components/VoicePracticeView';
-import ITEnglishView from '../components/ITEnglishView';
 import VocabularyView from '../components/VocabularyView';
-import LearningHistoryView from '../components/LearningHistoryView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
 import DailyWordsView from '../components/DailyWordsView';
-import DailyQuestionsView from '../components/DailyQuestionsView';
-import DailyConversationsView from '../components/DailyConversationsView';
-import BookLibraryView from '../components/BookLibraryView';
-import GrammarAcademyView from '../components/GrammarAcademyView';
-import AccentAcademyView from '../components/AccentAcademyView';
+
+const BookLibraryView = dynamic(() => import('../components/BookLibraryView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Գրադարանը բեռնվում է…</div>,
+});
+const GrammarAcademyView = dynamic(() => import('../components/GrammarAcademyView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Քերականությունը բեռնվում է…</div>,
+});
+const AccentAcademyView = dynamic(() => import('../components/AccentAcademyView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Արտասանության ակադեմիան բեռնվում է…</div>,
+});
+const DailyQuestionsView = dynamic(() => import('../components/DailyQuestionsView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Օրվա հարցերը բեռնվում են…</div>,
+});
+const DailyConversationsView = dynamic(() => import('../components/DailyConversationsView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Առօրյա զրույցները բեռնվում են…</div>,
+});
+const ITEnglishView = dynamic(() => import('../components/ITEnglishView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Մասնագիտական դասընթացը բեռնվում է…</div>,
+});
+const LearningHistoryView = dynamic(() => import('../components/LearningHistoryView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Ուսուցման պատմությունը բեռնվում է…</div>,
+});
+const TeacherView = dynamic(() => import('../components/TeacherView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Ուսուցիչը բեռնվում է…</div>,
+});
+const VoicePracticeView = dynamic(() => import('../components/VoicePracticeView'), {
+  loading: () => <div className="p-8 text-center text-slate-400 font-bold">Ձայնային պարապմունքը բեռնվում է…</div>,
+});
 import {
   getPageMemoryFromURL,
   resolveInitialPageMemory,

@@ -31,7 +31,7 @@ export function createSqliteBackupBuffer(data: UserProgressData): Uint8Array {
       CREATE TABLE IF NOT EXISTS haylingo_meta (key TEXT PRIMARY KEY, val TEXT);
       CREATE TABLE IF NOT EXISTS user_profile (
         id TEXT PRIMARY KEY, first_name TEXT, last_name TEXT, age INTEGER, profession TEXT,
-        custom_profession TEXT, proficiency_tier TEXT, learning_goal TEXT, custom_goal TEXT,
+        custom_profession TEXT, proficiency_tier TEXT, cefr_level TEXT, learning_goal TEXT, custom_goal TEXT,
         learning_start_date TEXT, created_at INTEGER, updated_at INTEGER
       );
       CREATE TABLE IF NOT EXISTS user_settings (
@@ -90,6 +90,7 @@ export function createSqliteBackupBuffer(data: UserProgressData): Uint8Array {
     metaStmt.run('version', '4.0.0');
     metaStmt.run('exported_at', new Date().toISOString());
     metaStmt.run('format', 'sqlite3');
+    metaStmt.run('cefr_level', data.level || 'A2');
 
     // Profile
     if (data.profile) {
@@ -97,9 +98,9 @@ export function createSqliteBackupBuffer(data: UserProgressData): Uint8Array {
       db.prepare(`
         INSERT INTO user_profile (
           id, first_name, last_name, age, profession, custom_profession,
-          proficiency_tier, learning_goal, custom_goal, learning_start_date,
+          proficiency_tier, cefr_level, learning_goal, custom_goal, learning_start_date,
           created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         p.id || 'user-main',
         p.firstName || '',
@@ -108,6 +109,7 @@ export function createSqliteBackupBuffer(data: UserProgressData): Uint8Array {
         p.profession || '',
         p.customProfession || '',
         p.proficiencyTier || 'Elementary',
+        data.level || 'A2',
         p.learningGoal || 'work',
         p.customGoal || '',
         p.learningStartDate || '',
@@ -439,6 +441,16 @@ export function parseSqliteBackupBuffer(
         };
         restored.profile = prof;
         restored.userName = `${prof.firstName} ${prof.lastName}`.trim() || 'Օգտատեր';
+        if (pRow.cefr_level) {
+          restored.level = String(pRow.cefr_level) as any;
+        }
+      }
+    }
+
+    if (hasTable('haylingo_meta') && !restored.level) {
+      const levelRow = db.prepare("SELECT val FROM haylingo_meta WHERE key='cefr_level'").get() as { val?: string } | undefined;
+      if (levelRow?.val) {
+        restored.level = levelRow.val as any;
       }
     }
 

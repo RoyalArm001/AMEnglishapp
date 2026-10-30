@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'haylingo-pwa-v1.3.0';
+const CACHE_VERSION = 'haylingo-pwa-v1.3.1';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -49,22 +49,31 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Navigation requests: Network-first with cached '/' shell fallback for full Offline PWA support
+  // Navigation requests: Network-first with cached shell fallback for full Offline PWA support
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
           if (response && response.status === 200) {
             const copy = response.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => cache.put('/', copy));
+            const copyRoot = response.clone();
+            caches.open(RUNTIME_CACHE).then((cache) => {
+              cache.put(request, copy).catch(() => {});
+              cache.put('/', copyRoot).catch(() => {});
+            });
           }
           return response;
         })
         .catch(async () => {
-          const runtimeCached = await caches.match(request);
-          if (runtimeCached) return runtimeCached;
-          const rootCached = await caches.match('/');
-          if (rootCached) return rootCached;
+          const directMatch = await caches.match(request);
+          if (directMatch) return directMatch;
+
+          const searchMatch = await caches.match(request, { ignoreSearch: true });
+          if (searchMatch) return searchMatch;
+
+          const rootMatch = (await caches.match('/')) || (await caches.match('/', { ignoreSearch: true }));
+          if (rootMatch) return rootMatch;
+
           return new Response(
             '<!DOCTYPE html><html lang="hy"><head><meta charset="utf-8"><title>HayLingo — Offline</title></head><body style="background:#090d16;color:#fff;font-family:sans-serif;padding:2rem;text-align:center;"><h1>HayLingo AI</h1><p>Դուք անցանց եք (Offline)։ Ուսումնական բովանդակությունը հասանելի է։</p></body></html>',
             { headers: { 'Content-Type': 'text/html; charset=utf-8' } }

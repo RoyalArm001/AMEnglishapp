@@ -1,0 +1,1207 @@
+{
+  "books": [
+    {
+      "id": "book-clockmaker",
+      "title": "The Clockmaker of London",
+      "author": "HayLingo Classics Adaptation",
+      "level": "A2",
+      "chapters": 2,
+      "sentences": 24,
+      "words": 300
+    },
+    {
+      "id": "book-silent-forest",
+      "title": "The Silent Forest",
+      "author": "Elena Vance",
+      "level": "B1",
+      "chapters": 1,
+      "sentences": 8,
+      "words": 103
+    },
+    {
+      "id": "book-digital-horizon",
+      "title": "The Digital Horizon",
+      "author": "Armen Ghazaryan",
+      "level": "B2",
+      "chapters": 1,
+      "sentences": 8,
+      "words": 104
+    },
+    {
+      "id": "book-ocean-journey",
+      "title": "The First Step Across the Ocean",
+      "author": "Clara Hughes",
+      "level": "B1",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 50
+    },
+    {
+      "id": "book-negotiation-art",
+      "title": "The Art of Modern Negotiation",
+      "author": "Victoria Sterling",
+      "level": "B2",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 50
+    },
+    {
+      "id": "book-echoes-past",
+      "title": "Echoes of the Past",
+      "author": "Sarah Jenkins",
+      "level": "A2",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 51
+    },
+    {
+      "id": "book-city-clouds",
+      "title": "The City Beneath the Clouds",
+      "author": "Dr. Gregory Finch",
+      "level": "C1",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 54
+    },
+    {
+      "id": "book-midnight-baker",
+      "title": "The Midnight Baker",
+      "author": "Lucas Meyer",
+      "level": "A2",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 52
+    },
+    {
+      "id": "book-mountain-hermit",
+      "title": "The Mountain Hermit",
+      "author": "David Thorne",
+      "level": "A1",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 56
+    },
+    {
+      "id": "book-code-tomorrow",
+      "title": "The Code of Tomorrow",
+      "author": "Vahan Melikyan",
+      "level": "B1",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 43
+    },
+    {
+      "id": "book-sherlock-red-headed",
+      "title": "The Red-Headed League",
+      "author": "Arthur Conan Doyle (Adapted)",
+      "level": "B1",
+      "chapters": 3,
+      "sentences": 24,
+      "words": 334
+    },
+    {
+      "id": "book-alice-wonderland",
+      "title": "Alice's Adventures in Wonderland",
+      "author": "Lewis Carroll (Adapted)",
+      "level": "A2",
+      "chapters": 3,
+      "sentences": 12,
+      "words": 173
+    },
+    {
+      "id": "book-eighty-days",
+      "title": "Around the World in Eighty Days",
+      "author": "Jules Verne (Adapted)",
+      "level": "B1",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 65
+    },
+    {
+      "id": "book-time-machine",
+      "title": "The Time Machine",
+      "author": "H.G. Wells (Adapted)",
+      "level": "B2",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 56
+    },
+    {
+      "id": "book-it-leadership",
+      "title": "Modern IT Leadership & Team Dynamics",
+      "author": "Karen Harutyunyan",
+      "level": "B2",
+      "chapters": 1,
+      "sentences": 4,
+      "words": 48
+    }
+  ],
+  "poems": 10,
+  "grammar": [
+    {
+      "id": "grammar-1-pronouns",
+      "title": "Personal Pronouns (I, You, He, She, It, We, They)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-2-to-be",
+      "title": "To Be (Am / Is / Are)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-3-have-has",
+      "title": "Have / Has (Possession)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-4-do-does-did",
+      "title": "Do / Does / Did (Auxiliary Verbs)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-5-articles",
+      "title": "Articles (A / An / The)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-6-present-simple",
+      "title": "Present Simple Tense",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-7-present-continuous",
+      "title": "Present Continuous Tense",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-8-past-simple",
+      "title": "Past Simple Tense",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-9-past-continuous",
+      "title": "Past Continuous Tense",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-10-future-simple",
+      "title": "Future Simple (Will / Won't)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-11-present-perfect",
+      "title": "Present Perfect Tense",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-12-prepositions",
+      "title": "Prepositions of Time and Place",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-13-questions-negatives",
+      "title": "Questions and Negatives",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-14-modal-verbs",
+      "title": "Modal Verbs (Can, Could, Should, Must, May)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-15-conditionals",
+      "title": "Conditionals (Zero, 1st, 2nd, 3rd)",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-16-passive-voice",
+      "title": "Passive Voice",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-17-reported-speech",
+      "title": "Reported Speech",
+      "examples": 4,
+      "exercises": 4
+    },
+    {
+      "id": "grammar-18-advanced",
+      "title": "Advanced Grammar (Inversion, Cleft Sentences, Subjunctive)",
+      "examples": 4,
+      "exercises": 4
+    }
+  ],
+  "checks": [
+    {
+      "name": "dashboard-1440",
+      "result": {
+        "headings": [
+          "Աշխատանքային ժողովներ և թիմային քննարկումներ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "lessons-1440",
+      "result": {
+        "headings": [
+          "Անգլերենի գործնական դասեր (28 դաս)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "exercises-1440",
+      "result": {
+        "headings": [
+          "Ինտերակտիվ վարժությունների հարթակ (116 առաջադրանք)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "teacher-1440",
+      "result": {
+        "headings": [
+          "Հարց ու պատասխան՝ հայերեն բացատրություններով"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "voice-1440",
+      "result": {
+        "headings": [
+          "Խոսակցական ուսուցում միկրոֆոնով (STT & TTS)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "it-english-1440",
+      "result": {
+        "headings": [
+          "ՏՏ Անգլերեն՝ 13 Թեմաներ և 21 Աշխատանքային Երկխոսություններ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "vocabulary-1440",
+      "result": {
+        "headings": [
+          "Բառարան, Քարտեր (Flashcards) և Ինտերվալային Կրկնություն"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "translation-1440",
+      "result": {
+        "headings": [],
+        "overflow": false
+      }
+    },
+    {
+      "name": "history-1440",
+      "result": {
+        "headings": [
+          "Առաջընթացի գրաֆիկներ, դասերի կարգավիճակ և սխալների շտկում"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "profile-1440",
+      "result": {
+        "headings": [
+          "Սովորողի անձնական էջ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "settings-1440",
+      "result": {
+        "headings": [
+          "Համակարգի և ուսուցման կարգավորումներ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "daily-words-1440",
+      "result": {
+        "headings": [
+          "Օրվա 3 բառերը"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "daily-questions-1440",
+      "result": {
+        "headings": [
+          "Օրվա հարցերը"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "daily-conversations-1440",
+      "result": {
+        "headings": [
+          "Առօրյա զրույցներ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "books-1440",
+      "result": {
+        "headings": [
+          "Գրադարան և Պոեզիա"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "grammar-1440",
+      "result": {
+        "headings": [
+          "Անգլերենի քերականություն (A1 – C2)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "accent-1440",
+      "result": {
+        "headings": [
+          "Արտասանություն և ակցենտ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "dashboard-390",
+      "result": {
+        "headings": [
+          "Աշխատանքային ժողովներ և թիմային քննարկումներ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "lessons-390",
+      "result": {
+        "headings": [
+          "Անգլերենի գործնական դասեր (28 դաս)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "exercises-390",
+      "result": {
+        "headings": [
+          "Ինտերակտիվ վարժությունների հարթակ (116 առաջադրանք)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "teacher-390",
+      "result": {
+        "headings": [
+          "Հարց ու պատասխան՝ հայերեն բացատրություններով"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "voice-390",
+      "result": {
+        "headings": [
+          "Խոսակցական ուսուցում միկրոֆոնով (STT & TTS)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "it-english-390",
+      "result": {
+        "headings": [
+          "ՏՏ Անգլերեն՝ 13 Թեմաներ և 21 Աշխատանքային Երկխոսություններ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "vocabulary-390",
+      "result": {
+        "headings": [
+          "Բառարան, Քարտեր (Flashcards) և Ինտերվալային Կրկնություն"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "translation-390",
+      "result": {
+        "headings": [],
+        "overflow": false
+      }
+    },
+    {
+      "name": "history-390",
+      "result": {
+        "headings": [
+          "Առաջընթացի գրաֆիկներ, դասերի կարգավիճակ և սխալների շտկում"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "profile-390",
+      "result": {
+        "headings": [
+          "Սովորողի անձնական էջ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "settings-390",
+      "result": {
+        "headings": [
+          "Համակարգի և ուսուցման կարգավորումներ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "daily-words-390",
+      "result": {
+        "headings": [
+          "Օրվա 3 բառերը"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "daily-questions-390",
+      "result": {
+        "headings": [
+          "Օրվա հարցերը"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "daily-conversations-390",
+      "result": {
+        "headings": [
+          "Առօրյա զրույցներ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "books-390",
+      "result": {
+        "headings": [
+          "Գրադարան և Պոեզիա"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "grammar-390",
+      "result": {
+        "headings": [
+          "Անգլերենի քերականություն (A1 – C2)"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "accent-390",
+      "result": {
+        "headings": [
+          "Արտասանություն և ակցենտ"
+        ],
+        "overflow": false
+      }
+    },
+    {
+      "name": "book-open-book-clockmaker",
+      "result": {
+        "title": [
+          "The Clockmaker of London"
+        ],
+        "chapterButtons": 2
+      }
+    },
+    {
+      "name": "book-open-book-silent-forest",
+      "result": {
+        "title": [
+          "The Silent Forest"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-digital-horizon",
+      "result": {
+        "title": [
+          "The Digital Horizon"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-ocean-journey",
+      "result": {
+        "title": [
+          "The First Step Across the Ocean"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-negotiation-art",
+      "result": {
+        "title": [
+          "The Art of Modern Negotiation"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-echoes-past",
+      "result": {
+        "title": [
+          "Echoes of the Past"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-city-clouds",
+      "result": {
+        "title": [
+          "The City Beneath the Clouds"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-midnight-baker",
+      "result": {
+        "title": [
+          "The Midnight Baker"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-mountain-hermit",
+      "result": {
+        "title": [
+          "The Mountain Hermit"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-code-tomorrow",
+      "result": {
+        "title": [
+          "The Code of Tomorrow"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-sherlock-red-headed",
+      "result": {
+        "title": [
+          "The Red-Headed League"
+        ],
+        "chapterButtons": 3
+      }
+    },
+    {
+      "name": "book-open-book-alice-wonderland",
+      "result": {
+        "title": [
+          "Alice's Adventures in Wonderland"
+        ],
+        "chapterButtons": 3
+      }
+    },
+    {
+      "name": "book-open-book-eighty-days",
+      "result": {
+        "title": [
+          "Around the World in Eighty Days"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-time-machine",
+      "result": {
+        "title": [
+          "The Time Machine"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-open-book-it-leadership",
+      "result": {
+        "title": [
+          "Modern IT Leadership & Team Dynamics"
+        ],
+        "chapterButtons": 1
+      }
+    },
+    {
+      "name": "book-wake",
+      "result": {
+        "before": 2,
+        "paused": 1,
+        "OFF": 1
+      }
+    },
+    {
+      "name": "grammar-grammar-1-pronouns",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-1-pronouns&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-1-pronouns",
+          "userId": "user-main",
+          "topicId": "grammar-1-pronouns",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-1-1",
+            "g-ex-1-2",
+            "g-ex-1-3",
+            "g-ex-1-4"
+          ],
+          "updatedAt": 1793363733105
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-2-to-be",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-2-to-be&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-2-to-be",
+          "userId": "user-main",
+          "topicId": "grammar-2-to-be",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-2-1",
+            "g-ex-2-2",
+            "g-ex-2-3",
+            "g-ex-2-4"
+          ],
+          "updatedAt": 1793363733672
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-3-have-has",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-3-have-has&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-3-have-has",
+          "userId": "user-main",
+          "topicId": "grammar-3-have-has",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-3-1",
+            "g-ex-3-2",
+            "g-ex-3-3",
+            "g-ex-3-4"
+          ],
+          "updatedAt": 1793363734205
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-4-do-does-did",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-4-do-does-did&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-4-do-does-did",
+          "userId": "user-main",
+          "topicId": "grammar-4-do-does-did",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-4-1",
+            "g-ex-4-2",
+            "g-ex-4-3",
+            "g-ex-4-4"
+          ],
+          "updatedAt": 1793363734722
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-5-articles",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-5-articles&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-5-articles",
+          "userId": "user-main",
+          "topicId": "grammar-5-articles",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-5-1",
+            "g-ex-5-2",
+            "g-ex-5-3",
+            "g-ex-5-4"
+          ],
+          "updatedAt": 1793363735278
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-6-present-simple",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-6-present-simple&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-6-present-simple",
+          "userId": "user-main",
+          "topicId": "grammar-6-present-simple",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-6-1",
+            "g-ex-6-2",
+            "g-ex-6-3",
+            "g-ex-6-4"
+          ],
+          "updatedAt": 1793363735872
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-7-present-continuous",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-7-present-continuous&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-7-present-continuous",
+          "userId": "user-main",
+          "topicId": "grammar-7-present-continuous",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-7-1",
+            "g-ex-7-2",
+            "g-ex-7-3",
+            "g-ex-7-4"
+          ],
+          "updatedAt": 1793363736454
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-8-past-simple",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-8-past-simple&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-8-past-simple",
+          "userId": "user-main",
+          "topicId": "grammar-8-past-simple",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-8-1",
+            "g-ex-8-2",
+            "g-ex-8-3",
+            "g-ex-8-4"
+          ],
+          "updatedAt": 1793363737005
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-9-past-continuous",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-9-past-continuous&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-9-past-continuous",
+          "userId": "user-main",
+          "topicId": "grammar-9-past-continuous",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-9-1",
+            "g-ex-9-2",
+            "g-ex-9-3",
+            "g-ex-9-4"
+          ],
+          "updatedAt": 1793363737537
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-10-future-simple",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-10-future-simple&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-10-future-simple",
+          "userId": "user-main",
+          "topicId": "grammar-10-future-simple",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-10-1",
+            "g-ex-10-2",
+            "g-ex-10-3",
+            "g-ex-10-4"
+          ],
+          "updatedAt": 1793363738055
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-11-present-perfect",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-11-present-perfect&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-11-present-perfect",
+          "userId": "user-main",
+          "topicId": "grammar-11-present-perfect",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-11-1",
+            "g-ex-11-2",
+            "g-ex-11-3",
+            "g-ex-11-4"
+          ],
+          "updatedAt": 1793363738587
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-12-prepositions",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-12-prepositions&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-12-prepositions",
+          "userId": "user-main",
+          "topicId": "grammar-12-prepositions",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-12-1",
+            "g-ex-12-2",
+            "g-ex-12-3",
+            "g-ex-12-4"
+          ],
+          "updatedAt": 1793363739121
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-13-questions-negatives",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-13-questions-negatives&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-13-questions-negatives",
+          "userId": "user-main",
+          "topicId": "grammar-13-questions-negatives",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-13-1",
+            "g-ex-13-2",
+            "g-ex-13-3",
+            "g-ex-13-4"
+          ],
+          "updatedAt": 1793363739688
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-14-modal-verbs",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-14-modal-verbs&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-14-modal-verbs",
+          "userId": "user-main",
+          "topicId": "grammar-14-modal-verbs",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-14-1",
+            "g-ex-14-2",
+            "g-ex-14-3",
+            "g-ex-14-4"
+          ],
+          "updatedAt": 1793363740237
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-15-conditionals",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-15-conditionals&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-15-conditionals",
+          "userId": "user-main",
+          "topicId": "grammar-15-conditionals",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-15-1",
+            "g-ex-15-2",
+            "g-ex-15-3",
+            "g-ex-15-4"
+          ],
+          "updatedAt": 1793363740738
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-16-passive-voice",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-16-passive-voice&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-16-passive-voice",
+          "userId": "user-main",
+          "topicId": "grammar-16-passive-voice",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-16-1",
+            "g-ex-16-2",
+            "g-ex-16-3",
+            "g-ex-16-4"
+          ],
+          "updatedAt": 1793363741275
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-17-reported-speech",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-17-reported-speech&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-17-reported-speech",
+          "userId": "user-main",
+          "topicId": "grammar-17-reported-speech",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-17-1",
+            "g-ex-17-2",
+            "g-ex-17-3",
+            "g-ex-17-4"
+          ],
+          "updatedAt": 1793363741788
+        }
+      }
+    },
+    {
+      "name": "grammar-grammar-18-advanced",
+      "result": {
+        "initial": "http://127.0.0.1:3017/?tab=grammar&subId=grammar-18-advanced&step=0",
+        "answers": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "saved": {
+          "id": "gram-grammar-18-advanced",
+          "userId": "user-main",
+          "topicId": "grammar-18-advanced",
+          "isCompleted": true,
+          "score": 100,
+          "completedExercises": [
+            "g-ex-18-1",
+            "g-ex-18-2",
+            "g-ex-18-3",
+            "g-ex-18-4"
+          ],
+          "updatedAt": 1793363742387
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "sqlite": {
+    "header": "SQLite format 3\u0000",
+    "ok": true,
+    "missingKeys": [
+      "onboardingCompleted",
+      "level",
+      "placementCompleted",
+      "completedLessonIds",
+      "currentLessonId",
+      "currentSentenceIndex",
+      "savedSentenceIds",
+      "learnedWordIds",
+      "favoriteWordIds",
+      "completedExerciseIds",
+      "exerciseAttempts",
+      "completedRoleplayIds",
+      "speakingSessions",
+      "correctAnswersCount",
+      "wrongAnswersCount",
+      "totalStudyMinutes",
+      "dailyStudyMinutes",
+      "dailyStudyDate",
+      "streakDays",
+      "lastActiveDate",
+      "lastActiveTimestamp",
+      "preferredMorningTime",
+      "darkMode",
+      "speechRate",
+      "skills",
+      "mistakes",
+      "teacherSession"
+    ]
+  },
+  "foreignSqlite": {
+    "ok": true,
+    "data": {}
+  },
+  "invalidSqlite": {
+    "ok": false,
+    "errorAm": "Ֆայլը վավեր SQLite format 3 տվյալների բազա չէ (SQLite format 3 header-ը բացակայում է)։"
+  }
+}
