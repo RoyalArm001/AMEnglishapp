@@ -9,14 +9,18 @@ import {
   Brain,
   Clock,
   Flame,
+  GraduationCap,
+  HelpCircle,
   History,
   LayoutDashboard,
   Languages,
   Menu,
   MessageCircle,
+  MessageSquare,
   Mic,
   Moon,
   Settings,
+  Sparkles,
   Sun,
   Terminal,
   User,
@@ -36,6 +40,7 @@ import {
   ExerciseItem,
   LearningGoalId,
   LessonProgressRecord,
+  MorningReminderSettings,
   ProfessionId,
   ProficiencyTier,
   StudySessionRecord,
@@ -46,6 +51,7 @@ import {
   UserSettingsRecord,
 } from '../lib/types';
 import { useDisplaySettings } from '../lib/use-display-settings';
+import { StudyActivityContext } from '../lib/study-activity';
 import { useWakeLock } from '../lib/use-wake-lock';
 import { WAKE_STATUS_AM } from '../lib/wake-lock';
 import { useStudyTimer } from '../lib/use-study-timer';
@@ -64,7 +70,18 @@ import VocabularyView from '../components/VocabularyView';
 import LearningHistoryView from '../components/LearningHistoryView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
-import PWAManager from '../components/PWAManager';
+import DailyWordsView from '../components/DailyWordsView';
+import DailyQuestionsView from '../components/DailyQuestionsView';
+import DailyConversationsView from '../components/DailyConversationsView';
+import BookLibraryView from '../components/BookLibraryView';
+import GrammarAcademyView from '../components/GrammarAcademyView';
+import AccentAcademyView from '../components/AccentAcademyView';
+import {
+  getPageMemoryFromURL,
+  resolveInitialPageMemory,
+  setPageMemory,
+} from '../lib/page-memory';
+import PWAManager, { TAB_QUERY_MAP } from '../components/PWAManager';
 import Logo, { LogoIcon } from '../components/Logo';
 import { APP_VERSION } from '../lib/pwa';
 
@@ -81,12 +98,24 @@ type NavTabId =
   | 'IT English'
   | 'Vocabulary'
   | 'Translation'
+  | 'Daily Words'
+  | 'Daily Questions'
+  | 'Daily Conversations'
+  | 'Book Library'
+  | 'Grammar Academy'
+  | 'Accent Academy'
   | 'My Progress'
   | 'Profile'
   | 'Settings';
 
 const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] = [
   { id: 'Dashboard', labelAm: UI_TEXT.nav.dashboard, subAm: 'Օրվա ամփոփում', icon: LayoutDashboard },
+  { id: 'Daily Words', labelAm: 'Օրվա 3 բառերը', subAm: 'Օրական մարտահրավեր', icon: Sparkles },
+  { id: 'Daily Questions', labelAm: 'Օրվա հարցերը', subAm: '10 ամենօրյա հարց', icon: HelpCircle },
+  { id: 'Daily Conversations', labelAm: 'Առօրյա զրույցներ', subAm: '12 կենդանի թեմա', icon: MessageSquare },
+  { id: 'Book Library', labelAm: 'Գրադարան & Պոեզիա', subAm: '15 գիրք & 10 պոեմ', icon: BookOpen },
+  { id: 'Grammar Academy', labelAm: 'Քերականություն', subAm: '18 թեմա (A1–C2)', icon: GraduationCap },
+  { id: 'Accent Academy', labelAm: 'Արտասանություն & ակցենտ', subAm: '🇺🇸 US vs 🇬🇧 UK', icon: Languages },
   { id: 'Lessons', labelAm: UI_TEXT.nav.lessons, subAm: `${LESSON_CATEGORIES.length} բաժին · ${LESSONS_DATA.length} դաս`, icon: BookOpen },
   { id: 'Exercises', labelAm: UI_TEXT.nav.exercises, subAm: 'Վարժություններ Ա–Զ', icon: Brain },
   { id: 'Study Assistant', labelAm: UI_TEXT.nav.teacher, subAm: 'Հարց ու պատասխան', icon: MessageCircle },
@@ -110,21 +139,129 @@ function navigateByKey(event: React.KeyboardEvent<HTMLElement>) {
 }
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<NavTabId>('Dashboard');
-  const navigateTab = useCallback((tab: string) => setActiveTab(tab as NavTabId), []);
+  const [activeTab, restoreActiveTab] = useState<NavTabId>('Dashboard');
+  const [pageSubId, setPageSubId] = useState<string | undefined>(undefined);
+  const [pageStep, setPageStep] = useState<number | undefined>(undefined);
+  const [pageMode, setPageMode] = useState<string | undefined>(undefined);
+
+  const [sessionState, setSessionState] = useState<'idle' | 'active' | 'paused'>('idle');
+  const setActiveTab = useCallback(
+    (tab: NavTabId, subId?: string, step?: number, mode?: string) => {
+      restoreActiveTab(tab);
+      setPageSubId(subId);
+      setPageStep(step);
+      setPageMode(mode);
+      setSessionState(
+        [
+          'Lessons',
+          'Exercises',
+          'Study Assistant',
+          'Voice Practice',
+          'IT English',
+          'Vocabulary',
+          'Daily Words',
+          'Daily Questions',
+          'Daily Conversations',
+          'Book Library',
+          'Grammar Academy',
+          'Accent Academy',
+        ].includes(tab)
+          ? 'active'
+          : 'idle'
+      );
+    },
+    []
+  );
+  const navigateTab = useCallback(
+    (tab: string, subId?: string, step?: number) =>
+      setActiveTab(tab as NavTabId, subId, step),
+    [setActiveTab]
+  );
   const consumeStudyMinutes = useStudyTimer(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [progress, setProgress] = useState<UserProgressData>(DEFAULT_USER_PROGRESS);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [storageError, setStorageError] = useState(false);
   const [startInPlacement, setStartInPlacement] = useState<boolean>(false);
-  const [sessionRunning, setSessionRunning] = useState(true);
-  const isLearning = ['Lessons','Exercises','Study Assistant','Voice Practice','IT English','Vocabulary'].includes(activeTab) || (activeTab === 'My Progress' && startInPlacement);
+  const sessionRunning = sessionState === 'active';
+  const isLearning =
+    [
+      'Lessons',
+      'Exercises',
+      'Study Assistant',
+      'Voice Practice',
+      'IT English',
+      'Vocabulary',
+      'Daily Words',
+      'Daily Questions',
+      'Daily Conversations',
+      'Book Library',
+      'Grammar Academy',
+      'Accent Academy',
+    ].includes(activeTab) || (activeTab === 'My Progress' && startInPlacement);
   useDisplaySettings(progress.settings);
-  const wake = useWakeLock(hydrated && progress.onboardingCompleted && isLearning && sessionRunning && progress.settings.keepScreenAwake);
-  useEffect(() => { setSessionRunning(true); }, [activeTab]);
+  const wake = useWakeLock(
+    hydrated && progress.onboardingCompleted && isLearning && sessionRunning && progress.settings.keepScreenAwake,
+    activeTab
+  );
   useEffect(() => {
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape' && mobileMenuOpen) { setMobileMenuOpen(false); document.querySelector<HTMLButtonElement>('[aria-label="Մենյու"]')?.focus(); } };
+    if (!hydrated) return;
+    try {
+      sessionStorage.setItem(
+        'haylingo-study-session',
+        JSON.stringify({
+          userId: progress.profile.id,
+          tab: activeTab,
+          subId: pageSubId,
+          step: pageStep,
+          mode: pageMode,
+          state: sessionState,
+          placement: startInPlacement,
+        })
+      );
+    } catch {
+      /* Storage may be disabled; learning still works. */
+    }
+  }, [hydrated, activeTab, pageSubId, pageStep, pageMode, sessionState, startInPlacement, progress.profile.id]);
+
+  // Sync page memory with URL query params
+  useEffect(() => {
+    if (!hydrated) return;
+    const tabSlug =
+      Object.keys(TAB_QUERY_MAP).find((k) => TAB_QUERY_MAP[k] === activeTab) ||
+      activeTab.toLowerCase().replace(/\s+/g, '-');
+
+    setPageMemory({
+      tab: tabSlug,
+      subId: pageSubId,
+      step: pageStep,
+      mode: pageMode,
+    });
+  }, [activeTab, pageSubId, pageStep, pageMode, hydrated]);
+
+  // Handle browser back / forward navigation (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const mem = getPageMemoryFromURL();
+      if (mem.tab) {
+        const mapped = TAB_QUERY_MAP[mem.tab.toLowerCase()] || mem.tab;
+        restoreActiveTab(mapped as NavTabId);
+        setPageSubId(mem.subId);
+        setPageStep(mem.step);
+        setPageMode(mem.mode);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+        document.querySelector<HTMLButtonElement>('[aria-label="Մենյու"]')?.focus();
+      }
+    };
     window.addEventListener('keydown', escape);
     return () => window.removeEventListener('keydown', escape);
   }, [mobileMenuOpen]);
@@ -136,9 +273,41 @@ export default function HomePage() {
     const syncData = learningRepository.loadProgressSync();
     setProgress(syncData);
 
-
     learningRepository.loadProgressAsync().then((asyncData) => {
       setProgress(asyncData);
+      const mem = resolveInitialPageMemory('Dashboard');
+      let tab = TAB_QUERY_MAP[mem.tab?.toLowerCase() || ''] || mem.tab || 'Dashboard';
+      let state: 'idle' | 'active' | 'paused' = 'idle';
+      try {
+        const saved = JSON.parse(sessionStorage.getItem('haylingo-study-session') || 'null');
+        const reload =
+          (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)?.type ===
+          'reload';
+        if (
+          reload &&
+          saved?.userId === asyncData.profile.id &&
+          NAV_ITEMS.some((item) => item.id === saved.tab) &&
+          ['idle', 'active', 'paused'].includes(saved.state)
+        ) {
+          tab = saved.tab;
+          state = saved.state;
+          setPageSubId(saved.subId);
+          setPageStep(saved.step);
+          setPageMode(saved.mode);
+          setStartInPlacement(saved.placement === true);
+        } else {
+          setPageSubId(mem.subId);
+          setPageStep(mem.step);
+          setPageMode(mem.mode);
+        }
+      } catch {
+        setPageSubId(mem.subId);
+        setPageStep(mem.step);
+        setPageMode(mem.mode);
+      }
+      restoreActiveTab(tab as NavTabId);
+      setSessionState(state);
+      setLessonSentenceResumeIdx(asyncData.currentSentenceIndex || 0);
       setHydrated(true);
     });
   }, []);
@@ -290,7 +459,7 @@ export default function HomePage() {
   };
 
   const handleOpenLesson = (lessonId: string, sentenceIdx: number = 0, startSession = true) => {
-    setSessionRunning(startSession);
+    setSessionState(startSession ? 'active' : 'idle');
     setLessonSentenceResumeIdx(sentenceIdx);
     updateAndPersist((prev): UserProgressData => {
       const existingLp = prev.lessonProgressMap?.[lessonId];
@@ -313,11 +482,11 @@ export default function HomePage() {
         },
       };
     });
-    setActiveTab('Lessons');
+    restoreActiveTab('Lessons');
   };
 
   const handleUpdateSentencePosition = (lessonId: string, sentenceIdx: number) => {
-    setSessionRunning(true);
+    if (sessionState === 'idle') setSessionState('active');
     updateAndPersist((prev): UserProgressData => {
       const existingLp = prev.lessonProgressMap?.[lessonId];
       const completedIndices = Array.from(
@@ -355,7 +524,7 @@ export default function HomePage() {
   };
 
   const handleCompleteLesson = (lessonId: string) => {
-    setSessionRunning(false);
+    setSessionState('idle');
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       if (prev.completedLessonIds.includes(lessonId)) return prev;
@@ -563,7 +732,7 @@ export default function HomePage() {
   };
 
   const handleCompletePlacement = (calculatedLevel: CEFRLevel, scorePercent: number) => {
-    setSessionRunning(false);
+    setSessionState('idle');
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const tz = prev.settings?.timezone || 'Asia/Yerevan';
@@ -617,6 +786,30 @@ export default function HomePage() {
       setProgress(res.data);
     }
     return { ok: res.ok, errorAm: res.errorAm };
+  };
+
+  const handleUpdateMorningReminder = (partial: Partial<MorningReminderSettings>) => {
+    updateAndPersist((prev): UserProgressData => ({
+      ...prev,
+      morningReminder: {
+        ...(prev.morningReminder || DEFAULT_USER_PROGRESS.morningReminder!),
+        ...partial,
+        updatedAt: Date.now(),
+      },
+    }));
+  };
+
+  const handleExportSqlite = async () => {
+    await learningRepository.exportToSqlite?.(progress);
+  };
+
+  const handleImportSqlite = async (file: File) => {
+    const res = await learningRepository.importFromSqlite?.(file);
+    if (res?.ok && res.data) {
+      setProgress(res.data);
+      return { ok: true };
+    }
+    return { ok: false, errorAm: res?.errorAm };
   };
 
   const handleWipeAllData = async () => {
@@ -801,10 +994,14 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Main Content Area */}
+      <StudyActivityContext.Provider value={{start: () => setSessionState(value => value === 'idle' ? 'active' : value), finish: () => setSessionState('idle')}}>
       <main id="learning-main" tabIndex={-1} className="app-main">
         <PWAManager
-          morningPracticeTime={progress.settings?.preferredMorningTime || '08:30'}
+          morningPracticeTime={progress.morningReminder?.reminderTime || progress.settings?.preferredMorningTime || '08:00'}
           timezone={progress.settings?.timezone || 'Asia/Yerevan'}
+          morningReminderEnabled={progress.morningReminder?.isEnabled}
+          morningReminderTopic={progress.morningReminder?.topic}
+          morningReminderTaskCount={progress.morningReminder?.taskCount}
           onNavigateTab={navigateTab}
         />
         <div className="app-content mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
@@ -848,8 +1045,12 @@ export default function HomePage() {
           </div>
 
           {isLearning && <section aria-label="Պարապմունքի էկրանը" className="study-session-bar mb-5 p-3 rounded-xl border border-emerald-300 flex flex-wrap gap-3 items-center justify-between">
-            <div><p>{sessionRunning ? 'Պարապմունքն ընթացքի մեջ է' : 'Պարապմունքն ավարտված կամ դադարեցված է'}</p><p data-wake-status={wake.status} className="text-sm">{WAKE_STATUS_AM[wake.status]}</p></div>
-            <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionRunning(value => !value)}>{sessionRunning ? 'Ավարտել պարապմունքը' : 'Սկսել պարապմունքը'}</button>
+            <div><p>{sessionRunning ? 'Պարապմունքն ընթացքի մեջ է' : sessionState === 'paused' ? 'Պարապմունքն ընդմիջված է' : 'Պարապմունքն ավարտված է կամ դեռ չի սկսվել'}</p><p aria-live="polite" data-wake-status={wake.status} className="text-sm">{WAKE_STATUS_AM[wake.status]}</p></div>
+            <div className="flex flex-wrap gap-2">
+              {sessionRunning ? <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionState('paused')}>Ընդմիջել դասը</button> : <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionState('active')}>{sessionState === 'paused' ? 'Շարունակել դասը' : 'Սկսել պարապմունքը'}</button>}
+              {sessionState !== 'idle' && <button type="button" className="rounded-xl border px-3 py-2" onClick={() => setSessionState('idle')}>Դադարեցնել դասը</button>}
+            </div>
+            <label className="flex gap-2 items-start text-sm"><input type="checkbox" checked={progress.settings.keepScreenAwake} onChange={event => handleUpdateSettings({keepScreenAwake:event.target.checked})} /><span>Դասի ընթացքում էկրանը միացված պահել</span></label>
             {['released','denied'].includes(wake.status) && <button type="button" className="underline" onClick={wake.retry}>Կրկին միացնել էկրանի պահումը</button>}
           </section>}
           {activeTab === 'Dashboard' && (
@@ -861,6 +1062,7 @@ export default function HomePage() {
               onStartPlacementTest={() => {
                 setStartInPlacement(true);
                 setActiveTab('My Progress');
+                setSessionState('active');
               }}
               onSpeak={handleSpeak}
             />
@@ -922,6 +1124,89 @@ export default function HomePage() {
             />
           )}
 
+          {activeTab === 'Daily Words' && (
+            <DailyWordsView
+              userProgress={progress}
+              onSaveProgress={(upd) => updateAndPersist(() => upd)}
+              onNavigateTab={(tab, subId, step) => {
+                setPageSubId(subId);
+                setPageStep(step);
+                setActiveTab((TAB_QUERY_MAP[tab.toLowerCase()] || tab) as NavTabId, subId, step);
+              }}
+              initialStep={pageStep}
+            />
+          )}
+
+          {activeTab === 'Daily Questions' && (
+            <DailyQuestionsView
+              userProgress={progress}
+              onSaveProgress={(upd) => updateAndPersist(() => upd)}
+              onNavigateTab={(tab, subId, step) => {
+                setPageSubId(subId);
+                setPageStep(step);
+                setActiveTab((TAB_QUERY_MAP[tab.toLowerCase()] || tab) as NavTabId, subId, step);
+              }}
+              initialStep={pageStep}
+            />
+          )}
+
+          {activeTab === 'Daily Conversations' && (
+            <DailyConversationsView
+              userProgress={progress}
+              onSaveProgress={(upd) => updateAndPersist(() => upd)}
+              onNavigateTab={(tab, subId, step) => {
+                setPageSubId(subId);
+                setPageStep(step);
+                setActiveTab((TAB_QUERY_MAP[tab.toLowerCase()] || tab) as NavTabId, subId, step);
+              }}
+              initialTopicId={pageSubId}
+              initialStep={pageStep}
+            />
+          )}
+
+          {activeTab === 'Book Library' && (
+            <BookLibraryView
+              userProgress={progress}
+              onSaveProgress={(upd) => updateAndPersist(() => upd)}
+              onNavigateTab={(tab, subId, step) => {
+                setPageSubId(subId);
+                setPageStep(step);
+                setActiveTab((TAB_QUERY_MAP[tab.toLowerCase()] || tab) as NavTabId, subId, step);
+              }}
+              initialItemId={pageSubId}
+              initialStep={pageStep}
+              initialMode={pageMode as any}
+            />
+          )}
+
+          {activeTab === 'Grammar Academy' && (
+            <GrammarAcademyView
+              userProgress={progress}
+              onSaveProgress={(upd) => updateAndPersist(() => upd)}
+              onNavigateTab={(tab, subId, step) => {
+                setPageSubId(subId);
+                setPageStep(step);
+                setActiveTab((TAB_QUERY_MAP[tab.toLowerCase()] || tab) as NavTabId, subId, step);
+              }}
+              initialTopicId={pageSubId}
+              initialStep={pageStep}
+            />
+          )}
+
+          {activeTab === 'Accent Academy' && (
+            <AccentAcademyView
+              userProgress={progress}
+              onSaveProgress={(upd) => updateAndPersist(() => upd)}
+              onNavigateTab={(tab, subId, step) => {
+                setPageSubId(subId);
+                setPageStep(step);
+                setActiveTab((TAB_QUERY_MAP[tab.toLowerCase()] || tab) as NavTabId, subId, step);
+              }}
+              initialModuleId={pageSubId}
+              initialStep={pageStep}
+            />
+          )}
+
           {activeTab === 'Translation' && <TranslationView onSpeak={handleSpeak} />}
 
           {activeTab === 'My Progress' && (
@@ -949,15 +1234,19 @@ export default function HomePage() {
             <SettingsView
               progress={progress}
               onUpdateSettings={handleUpdateSettings}
+              onUpdateMorningReminder={handleUpdateMorningReminder}
               onChangeLevel={handleChangeLevel}
               onExportJson={handleExportJson}
               onImportJson={handleImportJson}
+              onExportSqlite={handleExportSqlite}
+              onImportSqlite={handleImportSqlite}
               onWipeAllData={handleWipeAllData}
               onSpeak={handleSpeak}
             />
           )}
         </div>
       </main>
+      </StudyActivityContext.Provider>
 
       {/* Mobile Bottom Navigation Bar (PWA Native App Experience) */}
       <nav

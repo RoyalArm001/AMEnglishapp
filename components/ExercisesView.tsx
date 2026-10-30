@@ -1,4 +1,5 @@
 'use client';
+import { useStudyActivity } from '../lib/study-activity';
 import { evaluateExerciseAnswer } from '../lib/exercise-validation';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -39,9 +40,11 @@ const EXERCISE_TYPE_META: { id: ExerciseType | 'all'; code: string; labelAm: str
 
 export default function ExercisesView({
   progress,
-  onSpeak,
+  onSpeak: speakAudio,
   onRecordExerciseResult,
 }: ExercisesViewProps) {
+  const studyActivity = useStudyActivity();
+  const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const [selectedType, setSelectedType] = useState<ExerciseType | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<CEFRLevel | 'all'>('all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -90,6 +93,7 @@ export default function ExercisesView({
   };
 
   const handleCheck = () => {
+    studyActivity.start();
     const raw =
       currentExercise.type === 'build-sentence'
         ? selectedWords.map((w) => w.word).join(' ')
@@ -134,6 +138,7 @@ export default function ExercisesView({
   };
 
   const handleVoiceInput = () => {
+    studyActivity.start();
     if (isListening && stopRecFn) {
       stopRecFn();
       setIsListening(false);

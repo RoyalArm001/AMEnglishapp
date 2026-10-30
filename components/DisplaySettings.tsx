@@ -8,7 +8,7 @@ export default function DisplaySettings({settings,onChange}:{settings:UserSettin
   useEffect(()=>setWakeSupported(window.isSecureContext && Boolean(navigator.wakeLock?.request)),[]);
   return <section aria-labelledby="display-settings-title" className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-5">
     <h2 id="display-settings-title" className="text-lg font-bold">Էկրան և տառաչափ</h2>
-    <label className="flex items-start gap-3"><input type="checkbox" checked={settings.keepScreenAwake} onChange={e=>onChange({keepScreenAwake:e.target.checked})} /><span>Էկրանը միացված պահել</span></label>
+    <label className="flex items-start gap-3"><input type="checkbox" checked={settings.keepScreenAwake} onChange={e=>onChange({keepScreenAwake:e.target.checked})} /><span>Դասի ընթացքում էկրանը միացված պահել</span></label>
     <p className="text-sm text-slate-500">Գործում է պարապմունքի ընթացքում։ Էջից դուրս գալուց կամ պարապմունքն ավարտելուց հետո անջատվում է։ Համակարգը կարող է մերժել կամ ընդհատել այն, օրինակ՝ մարտկոցի խնայման պատճառով։</p>
     {wakeSupported===false && <p role="note">Այս բրաուզերը կամ կապը չի աջակցում Screen Wake Lock-ին։ Պարապմունքները շարունակում են աշխատել։</p>}
     <label className="block space-y-2"><span>Ցուցադրման ռեժիմ</span><select aria-label="Ցուցադրման ռեժիմ" className="w-full rounded-xl border p-3 dark:bg-slate-800" value={settings.displayMode} onChange={e=>onChange({displayMode:e.target.value as UserSettingsRecord['displayMode']})}>

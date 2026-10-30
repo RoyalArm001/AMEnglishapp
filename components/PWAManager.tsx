@@ -26,10 +26,13 @@ import { getDateStringInTimezone, getTimeStringInTimezone } from '../lib/i18n';
 interface PWAManagerProps {
   morningPracticeTime: string;
   timezone: string;
+  morningReminderEnabled?: boolean;
+  morningReminderTopic?: 'words' | 'grammar' | 'conversation' | 'all';
+  morningReminderTaskCount?: number;
   onNavigateTab: (tab: string) => void;
 }
 
-const TAB_QUERY_MAP: Record<string, string> = {
+export const TAB_QUERY_MAP: Record<string, string> = {
   dashboard: 'Dashboard',
   lessons: 'Lessons',
   exercises: 'Exercises',
@@ -42,11 +45,20 @@ const TAB_QUERY_MAP: Record<string, string> = {
   progress: 'My Progress',
   profile: 'Profile',
   settings: 'Settings',
+  'daily-words': 'Daily Words',
+  'daily-questions': 'Daily Questions',
+  'daily-conversations': 'Daily Conversations',
+  books: 'Book Library',
+  grammar: 'Grammar Academy',
+  accent: 'Accent Academy',
 };
 
 export default function PWAManager({
   morningPracticeTime,
   timezone,
+  morningReminderEnabled,
+  morningReminderTopic,
+  morningReminderTaskCount,
   onNavigateTab,
 }: PWAManagerProps) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -67,17 +79,6 @@ export default function PWAManager({
 
     const dismissed = window.sessionStorage.getItem('haylingo_pwa_banner_dismissed') === '1';
     setInstallBannerDismissed(dismissed);
-
-    // Handle PWA shortcut deep links (?tab=lessons, ?tab=voice, etc.)
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get('tab');
-      if (tabParam && TAB_QUERY_MAP[tabParam.toLowerCase()]) {
-        onNavigateTab(TAB_QUERY_MAP[tabParam.toLowerCase()]);
-      }
-    } catch {
-      // ignore
-    }
 
     registerServiceWorker(
       (reg) => setWaitingSW(reg),
@@ -126,15 +127,22 @@ export default function PWAManager({
     if (typeof window === 'undefined') return;
 
     const checkReminder = async () => {
+      if (morningReminderEnabled === false) return;
+
       const nowTime = getTimeStringInTimezone(timezone);
       const todayStr = getDateStringInTimezone(timezone);
       const lastNotified = window.localStorage.getItem('haylingo_last_notified_date');
 
       if (nowTime === morningPracticeTime && lastNotified !== todayStr && 'Notification' in window && Notification.permission === 'granted') {
+        let targetUrl = '/?tab=daily-words';
+        if (morningReminderTopic === 'grammar') targetUrl = '/?tab=grammar';
+        else if (morningReminderTopic === 'conversation') targetUrl = '/?tab=daily-conversations';
+
+        const taskCount = morningReminderTaskCount || 3;
         const sent = await sendPWANotification(
-          'HayLingo — Առավոտյան Ձայնային Պարապմունք',
-          `Ժամը ${morningPracticeTime}-ն է։ Սկսեք 5 րոպեանոց առավոտյան անգլերենի պարապմունքը։`,
-          '/?tab=voice',
+          '🔔 HayLingo — Ժամանակն է սովորել անգլերեն',
+          `Այսօր ունես ${taskCount} առաջադրանք։ Սեղմիր՝ «Սկսել»։`,
+          targetUrl,
           `haylingo-morning-${todayStr}`
         );
         if (sent) window.localStorage.setItem('haylingo_last_notified_date', todayStr);
@@ -143,7 +151,7 @@ export default function PWAManager({
 
     const interval = setInterval(checkReminder, 45000);
     return () => clearInterval(interval);
-  }, [morningPracticeTime, timezone]);
+  }, [morningPracticeTime, timezone, morningReminderEnabled, morningReminderTopic, morningReminderTaskCount]);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {

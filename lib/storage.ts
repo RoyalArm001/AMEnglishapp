@@ -28,7 +28,7 @@ const LEGACY_STORAGE_KEY_V2 = 'am_english_learning_state_v2';
 const LIGHT_SETTINGS_KEY = 'am_english_light_settings_v3';
 
 const IDB_NAME = 'AMEnglishLearningDB_v3';
-const IDB_SCHEMA_VERSION = 3;
+const IDB_SCHEMA_VERSION = 4;
 
 export const IDB_STORES = {
   users: 'users',
@@ -43,6 +43,21 @@ export const IDB_STORES = {
   speaking_sessions: 'speaking_sessions',
   learning_history: 'learning_history',
   achievements: 'achievements',
+  // New stores for v4
+  daily_reminders: 'daily_reminders',
+  daily_word_challenges: 'daily_word_challenges',
+  daily_word_attempts: 'daily_word_attempts',
+  daily_questions_state: 'daily_questions_state',
+  daily_conversations_state: 'daily_conversations_state',
+  books: 'books',
+  book_chapters: 'book_chapters',
+  reading_progress: 'reading_progress',
+  poems: 'poems',
+  grammar_lessons: 'grammar_lessons',
+  grammar_attempts: 'grammar_attempts',
+  pronunciation_exercises: 'pronunciation_exercises',
+  pronunciation_progress: 'pronunciation_progress',
+  accent_preferences: 'accent_preferences',
 } as const;
 
 export function getTodayDateString(timezone: string = 'Asia/Yerevan'): string {
@@ -147,6 +162,28 @@ export const DEFAULT_USER_PROGRESS: UserProgressData = {
     weakTopics: [],
     messages: [],
   },
+  morningReminder: {
+    id: 'reminder-main',
+    userId: 'user-main',
+    isEnabled: false,
+    reminderTime: '08:00',
+    repeatDaily: true,
+    taskCount: 3,
+    soundEnabled: true,
+    timezone: DEFAULT_TIMEZONE,
+    topic: 'all',
+    updatedAt: Date.now(),
+  },
+  dailyWordAttempts: [],
+  dailyConversationsMap: {},
+  readingProgressMap: {},
+  grammarAttemptsMap: {},
+  pronunciationProgressMap: {},
+  accentPreference: {
+    userId: 'user-main',
+    accent: 'us',
+    updatedAt: Date.now(),
+  },
 };
 
 /**
@@ -167,6 +204,8 @@ export interface ILearningRepository {
   resetProgress(): Promise<UserProgressData>;
   exportToJson(data: UserProgressData): string;
   importFromJson(jsonText: string): Promise<{ ok: boolean; data?: UserProgressData; errorAm?: string }>;
+  exportToSqlite?(data: UserProgressData): Promise<void>;
+  importFromSqlite?(file: File): Promise<{ ok: boolean; data?: UserProgressData; errorAm?: string }>;
 }
 
 /**
@@ -271,6 +310,21 @@ export function normalizeAndValidateState(raw: Partial<UserProgressData>): UserP
     speakingSessions: deduplicateById(raw.speakingSessions || []),
     achievements: deduplicateById(raw.achievements || DEFAULT_ACHIEVEMENTS),
     lessonProgressMap: raw.lessonProgressMap || {},
+    morningReminder: raw.morningReminder
+      ? { ...DEFAULT_USER_PROGRESS.morningReminder!, ...raw.morningReminder, userId }
+      : { ...DEFAULT_USER_PROGRESS.morningReminder!, userId },
+    dailyWordsChallenge: raw.dailyWordsChallenge || undefined,
+    dailyWordAttempts: deduplicateById(raw.dailyWordAttempts || []),
+    dailyQuestionsState: raw.dailyQuestionsState || undefined,
+    dailyConversationsMap: raw.dailyConversationsMap || {},
+    readingProgressMap: raw.readingProgressMap || {},
+    grammarAttemptsMap: raw.grammarAttemptsMap || {},
+    pronunciationProgressMap: raw.pronunciationProgressMap || {},
+    accentPreference: raw.accentPreference || {
+      userId,
+      accent: 'us',
+      updatedAt: Date.now(),
+    },
   };
 
   // Timezone-accurate Daily Study Minutes & Streak calculation
@@ -539,6 +593,72 @@ class LocalLearningRepository implements ILearningRepository {
           }
         });
 
+        // 13. daily_reminders store
+        if (normalized.morningReminder) {
+          tx.objectStore(IDB_STORES.daily_reminders).put({
+            ...normalized.morningReminder,
+            id: normalized.morningReminder.id || 'reminder-main',
+            updatedAt: Date.now(),
+          });
+        }
+
+        // 14. daily_word_challenges store
+        if (normalized.dailyWordsChallenge) {
+          tx.objectStore(IDB_STORES.daily_word_challenges).put({
+            ...normalized.dailyWordsChallenge,
+            id: normalized.dailyWordsChallenge.id || 'dw-today',
+            updatedAt: Date.now(),
+          });
+        }
+
+        // 15. daily_word_attempts store
+        const dwaStore = tx.objectStore(IDB_STORES.daily_word_attempts);
+        (normalized.dailyWordAttempts || []).slice(0, 200).forEach((a) => {
+          if (a && a.id) dwaStore.put(a);
+        });
+
+        // 16. daily_questions_state store
+        if (normalized.dailyQuestionsState) {
+          tx.objectStore(IDB_STORES.daily_questions_state).put({
+            ...normalized.dailyQuestionsState,
+            id: normalized.dailyQuestionsState.id || 'dq-today',
+            updatedAt: Date.now(),
+          });
+        }
+
+        // 17. daily_conversations_state store
+        const dcsStore = tx.objectStore(IDB_STORES.daily_conversations_state);
+        Object.values(normalized.dailyConversationsMap || {}).forEach((dc) => {
+          if (dc && dc.id) dcsStore.put(dc);
+        });
+
+        // 18. reading_progress store
+        const rpStore = tx.objectStore(IDB_STORES.reading_progress);
+        Object.values(normalized.readingProgressMap || {}).forEach((rp) => {
+          if (rp && rp.id) rpStore.put(rp);
+        });
+
+        // 19. grammar_attempts store
+        const gaStore = tx.objectStore(IDB_STORES.grammar_attempts);
+        Object.values(normalized.grammarAttemptsMap || {}).forEach((ga) => {
+          if (ga && ga.id) gaStore.put(ga);
+        });
+
+        // 20. pronunciation_progress store
+        const ppStore = tx.objectStore(IDB_STORES.pronunciation_progress);
+        Object.values(normalized.pronunciationProgressMap || {}).forEach((pp) => {
+          if (pp && pp.id) ppStore.put(pp);
+        });
+
+        // 21. accent_preferences store
+        if (normalized.accentPreference) {
+          tx.objectStore(IDB_STORES.accent_preferences).put({
+            ...normalized.accentPreference,
+            id: normalized.accentPreference.userId || 'user-main',
+            updatedAt: Date.now(),
+          });
+        }
+
         tx.oncomplete = () => { db.close(); resolve(); };
         tx.onerror = fail;
         tx.onabort = fail;
@@ -623,6 +743,25 @@ class LocalLearningRepository implements ILearningRepository {
       };
     }
   }
+
+  async exportToSqlite(data: UserProgressData): Promise<void> {
+    const { downloadSqliteBackupFile } = await import('./sqlite-db');
+    await downloadSqliteBackupFile(data);
+  }
+
+  async importFromSqlite(file: File): Promise<{ ok: boolean; data?: UserProgressData; errorAm?: string }> {
+    const { uploadSqliteBackupFile } = await import('./sqlite-db');
+    const result = await uploadSqliteBackupFile(file);
+    if (!result.ok || !result.data) {
+      return { ok: false, errorAm: result.errorAm || 'SQLite վերականգնումը ձախողվեց' };
+    }
+    const restored = normalizeAndValidateState({
+      ...result.data,
+      onboardingCompleted: Boolean(result.data.onboardingCompleted),
+    });
+    await this.saveProgress(restored);
+    return { ok: true, data: restored };
+  }
 }
 
 export const learningRepository: ILearningRepository = new LocalLearningRepository();
@@ -695,7 +834,17 @@ export function recordLearningAttempt(
   params: {
     isCorrect: boolean;
     skill: SkillType;
-    source: 'exercise' | 'teacher' | 'voice' | 'roleplay';
+    source:
+      | 'exercise'
+      | 'teacher'
+      | 'voice'
+      | 'roleplay'
+      | 'daily_words'
+      | 'daily_questions'
+      | 'daily_conversations'
+      | 'book_reading'
+      | 'grammar'
+      | 'pronunciation';
     prompt: string;
     userAnswer: string;
     correctAnswer: string;

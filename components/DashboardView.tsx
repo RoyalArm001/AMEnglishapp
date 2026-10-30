@@ -481,6 +481,146 @@ export default function DashboardView({
         </div>
       </div>
 
+      {/* Daily & Academy Features Grid */}
+      <div className="space-y-4">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+            ԱՄԵՆՕՐՅԱ ՊԱՐԱՊՄՈՒՆՔՆԵՐ ԵՎ ԱԿԱԴԵՄԻԱ
+          </span>
+          <h2 className="text-lg md:text-xl font-bold mt-0.5">
+            Օրվա մարտահրավերներ, Գրադարան և Քերականություն
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* 1. Daily 3 Words */}
+          <button
+            onClick={() => onNavigate('Daily Words')}
+            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 transition shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <Sparkles size={20} />
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600">
+                {progress.dailyWordsChallenge?.isCompleted ? '✓ Ավարտված է' : `${progress.dailyWordsChallenge?.completedCount || 0} / 3 բառ`}
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-bold text-base">Օրվա 3 բառերը</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Հայերենից անգլերեն ինտերակտիվ գրավոր մարտահրավեր՝ հուշումներով և անսահմանափակ փորձերով։
+              </p>
+            </div>
+          </button>
+
+          {/* 2. Daily Questions */}
+          <button
+            onClick={() => onNavigate('Daily Questions')}
+            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 transition shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <Brain size={20} />
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-600">
+                {progress.dailyQuestionsState?.isCompleted ? '✓ Ավարտված է' : `${progress.dailyQuestionsState?.currentIndex || 0} / 10 հարց`}
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-bold text-base">Օրվա հարցերը</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                10 ամենօրյա հարցաշար՝ մակարդակին և մասնագիտությանը համապատասխան, հայերեն բացատրություններով։
+              </p>
+            </div>
+          </button>
+
+          {/* 3. Daily Conversations */}
+          <button
+            onClick={() => onNavigate('Daily Conversations')}
+            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 transition shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
+                <Mic size={20} />
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-600">
+                12 թեմա • 8 քայլ
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-bold text-base">Առօրյա զրույցներ</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Կենդանի երկխոսություններ՝ առավոտ, աշխատանք, սրճարան, հեռախոսազանգ և IT Support։
+              </p>
+            </div>
+          </button>
+
+          {/* 4. Book Library & Poetry */}
+          <button
+            onClick={() => onNavigate('Book Library')}
+            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                <BookOpen size={20} />
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-600">
+                15 գիրք • 10 պոեմ
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-bold text-base">Գրադարան և Պոեզիա</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Բառի սեղմումով թարգմանություն, ձայնային արտասանություն, էկրանի ակտիվություն (Wake Lock)։
+              </p>
+            </div>
+          </button>
+
+          {/* 5. Grammar Academy */}
+          <button
+            onClick={() => onNavigate('Grammar Academy')}
+            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 transition shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <GraduationCap size={20} />
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600">
+                18 թեմա • 72 վարժություն
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-bold text-base">Քերականության Ակադեմիա</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                A1-ից մինչև C2 ամբողջական քերականություն՝ կանոններով, բանաձևերով և վարժություններով։
+              </p>
+            </div>
+          </button>
+
+          {/* 6. Accent Academy */}
+          <button
+            onClick={() => onNavigate('Accent Academy')}
+            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 transition shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                <Volume2 size={20} />
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600">
+                🇺🇸 US vs 🇬🇧 UK
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-bold text-base">Արտասանություն և ակցենտ</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                10 արտասանական մոդուլներ՝ TH, R, W vs V, շեշտադրություն, ինտոնացիա և խոսքի ստուգում։
+              </p>
+            </div>
+          </button>
+        </div>
+      </div>
+
       {/* Saved Sentences Section */}
       {savedSentences.length > 0 && (
         <div className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">

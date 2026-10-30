@@ -1,4 +1,5 @@
 'use client';
+import { useStudyActivity } from '../lib/study-activity';
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -40,6 +41,7 @@ export default function VoicePracticeView({
   onUpdateSpeechRate,
   onRecordVoiceSession,
 }: VoicePracticeViewProps) {
+  const studyActivity = useStudyActivity();
   const [practiceMode, setPracticeMode] = useState<'conversation' | 'morning'>('morning');
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const [isListening, setIsListening] = useState<boolean>(false);
@@ -72,10 +74,12 @@ export default function VoicePracticeView({
   };
 
   const handlePlayAudio = (text: string, customRate?: 'slow' | 'normal') => {
+    studyActivity.start();
     speakEnglish(text, customRate || progress.speechRate, undefined, {customRateNumeric:progress.settings.voiceSpeedNumeric,selectedVoiceURI:progress.settings.selectedVoiceURI});
   };
 
   const handleToggleMicrophone = () => {
+    studyActivity.start();
     if (isListening && stopRecFn) {
       stopRecFn();
       setIsListening(false);
@@ -120,6 +124,7 @@ export default function VoicePracticeView({
   };
 
   const handleManualCompare = () => {
+    studyActivity.start();
     if (!manualText.trim()) return;
     const comp = compareSpokenToTarget(
       manualText,
@@ -137,7 +142,9 @@ export default function VoicePracticeView({
   };
 
   const handleNextPrompt = () => {
+    studyActivity.start();
     resetCurrentAttempt();
+    if (currentIdx + 1 >= filteredItems.length) studyActivity.finish();
     setCurrentIdx((prev) => (prev + 1) % Math.max(1, filteredItems.length));
   };
 

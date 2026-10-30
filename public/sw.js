@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'haylingo-pwa-v1.2.0';
+const CACHE_VERSION = 'haylingo-pwa-v1.3.0';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -66,7 +66,7 @@ self.addEventListener('fetch', (event) => {
           const rootCached = await caches.match('/');
           if (rootCached) return rootCached;
           return new Response(
-            '<!DOCTYPE html><html lang="hy"><head><meta charset="utf-8"><title>HayLingo — Offline</title></head><body style="background:#090d16;color:#fff;font-family:sans-serif;padding:2rem;text-align:center;"><h1>HayLingo</h1><p>Անցանց ռեժիմ (Offline)։ Խնդրում ենք թարմացնել էջը։</p></body></html>',
+            '<!DOCTYPE html><html lang="hy"><head><meta charset="utf-8"><title>HayLingo — Offline</title></head><body style="background:#090d16;color:#fff;font-family:sans-serif;padding:2rem;text-align:center;"><h1>HayLingo AI</h1><p>Դուք անցանց եք (Offline)։ Ուսումնական բովանդակությունը հասանելի է։</p></body></html>',
             { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
           );
         })
@@ -128,17 +128,17 @@ self.addEventListener('message', (event) => {
   }
 
   if (data.type === 'SHOW_NOTIFICATION') {
-    const title = data.title || 'HayLingo — Անգլերենի Պարապմունք';
+    const title = data.title || '🔔 HayLingo — Ժամանակն է սովորել անգլերեն';
     const options = {
       body:
         data.body ||
-        'Ժամանակն է կատարել այսօրվա անգլերենի դասը և պահպանել ձեր անընդմեջ օրերի շարքը (Streak)։',
+        'Այսօր ունես նոր առաջադրանք։ Սեղմիր՝ «Սկսել»։',
       icon: '/icons/icon-192.svg',
       badge: '/icons/icon-192.svg',
-      tag: data.tag || 'haylingo-daily-reminder',
+      tag: data.tag || 'haylingo-morning-reminder',
       renotify: true,
       data: {
-        url: data.url || '/?tab=voice',
+        url: data.url || '/?tab=daily-words',
       },
     };
     event.waitUntil(self.registration.showNotification(title, options));
@@ -147,9 +147,9 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('push', (event) => {
   let payload = {
-    title: 'HayLingo — Ուսուցման Հիշեցում',
-    body: 'Շարունակեք այսօրվա անգլերենի դասը և ձայնային պարապմունքը։',
-    url: '/?tab=lessons',
+    title: '🔔 HayLingo — Ժամանակն է սովորել անգլերեն',
+    body: 'Այսօրվա առաջադրանքը պատրաստ է։ Սեղմիր՝ սովորելու համար։',
+    url: '/?tab=daily-words',
   };
 
   if (event.data) {
@@ -165,15 +165,15 @@ self.addEventListener('push', (event) => {
       body: payload.body,
       icon: '/icons/icon-192.svg',
       badge: '/icons/icon-192.svg',
-      tag: 'haylingo-push',
-      data: { url: payload.url || '/' },
+      tag: 'haylingo-push-reminder',
+      data: { url: payload.url || '/?tab=daily-words' },
     })
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/?tab=daily-words';
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {

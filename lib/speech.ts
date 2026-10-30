@@ -281,3 +281,17 @@ export function compareSpokenToTarget(
     feedbackAm,
   };
 }
+
+export const speakEnglishText = speakEnglish;
+export const compareSpeechTranscript = (expected: string, spoken: string) => {
+  const comp = compareSpokenToTarget(expected, spoken);
+  const matchedWords = comp.wordBreakdown.filter((w) => w.matched).map((w) => w.word);
+  const missingWords = comp.wordBreakdown.filter((w) => !w.matched).map((w) => w.word);
+  return {
+    matchedWords,
+    missingWords,
+    matchRatio: comp.matchRatio,
+    isAcceptable: comp.isAcceptable,
+    feedbackAm: comp.feedbackAm,
+  };
+};
