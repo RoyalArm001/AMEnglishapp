@@ -46,6 +46,7 @@ import {
   UserSettingsRecord,
 } from '../lib/types';
 import { useDisplaySettings } from '../lib/use-display-settings';
+import { StudyActivityContext } from '../lib/study-activity';
 import { useWakeLock } from '../lib/use-wake-lock';
 import { WAKE_STATUS_AM } from '../lib/wake-lock';
 import { useStudyTimer } from '../lib/use-study-timer';
@@ -64,7 +65,7 @@ import VocabularyView from '../components/VocabularyView';
 import LearningHistoryView from '../components/LearningHistoryView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
-import PWAManager from '../components/PWAManager';
+import PWAManager, { TAB_QUERY_MAP } from '../components/PWAManager';
 import Logo, { LogoIcon } from '../components/Logo';
 import { APP_VERSION } from '../lib/pwa';
 
@@ -110,7 +111,12 @@ function navigateByKey(event: React.KeyboardEvent<HTMLElement>) {
 }
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<NavTabId>('Dashboard');
+  const [activeTab, restoreActiveTab] = useState<NavTabId>('Dashboard');
+  const [sessionState, setSessionState] = useState<'idle' | 'active' | 'paused'>('idle');
+  const setActiveTab = useCallback((tab: NavTabId) => {
+    restoreActiveTab(tab);
+    setSessionState(['Lessons','Exercises','Study Assistant','Voice Practice','IT English','Vocabulary'].includes(tab) ? 'active' : 'idle');
+  }, []);
   const navigateTab = useCallback((tab: string) => setActiveTab(tab as NavTabId), []);
   const consumeStudyMinutes = useStudyTimer(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -118,11 +124,14 @@ export default function HomePage() {
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [storageError, setStorageError] = useState(false);
   const [startInPlacement, setStartInPlacement] = useState<boolean>(false);
-  const [sessionRunning, setSessionRunning] = useState(true);
+  const sessionRunning = sessionState === 'active';
   const isLearning = ['Lessons','Exercises','Study Assistant','Voice Practice','IT English','Vocabulary'].includes(activeTab) || (activeTab === 'My Progress' && startInPlacement);
   useDisplaySettings(progress.settings);
-  const wake = useWakeLock(hydrated && progress.onboardingCompleted && isLearning && sessionRunning && progress.settings.keepScreenAwake);
-  useEffect(() => { setSessionRunning(true); }, [activeTab]);
+  const wake = useWakeLock(hydrated && progress.onboardingCompleted && isLearning && sessionRunning && progress.settings.keepScreenAwake, activeTab);
+  useEffect(() => {
+    if (!hydrated) return;
+    try { sessionStorage.setItem('haylingo-study-session', JSON.stringify({ userId: progress.profile.id, tab: activeTab, state: sessionState, placement: startInPlacement, entryUrl: location.pathname + location.search })); } catch { /* Storage may be disabled; learning still works. */ }
+  }, [hydrated, activeTab, sessionState, startInPlacement, progress.profile.id]);
   useEffect(() => {
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape' && mobileMenuOpen) { setMobileMenuOpen(false); document.querySelector<HTMLButtonElement>('[aria-label="Մենյու"]')?.focus(); } };
     window.addEventListener('keydown', escape);
@@ -139,6 +148,19 @@ export default function HomePage() {
 
     learningRepository.loadProgressAsync().then((asyncData) => {
       setProgress(asyncData);
+      let tab = TAB_QUERY_MAP[new URLSearchParams(location.search).get('tab')?.toLowerCase() || ''] || 'Dashboard';
+      let state: 'idle' | 'active' | 'paused' = 'idle';
+      try {
+        const saved = JSON.parse(sessionStorage.getItem('haylingo-study-session') || 'null');
+        const reload = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)?.type === 'reload';
+        if (reload && saved?.userId === asyncData.profile.id && saved.entryUrl === location.pathname + location.search && NAV_ITEMS.some(item => item.id === saved.tab) && ['idle','active','paused'].includes(saved.state)) {
+          tab = saved.tab; state = saved.state;
+          setStartInPlacement(saved.placement === true);
+        }
+      } catch { /* Ignore invalid or unavailable tab-local session data. */ }
+      restoreActiveTab(tab as NavTabId);
+      setSessionState(state);
+      setLessonSentenceResumeIdx(asyncData.currentSentenceIndex || 0);
       setHydrated(true);
     });
   }, []);
@@ -290,7 +312,7 @@ export default function HomePage() {
   };
 
   const handleOpenLesson = (lessonId: string, sentenceIdx: number = 0, startSession = true) => {
-    setSessionRunning(startSession);
+    setSessionState(startSession ? 'active' : 'idle');
     setLessonSentenceResumeIdx(sentenceIdx);
     updateAndPersist((prev): UserProgressData => {
       const existingLp = prev.lessonProgressMap?.[lessonId];
@@ -313,11 +335,11 @@ export default function HomePage() {
         },
       };
     });
-    setActiveTab('Lessons');
+    restoreActiveTab('Lessons');
   };
 
   const handleUpdateSentencePosition = (lessonId: string, sentenceIdx: number) => {
-    setSessionRunning(true);
+    if (sessionState === 'idle') setSessionState('active');
     updateAndPersist((prev): UserProgressData => {
       const existingLp = prev.lessonProgressMap?.[lessonId];
       const completedIndices = Array.from(
@@ -355,7 +377,7 @@ export default function HomePage() {
   };
 
   const handleCompleteLesson = (lessonId: string) => {
-    setSessionRunning(false);
+    setSessionState('idle');
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       if (prev.completedLessonIds.includes(lessonId)) return prev;
@@ -563,7 +585,7 @@ export default function HomePage() {
   };
 
   const handleCompletePlacement = (calculatedLevel: CEFRLevel, scorePercent: number) => {
-    setSessionRunning(false);
+    setSessionState('idle');
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const tz = prev.settings?.timezone || 'Asia/Yerevan';
@@ -801,6 +823,7 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Main Content Area */}
+      <StudyActivityContext.Provider value={{start: () => setSessionState(value => value === 'idle' ? 'active' : value), finish: () => setSessionState('idle')}}>
       <main id="learning-main" tabIndex={-1} className="app-main">
         <PWAManager
           morningPracticeTime={progress.settings?.preferredMorningTime || '08:30'}
@@ -848,8 +871,12 @@ export default function HomePage() {
           </div>
 
           {isLearning && <section aria-label="Պարապմունքի էկրանը" className="study-session-bar mb-5 p-3 rounded-xl border border-emerald-300 flex flex-wrap gap-3 items-center justify-between">
-            <div><p>{sessionRunning ? 'Պարապմունքն ընթացքի մեջ է' : 'Պարապմունքն ավարտված կամ դադարեցված է'}</p><p data-wake-status={wake.status} className="text-sm">{WAKE_STATUS_AM[wake.status]}</p></div>
-            <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionRunning(value => !value)}>{sessionRunning ? 'Ավարտել պարապմունքը' : 'Սկսել պարապմունքը'}</button>
+            <div><p>{sessionRunning ? 'Պարապմունքն ընթացքի մեջ է' : sessionState === 'paused' ? 'Պարապմունքն ընդմիջված է' : 'Պարապմունքն ավարտված է կամ դեռ չի սկսվել'}</p><p aria-live="polite" data-wake-status={wake.status} className="text-sm">{WAKE_STATUS_AM[wake.status]}</p></div>
+            <div className="flex flex-wrap gap-2">
+              {sessionRunning ? <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionState('paused')}>Ընդմիջել դասը</button> : <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionState('active')}>{sessionState === 'paused' ? 'Շարունակել դասը' : 'Սկսել պարապմունքը'}</button>}
+              {sessionState !== 'idle' && <button type="button" className="rounded-xl border px-3 py-2" onClick={() => setSessionState('idle')}>Դադարեցնել դասը</button>}
+            </div>
+            <label className="flex gap-2 items-start text-sm"><input type="checkbox" checked={progress.settings.keepScreenAwake} onChange={event => handleUpdateSettings({keepScreenAwake:event.target.checked})} /><span>Դասի ընթացքում էկրանը միացված պահել</span></label>
             {['released','denied'].includes(wake.status) && <button type="button" className="underline" onClick={wake.retry}>Կրկին միացնել էկրանի պահումը</button>}
           </section>}
           {activeTab === 'Dashboard' && (
@@ -861,6 +888,7 @@ export default function HomePage() {
               onStartPlacementTest={() => {
                 setStartInPlacement(true);
                 setActiveTab('My Progress');
+                setSessionState('active');
               }}
               onSpeak={handleSpeak}
             />
@@ -958,6 +986,7 @@ export default function HomePage() {
           )}
         </div>
       </main>
+      </StudyActivityContext.Provider>
 
       {/* Mobile Bottom Navigation Bar (PWA Native App Experience) */}
       <nav

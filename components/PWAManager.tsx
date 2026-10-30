@@ -29,7 +29,7 @@ interface PWAManagerProps {
   onNavigateTab: (tab: string) => void;
 }
 
-const TAB_QUERY_MAP: Record<string, string> = {
+export const TAB_QUERY_MAP: Record<string, string> = {
   dashboard: 'Dashboard',
   lessons: 'Lessons',
   exercises: 'Exercises',
@@ -67,17 +67,6 @@ export default function PWAManager({
 
     const dismissed = window.sessionStorage.getItem('haylingo_pwa_banner_dismissed') === '1';
     setInstallBannerDismissed(dismissed);
-
-    // Handle PWA shortcut deep links (?tab=lessons, ?tab=voice, etc.)
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get('tab');
-      if (tabParam && TAB_QUERY_MAP[tabParam.toLowerCase()]) {
-        onNavigateTab(TAB_QUERY_MAP[tabParam.toLowerCase()]);
-      }
-    } catch {
-      // ignore
-    }
 
     registerServiceWorker(
       (reg) => setWaitingSW(reg),

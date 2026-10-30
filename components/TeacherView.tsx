@@ -1,4 +1,5 @@
 'use client';
+import { useStudyActivity } from '../lib/study-activity';
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -36,9 +37,11 @@ interface TeacherViewProps {
 
 export default function TeacherView({
   progress,
-  onSpeak,
+  onSpeak: speakAudio,
   onUpdateTeacherState,
 }: TeacherViewProps) {
+  const studyActivity = useStudyActivity();
+  const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const session = progress.teacherSession;
   const storedQuestion = TEACHER_CURRICULUM[session.currentQuestionIndex % TEACHER_CURRICULUM.length];
   const preferredQuestion = (!session.messages.length || (storedQuestion?.profession && storedQuestion.profession !== progress.profile.profession)) ? TEACHER_CURRICULUM.find(q => q.profession === progress.profile.profession) : undefined;
@@ -56,6 +59,7 @@ export default function TeacherView({
   useEffect(() => () => { stopRecFn?.(); }, [stopRecFn]);
 
   const handleSendAnswer = async () => {
+    studyActivity.start();
     const trimmed = inputText.trim();
     if (!trimmed || isLoading) return;
 
@@ -126,6 +130,7 @@ export default function TeacherView({
   };
 
   const handleVoiceInput = () => {
+    studyActivity.start();
     if (isListening && stopRecFn) {
       stopRecFn();
       setIsListening(false);

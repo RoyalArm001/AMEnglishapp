@@ -3,12 +3,13 @@ import {LESSONS_DATA} from '../../data/lessons';
 
 test.beforeEach(async({page})=>{
   await page.addInitScript(()=>{
-    const state={requests:0,releases:0,deny:false,locks:[] as any[]};
+    const state={requests:0,releases:0,deny:false,hold:false,finish:null as null|(()=>void),locks:[] as any[]};
     (window as any).__wake=state;
     Object.defineProperty(navigator,'wakeLock',{configurable:true,value:{request:async(type:string)=>{
       if(type!=='screen')throw new Error('wrong lock type');
       state.requests++;
       if(state.deny)throw new DOMException('Unavailable','NotAllowedError');
+      if(state.hold)await new Promise<void>(resolve=>{state.finish=resolve});
       const lock=new EventTarget() as any;lock.released=false;
       lock.release=async()=>{if(!lock.released){lock.released=true;state.releases++;lock.dispatchEvent(new Event('release'));}};
       state.locks.push(lock);return lock;
@@ -20,12 +21,13 @@ test.beforeEach(async({page})=>{
   await page.getByRole('button',{name:'Պահպանել և անցնել գլխավոր վահանակ',exact:true}).click();
   await expect(page.locator('main')).toBeVisible();
 });
+async function startStudy(page:Page){await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');await page.getByRole('button',{name:'Սկսել պարապմունքը',exact:true}).click();}
 const wakeStatus=(page:Page)=>page.locator('[data-wake-status]');
 const fontInput=(page:Page,label:string)=>page.getByRole('slider',{name:label+'ի չափը',exact:true});
 async function chooseFont(page:Page,label:string,value:number){const input=fontInput(page,label);await input.focus();await input.press('Home');for(let i=14;i<value;i++)await input.press('ArrowRight');await expect(input).toHaveValue(String(value));}
 
 test('wake lock starts for learning, stops on lesson completion and leaving the section',async({page})=>{
-  await page.goto('/?tab=lessons');await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+  await page.goto('/?tab=lessons');await startStudy(page);await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
   const id=await page.evaluate(()=>JSON.parse(localStorage.getItem('am_english_learning_snapshot_v3')!).currentLessonId);
   const lesson=LESSONS_DATA.find(l=>l.id===id)!;
   for(let i=1;i<lesson.sentences.length;i++)await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();
@@ -40,7 +42,7 @@ test('wake lock starts for learning, stops on lesson completion and leaving the 
 });
 
 test('wake lock handles visibility, system release and denied request',async({page})=>{
-  await page.goto('/?tab=voice');await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+  await page.goto('/?tab=voice');await startStudy(page);await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
   await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));});
   await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','hidden');
   await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'visible'});document.dispatchEvent(new Event('visibilitychange'));});
@@ -58,18 +60,19 @@ test('wake lock handles visibility, system release and denied request',async({pa
 
 test('unsupported API and disabled setting allow normal learning',async({page})=>{
   await page.addInitScript(()=>Object.defineProperty(navigator,'wakeLock',{configurable:true,value:undefined}));
-  await page.goto('/?tab=teacher');await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','unsupported');
+  await page.goto('/?tab=teacher');await startStudy(page);await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','unsupported');
   await page.goto('/?tab=settings');await expect(page.getByRole('note')).toContainText('չի աջակցում');
-  await page.getByLabel('Էկրանը միացված պահել',{exact:true}).uncheck();
+  await page.getByLabel('Դասի ընթացքում էկրանը միացված պահել',{exact:true}).uncheck();
   await page.goto('/?tab=it-english');await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
-  await page.goto('/?tab=settings');await expect(page.getByLabel('Էկրանը միացված պահել',{exact:true})).not.toBeChecked();
+  await page.goto('/?tab=settings');await expect(page.getByLabel('Դասի ընթացքում էկրանը միացված պահել',{exact:true})).not.toBeChecked();
 });
 
 test('reading listening speaking questions and conversations share the study lifecycle',async({page})=>{
   for(const tab of ['lessons','exercises','teacher','voice','it-english','vocabulary']){
     await page.goto('/?tab='+tab);
+    await startStudy(page);
     await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
-    await page.getByRole('button',{name:'Ավարտել պարապմունքը',exact:true}).click();
+    await page.getByRole('button',{name:'Դադարեցնել դասը',exact:true}).click();
     await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
     expect(await page.evaluate(()=>(window as any).__wake.locks.every((l:any)=>l.released))).toBe(true);
   }
@@ -117,4 +120,73 @@ test('30px fonts remain usable across learning pages in desktop mode and dark th
     await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),{message:'overflow at 30px: '+tab}).toBe(true);
     if(tab==='lessons')await page.screenshot({path:testInfo.outputPath('large-font-lessons.png')});
   }
+});
+
+
+test('pause resume live setting and F5 restore the actual study state and sentence',async({page})=>{
+ await page.goto('/?tab=lessons');await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(0);
+ await startStudy(page);await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ await page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true}).click();
+ const sentence=await page.locator('main [data-learning-text="english"]').first().textContent();
+ await page.reload();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ expect(await page.locator('main [data-learning-text="english"]').first().textContent()).toBe(sentence);
+ expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(1);
+ await page.getByRole('button',{name:'Ընդմիջել դասը',exact:true}).click();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ await page.reload();await expect(page.getByRole('button',{name:'Շարունակել դասը',exact:true})).toBeVisible();
+ expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(0);
+ await page.getByRole('button',{name:'Շարունակել դասը',exact:true}).click();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ const setting=page.getByLabel('Դասի ընթացքում էկրանը միացված պահել',{exact:true});await setting.uncheck();
+ await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ expect(await page.evaluate(()=>(window as any).__wake.locks.every((l:any)=>l.released))).toBe(true);
+ await page.reload();await expect(setting).not.toBeChecked();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ await setting.check();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ await page.getByRole('button',{name:'Դադարեցնել դասը',exact:true}).click();await page.reload();
+ await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(0);
+});
+
+test('standalone PWA lifecycle releases on pagehide and restores only an active session',async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(navigator,'standalone',{value:true}));
+ await page.goto('/?tab=voice');await startStudy(page);await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ await page.evaluate(()=>window.dispatchEvent(new Event('pagehide')));await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','hidden');
+ expect(await page.evaluate(()=>(window as any).__wake.locks.every((l:any)=>l.released))).toBe(true);
+ await page.evaluate(()=>window.dispatchEvent(new Event('pageshow')));await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ await page.getByRole('button',{name:'Ընդմիջել դասը',exact:true}).click();
+ await page.evaluate(()=>{window.dispatchEvent(new Event('pagehide'));window.dispatchEvent(new Event('pageshow'));});
+ await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(2);
+});
+
+
+test('pending requests never show active and rapid OFF ON cannot duplicate locks',async({page})=>{
+ await page.goto('/?tab=voice');await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ await page.evaluate(()=>{(window as any).__wake.hold=true});await startStudy(page);
+ await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','requesting');
+ const setting=page.getByLabel('Դասի ընթացքում էկրանը միացված պահել',{exact:true});await setting.uncheck();await setting.check();
+ expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(1);
+ await page.evaluate(()=>{const state=(window as any).__wake;state.hold=false;state.finish();});
+ await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+ expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(2);
+ expect(await page.evaluate(()=>(window as any).__wake.locks.filter((l:any)=>!l.released).length)).toBe(1);
+ await page.getByRole('button',{name:'Դադարեցնել դասը',exact:true}).click();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ expect(await page.evaluate(()=>(window as any).__wake.locks.every((l:any)=>l.released))).toBe(true);
+});
+
+test('listening and daily questions start on user activity without overriding pause',async({page})=>{
+ for(const tab of ['voice','teacher','it-english']){
+  await page.goto('/?tab='+tab);await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+  await page.getByRole('button',{name:'Լսել հարցը',exact:true}).first().click();await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','active');
+  await page.getByRole('button',{name:'Ընդմիջել դասը',exact:true}).click();
+  await page.getByRole('button',{name:'Լսել հարցը',exact:true}).first().click();
+  await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+  await expect(page.getByRole('button',{name:'Շարունակել դասը',exact:true})).toBeVisible();
+ }
+});
+
+
+test('refresh ignores a session saved for a different entry URL',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('haylingo-study-session',JSON.stringify({userId:'user-main',tab:'Dashboard',state:'active',entryUrl:'/'})));
+ await page.goto('/?tab=lessons');await page.reload();
+ await expect(page.getByRole('button',{name:'Հաջորդ նախադասությունը',exact:true})).toBeVisible();
+ await expect(wakeStatus(page)).toHaveAttribute('data-wake-status','inactive');
+ expect(await page.evaluate(()=>(window as any).__wake.requests)).toBe(0);
 });

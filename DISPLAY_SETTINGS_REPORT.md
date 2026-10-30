@@ -1,18 +1,25 @@
-# HayLingo v1.2.0 — էկրանի և տառաչափի կարգավորումներ
+# HayLingo v1.2.1 — էկրանի և տառաչափի կարգավորումներ
 
-Ամսաթիվ՝ **2026-10-30**։ Հիմք՝ `6249e21` (v1.1.4)։ Ճյուղ՝ `codex/display-settings`։ Production deployment չի կատարվել։
+Ամսաթիվ՝ **2026-10-30**։ Այս թարմացման հիմք՝ `871ebae` (v1.2.0)։ Ճյուղ՝ `codex/wake-lock-lifecycle`։ Production deployment չի կատարվել։
 
 ## Իրականացված հնարավորությունները
 
 ### 1. Էկրանը միացված պահել
 
-Կարգավորումներում ավելացվել է «Էկրանը միացված պահել» անջատիչը։ Միացված լինելու դեպքում ընթերցանության դասը, վարժությունների բաժինը, ուսումնական օգնականի հարցերը, առավոտյան/խոսակցական պարապմունքը, մասնագիտական երկխոսությունները և բառաքարտերը բացելիս պահանջվում է `navigator.wakeLock.request('screen')`։
+Կարգավորումը՝ **«Դասի ընթացքում էկրանը միացված պահել»**, սկզբնական արժեք՝ ON։ Նույն IndexedDB-ում պահպանվող անջատիչը կա նաև ընթացիկ դասի վերևում, ուստի այն կարելի է փոխել առանց դասից դուրս գալու։
 
-Պարապմունքի վերևում երևում են իրական API վիճակը և «Ավարտել պարապմունքը» / «Սկսել պարապմունքը» կոճակները։ Դասի ավարտը, պարապմունքի դադարեցումը, ուսուցման բաժնից դուրս գալը կամ կարգավորման անջատումը ազատում են պահումը։ Դասի ավտոմատ հաջորդ էջը բացվելուց հետո պահումը մնում է անջատված՝ մինչև նոր դասը սկսելը կամ դրա հաջորդ նախադասությանն անցնելը։
+Դասը մեկնարկում է «Սկսել պարապմունքը» կոճակով, ընտրացանկից ուսուցման բաժնի ընտրությամբ կամ իրական ուսումնական գործողությամբ՝ լսել, խոսել, պատասխանել։ Թարմ deep link-ը կամ ավտոմատ ձայնարկումն ինքնուրույն Wake Lock չի պահանջում։ Reading/Listening/Speaking-ը դասերի և վարժությունների մեջ է, Daily Questions-ը՝ ուսումնական օգնականում, Daily Conversations/Morning Practice-ը՝ ձայնային բաժնում, IT Roleplay-ը՝ մասնագիտական բաժնում։
 
-`visibilitychange`, `pagehide` և `pageshow` իրադարձությունները կառավարում են թաքցնելը, վերադառնալը և էջի վերականգնումը։ Ուշացած API պատասխանը չի կարող պահել էկրանը արդեն ավարտված պարապմունքի համար։ Օպերացիոն համակարգի կողմից release-ի կամ մերժման դեպքում երևում է հայերեն հաղորդագրություն ու կրկին փորձելու կոճակ։ Անվերջ ավտոմատ կրկնափորձեր չեն կատարվում։
+- **Ընդմիջել դասը** → ազատում է Wake Lock-ը, պահում դասի վիճակը։
+- **Շարունակել դասը** → նոր հարցում, եթե կարգավորումը ON է և էջը տեսանելի է։ Ընդմիջման ընթացքում այլ ուսումնական կոճակը չի վերացնում Pause-ը։
+- **Դադարեցնել դասը**, դասի ավարտ, բաժնից դուրս գալ, OFF կամ unmount → ազատում։ Առավոտյան/խոսակցական հարցաշարի վերջին հարցից կամ IT roleplay-ի վերջին քայլից առաջ անցնելը նույնպես ավարտում է պարապմունքը։ Բաց ավարտով պարապմունքն ավարտվում է «Դադարեցնել դասը»-ով։
+- **F5** → վերականգնում է նույն օգտատիրոջ active/paused վիճակն ու դասի նախադասությունը։ Active-ը նոր հարցում է կատարում, paused/idle-ը՝ ոչ։ Սեսիայի դրոշը tab-local `sessionStorage`-ում է՝ `userId` և սկզբնական URL կապով. կարգավորումն ու ուսումնական առաջընթացը շարունակում են պահպանվել IndexedDB-ում։ Այլ URL-ի հին սեսիան չի վերագրում նոր էջը։
 
-Հնարավորությունը ստուգվում է ըստ բրաուզերի API-ի և secure context-ի, ոչ սարքի անվան։ Այսպիսով նույն կոդը կիրառելի է աջակցող Android/iOS/Desktop բրաուզերներում։ Չաջակցվող բրաուզերում պարապմունքը շարունակում է աշխատել։ HTTPS, ակտիվ էջ և համակարգի թույլտվություն են անհրաժեշտ. մարտկոցի խնայումը կամ համակարգային քաղաքականությունը կարող են արգելել պահումը։ Տեխնիկական հիմքը՝ [MDN Screen Wake Lock API](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API) և [request()](https://developer.mozilla.org/en-US/docs/Web/API/WakeLock/request)։
+Ցուցիչը ակտիվ է դառնում միայն API-ի հաջող պատասխանից հետո. **🟢 ակտիվ**, **⚪ անջատված/հարցումն ընթացքի մեջ**, **🟠 անհասանելի**։ `visibilitychange`/`pagehide`-ը ազատում են պահումը՝ առանց առաջընթացը փոխելու։ `pageshow`/visible վերադարձը հարցում են անում միայն անհրաժեշտության դեպքում։ System release-ը կամ Battery Saver-ի մերժումը չեն առաջացնում անվերջ retry. կրկին փորձը հնարավոր է վերադարձի կամ «Կրկին միացնել»-ի միջոցով։
+
+Մեկ controller-ը կառավարում է ամբողջ hook-ի կյանքը։ API request/release գործողությունները հերթականացվում են նաև տարբեր controller-ների միջև՝ արագ unmount/remount և React Strict Mode դեպքերի համար։ Ուշացած արդյունքն անմիջապես ազատվում է, release listener-ները հեռացվում են, promise rejection-ները մշակվում են, disposed controller-ը React state չի փոխում։
+
+Միայն client-side, secure context և տեսանելի էջ։ Թաքնված տեսանյութ կամ workaround չկա։ Աջակցությունը ստուգվում է հնարավորությամբ, ոչ սարքի անվամբ. OS/browser սահմանափակումների դեպքում էկրանի միացված մնալը չի երաշխավորվում։ Հիմք՝ [MDN Screen Wake Lock API](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API) և [request()](https://developer.mozilla.org/en-US/docs/Web/API/WakeLock/request)։
 
 ### 2. Համակարգչային / Բջջային / Ավտոմատ ռեժիմ
 
@@ -38,40 +45,59 @@ Preview-ն և բաց հավելվածը փոխվում են անմիջապես։
 
 IndexedDB schema-ն մնում է **v3**, բոլոր 12 store-երը պահպանված են. փոփոխությունը լրացուցիչ դաշտեր/գրառում է և destructive schema migration չի պահանջում։ Առաջընթացը, դասերը և օգտատիրոջ տվյալները չեն մաքրվել։ JSON export/import-ը ներառում է նոր դաշտերը, իսկ անվավեր ռեժիմները, boolean-ները և 14–30px-ից դուրս չափերը մերժվում են։
 
-PWA cache տարբերակն ու հավելվածի համարը դարձել են **v1.2.0**։ Լույս/մութ թեմաները և անցանց ուսուցման գործող մեխանիզմը պահպանված են։ Նոր կարգավորումները ցանց կամ API բանալի չեն պահանջում։
+PWA cache տարբերակն ու հավելվածի համարը դարձել են **v1.2.1**։ Լույս/մութ թեմաները և անցանց ուսուցման գործող մեխանիզմը պահպանված են։ Նոր կարգավորումները ցանց կամ API բանալի չեն պահանջում։
 
-## Փոփոխված ֆայլերը
+## Այս թարմացման փոփոխված ֆայլերը
 
 | Ֆայլեր | Փոփոխություն |
 | --- | --- |
-| `lib/wake-lock.ts`, `lib/use-wake-lock.ts` | API controller, lifecycle, race-condition պաշտպանություն, հայերեն վիճակներ |
-| `lib/display-settings.ts`, `lib/use-display-settings.ts` | Լռելյայն արժեքներ, չափերի ստուգում, owner binding, responsive mode, live CSS |
-| `lib/types.ts`, `lib/storage.ts`, `lib/progress-validation.ts` | Տիպեր, additive migration, IndexedDB/LocalStorage, import validation |
-| `components/DisplaySettings.tsx`, `components/SettingsView.tsx` | Կարգավորումների իրական գործող կառավարումներ և preview |
-| `app/page.tsx`, `app/globals.css` | Պարապմունքի lifecycle, sidebar/mobile shell, keyboard navigation, typography և մեծ տառերի դասավորություն |
-| `components/LessonsView.tsx` | Դասի ավարտի lifecycle և երեք տեքստային չափեր |
-| `components/ExercisesView.tsx`, `components/TeacherView.tsx`, `components/VoicePracticeView.tsx` | Հարցերի, պատասխանների, արտասանության և մուտքագրման չափեր |
-| `components/ITEnglishView.tsx`, `components/ProfessionalPracticeView.tsx` | Մասնագիտական տեքստերի անկախ չափեր |
-| `components/VocabularyView.tsx`, `components/TranslationView.tsx` | Բառերի, օրինակների, արտասանության և թարգմանության չափեր |
-| `components/DashboardView.tsx`, `components/LearningHistoryView.tsx`, `components/PersonalSystemView.tsx` | Օրինակների և մակարդակի թեստի ուսումնական տեքստեր |
-| `package.json`, `package-lock.json`, `lib/pwa.ts`, `public/sw.js` | v1.2.0 տարբերակ |
-| `tests/display-settings.test.cjs`, `tests/e2e/display-settings.spec.ts` | Նոր unit/integration և բրաուզերային թեստեր |
-| `README.md`, `CHANGELOG.md`, `docs/DEVELOPMENT.md`, `DISPLAY_SETTINGS_REPORT.md` | Նկարագրություն, տարբերակի պատմություն, այս հաշվետվություն |
+| `lib/wake-lock.ts`, `lib/use-wake-lock.ts` | Կենտրոնացված lifecycle, հերթականացում, cleanup, իրական հայերեն կարգավիճակներ |
+| `lib/study-activity.tsx` | Ուսումնական գործողությունների start/finish context |
+| `app/page.tsx` | Դասի active/paused/idle վիճակ, refresh, live toggle, Pause/Resume/Stop |
+| `components/DisplaySettings.tsx` | Կարգավորման ճշգրիտ անվանում |
+| `components/LessonsView.tsx`, `components/ExercisesView.tsx`, `components/TeacherView.tsx` | Ուսումնական գործողությամբ մեկնարկ՝ առանց ավտոմատ ձայնարկմամբ մեկնարկի |
+| `components/VoicePracticeView.tsx`, `components/ITEnglishView.tsx`, `components/ProfessionalPracticeView.tsx` | Ձայնային/առավոտյան/մասնագիտական start/finish |
+| `components/PWAManager.tsx` | Սկզբնական deep link-ը կառավարվում է Home-ի վերականգնման հետ միասին |
+| `package.json`, `package-lock.json`, `lib/pwa.ts`, `public/sw.js` | v1.2.1 և PWA cache տարբերակ |
+| `tests/display-settings.test.cjs`, `tests/e2e/display-settings.spec.ts`, `tests/e2e/wake-lock-native.spec.ts` | Lifecycle, race, refresh, PWA simulation և native API թեստեր |
+| `README.md`, `CHANGELOG.md`, `DISPLAY_SETTINGS_REPORT.md` | Տարբերակ, պատմություն, հաշվետվություն |
+
+Նախորդ v1.2.0-ի display/font/persistence գործառույթները պահպանված են։ Զուգահեռ խմբագրման պատճառով ստուգումը կատարվել է առանձին `E:/AppS/AMEnglishApp-wake-lock` checkout-ում. մյուս խմբագրիչի նոր բաժինները չեն ներառվել այս commit-ում։
 
 ## Թեստերի արդյունքները
 
-Վերջնական արդյունքը՝ **114 հաջողված թեստ, 0 ձախողում** (66 unit/integration + 48 բրաուզերային)։
+Վերջնական արդյունքը՝ **137 հաջողված թեստ, 0 ձախողում**։
 
 | Հրաման | Արդյունք |
 | --- | --- |
-| `npm test` | **66 հաջողված, 0 ձախողված**՝ ներառյալ 17 նոր թեստ |
-| `npm run build` | **Հաջողվել է**՝ TypeScript և production build |
-| `npm run test:e2e` | **48 հաջողված, 0 ձախողված**՝ 2.0 րոպե, այդ թվում 21 նոր և 27 նախկին regression սցենար |
+| `npm test` | **71 հաջողված**, ներառյալ 22 display/persistence/Wake Lock թեստ |
+| `npm run build` | **Հաջողված**, TypeScript և production build |
+| `npm run test:e2e -- --reporter=list,json` | **66 հաջողված**, 2.1 րոպե, Chrome desktop/tablet/mobile չափերով |
+| `git diff --check` | Սխալներ չկան |
 
-Նոր թեստերը ներառում են Wake Lock request/release, պարապմունքի ավարտ, բոլոր ուսուցման բաժիններ, էջի hide/show, system release, մերժում, API-ի բացակայություն, ուշացած request, կարգավորման անջատում, ռեժիմների պահպանում, keyboard navigation, անկախ տառաչափեր, կենդանի preview, միայն IndexedDB-ից վերականգնում և 30px տառեր բոլոր հիմնական էջերում։ Ստուգվում են Chrome desktop **1440×1000**, tablet **820×1180**, mobile **390×844** չափերը և նախկին regression թեստերը։
+Բրաուզերային հավաքածուն՝ 36 display/lifecycle թեստ, 27 նախկին regression թեստ և 3 native API ստուգում։ Chrome viewport-ները՝ **1440×1000**, **820×1180**, **390×844**։ Իրական Chrome API-ն (առանց mock-ի) երեք դեպքում էլ տվել է **active**, Pause-ից հետո ստացված native Sentinel-ները եղել են **released**։ Գործարկումը Playwright-ի headless Chrome-ով է, localhost secure context-ում։
 
-Միջանկյալ ստուգմամբ ուղղվել են ցուցադրման select-ի accessible անունը և 30px տառաչափով դասերի ընտրացանկի լայնությունը։
+| Պահանջված սցենար | Ստուգում |
+| --- | --- |
+| 1. Դասի մեկնարկ | Mock + native API, ակտիվ է միայն հաջող պատասխանից հետո |
+| 2. Ավարտ/դադարեցում | Դասի ավարտի և Stop-ի E2E, Sentinel released |
+| 3. Pause | E2E և unit, ազատում |
+| 4. Resume | E2E և unit, նոր հարցում |
+| 5. Settings OFF | Ակտիվ դասում E2E, անմիջապես ազատում |
+| 6. Settings ON | Նույն ակտիվ դասում E2E, նոր հարցում |
+| 7. Hidden | Visibility և pagehide mock իրադարձություններ, ազատում |
+| 8. Visible վերադարձ | Նոր հարցում միայն active + ON դեպքում |
+| 9. F5 | Active/paused/idle, ON/OFF և դասի նախադասության պահպանում; այլ URL-ի հին սեսիան անտեսվում է |
+| 10. API-ի բացակայություն | Անվտանգ fallback, ուսուցումը շարունակում է աշխատել |
+| 11. Battery Saver / OS մերժում | Mock NotAllowedError/release, հայերեն հաղորդագրություն, retry միայն իրադարձությունից հետո |
+| 12. Արագ անցումներ | Pending OFF/ON և controller unmount/remount, զուգահեռ request չկա |
+| 13. Component unmount | Unit՝ ուշացած Sentinel-ի release և disposed controller-ից state update չկա |
+| 14. Mobile PWA lifecycle | Standalone դրոշի + pagehide/pageshow simulation երեք viewport-ով; իրական սարքի տեղադրում չի ստուգվել |
 
-**Ստուգման սահմանները.** Wake Lock-ի մերժման/ընդհատման և ակտիվացման lifecycle-ը unit/E2E թեստերում ստուգված է վերահսկվող API double-ով՝ իրական Chrome էջում։ Սա իրական հեռախոսի էկրանի երկարատև միացված մնալու կամ Android/iOS էներգախնայողության վարքի ապացույց չէ։ Իրական սարքերի OS screen timeout-ը և native PWA տեղադրումը ձեռքով չեն ստուգվել, ուստի այդ մասերի համար անվերապահ PASS չի հայտարարվում։
+Պահպանվել են նաև IndexedDB-only recovery, settings owner binding, հին տվյալների migration, բոլոր էջերի հասանելիություն, անցանց դասեր, light/dark, display modes և 30px տառաչափի ստուգումները։ Մեծ տառերի mobile screenshot-ը տեսողականորեն ստուգվել է։
 
-Արտաքին AI և Cloud Database չեն միացվել։ Production deployment չի կատարվել։
+Միջանկյալ ընդհանուր փորձարկման 2 ձախողումը բացահայտել էր արագ reload-ի ժամանակ նախորդ URL-ի սեսիան կիրառելու խնդիրը։ Ավելացվել է `entryUrl` ստուգում և առանձին regression թեստ։ Վերջնական առանձին checkout-ի ամբողջ հավաքածուն անցել է։
+
+**Սահմաններ.** Իրական Android/iOS սարքի էկրանի երկարատև միացված մնալը, իրական Battery Saver-ը և տեղադրված native PWA-ն չեն ստուգվել։ Mobile viewport-ը և standalone simulation-ը այդ սարքային ստուգումներին չեն փոխարինում։ OS/browser-ը կարող է մերժել կամ ընդհատել Wake Lock-ը։
+
+Արտաքին AI-ի և Cloud Database-ի ինտեգրման կարգավիճակը չի փոխվել։ Production deployment չի կատարվել։

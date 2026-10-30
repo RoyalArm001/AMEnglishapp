@@ -1,10 +1,12 @@
 'use client';
+import {useStudyActivity} from '../lib/study-activity';
 import React,{useEffect,useRef,useState} from 'react';
 import {PROFESSIONAL_ACTIVITIES,PROFESSIONAL_DIALOGUES} from '../data/professional-practice';
 import {PROFESSIONS_LIST} from '../data/professions';
 import {ProfessionId,SkillType} from '../lib/types';
 import {normalizeEnglishText,startSpeechRecognition} from '../lib/speech';
 export default function ProfessionalPracticeView({profession,onSpeak,onComplete}:{profession:ProfessionId;onSpeak:(text:string,speed?:'slow'|'normal')=>void;onComplete:(id:string,correct:boolean,prompt:string,answer:string,target:string,skill?:SkillType)=>void}){
+ const studyActivity=useStudyActivity();
  const [selected,setSelected]=useState(profession);const [index,setIndex]=useState(0);const [answer,setAnswer]=useState('');const [mode,setMode]=useState('study');const [feedback,setFeedback]=useState('');const stop=useRef<(()=>void)|null>(null);const [listening,setListening]=useState(false);
  useEffect(()=>{setSelected(profession);setIndex(0);setAnswer('');setFeedback('')},[profession]);
  useEffect(()=>()=>stop.current?.(),[]);
@@ -24,8 +26,8 @@ export default function ProfessionalPracticeView({profession,onSpeak,onComplete}
    {mode==='translate'&&<p><span data-learning-text="armenian">{current.answer[2]}</span></p>}
    {mode==='extended'&&<p><span data-learning-text="english">{current.followUp[0]}</span> · <span data-learning-text="pronunciation">{current.followUp[1]}</span> · <span data-learning-text="armenian">{current.followUp[2]}</span><br />Պատասխանեք երկու հարցին՝ <span data-learning-text="armenian">{current.answer[2]}</span> <span data-learning-text="armenian">{current.followUpAnswer[2]}</span></p>}
    <label className="block">Ձեր պատասխանը <input data-learning-text="english" aria-label="Մասնագիտական պատասխանը" value={answer} onChange={e=>{setAnswer(e.target.value);setFeedback('')}} className="w-full p-3 border rounded-xl dark:bg-slate-800" /></label>
-   {(mode==='speak'||mode==='extended')&&<button onClick={()=>{if(listening){stop.current?.();setListening(false);return;}stop.current=startSpeechRecognition({onStart:()=>setListening(true),onResult:setAnswer,onEnd:()=>setListening(false),onError:()=>{setListening(false);setFeedback('Խոսափողն անհասանելի է։ Կարող եք գրել պատասխանը։')}});if(!stop.current)setFeedback('Խոսքի ճանաչումը հասանելի չէ։ Գրեք պատասխանը։')}}>{listening?'Կանգնեցնել':'Պատասխանել խոսափողով'}</button>}
-   <button disabled={!answer.trim()||Boolean(feedback)} onClick={()=>{const correct=normalizeEnglishText(answer)===normalizeEnglishText(target);setFeedback(correct?'Ճիշտ է։':`Օրինակելի պատասխանը՝ ${target}`);onComplete(current.id,correct,current.question[0],answer,target,mode==='translate'?'writing':mode==='listen'?'listening':'speaking')}} className="px-4 py-2 bg-emerald-600 text-white rounded-xl disabled:opacity-50">Ստուգել</button>
+   {(mode==='speak'||mode==='extended')&&<button onClick={()=>{studyActivity.start();if(listening){stop.current?.();setListening(false);return;}stop.current=startSpeechRecognition({onStart:()=>setListening(true),onResult:setAnswer,onEnd:()=>setListening(false),onError:()=>{setListening(false);setFeedback('Խոսափողն անհասանելի է։ Կարող եք գրել պատասխանը։')}});if(!stop.current)setFeedback('Խոսքի ճանաչումը հասանելի չէ։ Գրեք պատասխանը։')}}>{listening?'Կանգնեցնել':'Պատասխանել խոսափողով'}</button>}
+   <button disabled={!answer.trim()||Boolean(feedback)} onClick={()=>{studyActivity.start();const correct=normalizeEnglishText(answer)===normalizeEnglishText(target);setFeedback(correct?'Ճիշտ է։':`Օրինակելի պատասխանը՝ ${target}`);onComplete(current.id,correct,current.question[0],answer,target,mode==='translate'?'writing':mode==='listen'?'listening':'speaking')}} className="px-4 py-2 bg-emerald-600 text-white rounded-xl disabled:opacity-50">Ստուգել</button>
   </>}
   <div className="flex gap-4"><button onClick={()=>onSpeak(target)}>Լսել պատասխանը</button><button onClick={()=>onSpeak(target,'slow')}>Լսել դանդաղ</button></div>
   {feedback&&<p role="status">{feedback}</p>}

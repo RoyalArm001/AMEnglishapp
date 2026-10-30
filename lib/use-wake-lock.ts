@@ -2,11 +2,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { createWakeLock, WakeStatus } from './wake-lock';
 
-export function useWakeLock(active: boolean) {
+export function useWakeLock(active: boolean, sessionKey = '') {
   const [status, setStatus] = useState<WakeStatus>('inactive');
   const controller = useRef<ReturnType<typeof createWakeLock> | null>(null);
   useEffect(() => {
-    if (!active) { setStatus('inactive'); return; }
     let suspended = false;
     controller.current = createWakeLock({
       request: window.isSecureContext && navigator.wakeLock?.request ? () => navigator.wakeLock.request('screen') : undefined,
@@ -19,8 +18,12 @@ export function useWakeLock(active: boolean) {
         window.addEventListener('pagehide', hide);
         return () => { document.removeEventListener('visibilitychange', callback); window.removeEventListener('pageshow', show); window.removeEventListener('pagehide', hide); };
       },
-    }, setStatus);
+    }, setStatus, false);
     return () => { controller.current?.dispose(); controller.current = null; };
-  }, [active]);
+  }, []);
+  useEffect(() => {
+    controller.current?.setActive(false);
+    controller.current?.setActive(active);
+  }, [active, sessionKey]);
   return { status, retry: () => controller.current?.retry() };
 }

@@ -1,5 +1,12 @@
 # HayLingo — տարբերակների պատմություն / Changelog
 
+## v1.2.1 — 2026-10-30
+
+- **Wake Lock lifecycle.** `lib/wake-lock.ts`, `lib/use-wake-lock.ts`: հարցումների և release-ի հերթականացում, Pause/Resume, OFF/ON, visibility/pagehide/pageshow, ուշացած պատասխանների և unmount-ի պաշտպանություն, release listener-ի մաքրում։ Համակարգային մերժումից հետո անվերջ կրկնափորձ չկա։
+- **Դասի իրական վիճակ.** `app/page.tsx`, `lib/study-activity.tsx`, ուսուցման բաղադրիչներ. օգտատիրոջ գործողությամբ մեկնարկ, առանձին ընդմիջում/շարունակում/դադարեցում, F5-ից հետո նույն օգտատիրոջ նույն էջի վիճակի վերականգնում։ Settings-ի նույն անջատիչը հասանելի է նաև ընթացիկ դասում։
+- **PWA և տարբերակ.** `components/PWAManager.tsx`, `lib/pwa.ts`, `public/sw.js`, package ֆայլեր. սկզբնական էջի ընտրությունը համադրվում է վերականգնված դասի հետ, cache՝ v1.2.1։
+- **Ստուգում.** Mock API-ով lifecycle/race թեստեր և Chrome-ի իրական Wake Lock API-ով ստուգում։ Մանրամասները՝ `DISPLAY_SETTINGS_REPORT.md`։ Արտաքին AI/Cloud Database-ի կարգավիճակը չի փոխվել։
+
 Փոփոխությունների վայրը նշված է յուրաքանչյուր տարբերակի տակ։ Տարբերակի համարը պահվում է `package.json`, `lib/pwa.ts` և `public/sw.js` ֆայլերում։
 
 ## v1.2.0 — 2026-10-30 — էկրանի և տառաչափի կարգավորումներ

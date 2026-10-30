@@ -1,4 +1,5 @@
 'use client';
+import { useStudyActivity } from '../lib/study-activity';
 
 import React, { useEffect, useState } from 'react';
 import ProfessionalPracticeView from './ProfessionalPracticeView';
@@ -33,9 +34,11 @@ interface ITEnglishViewProps {
 
 export default function ITEnglishView({
   progress,
-  onSpeak,
+  onSpeak: speakAudio,
   onCompleteRoleplay,
 }: ITEnglishViewProps) {
+  const studyActivity = useStudyActivity();
+  const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const [selectedTopicId, setSelectedTopicId] = useState<ITTopicId>(IT_DIALOGUES[0].topicId);
   const [activeScenarioId, setActiveScenarioId] = useState<string>(IT_DIALOGUES[0].id);
   const [roleplayMode, setRoleplayMode] = useState<'study' | 'interactive'>('interactive');
@@ -84,6 +87,7 @@ export default function ITEnglishView({
   const previousEmployeeTurn = activeScenario.turns[currentTurnIdx - 1];
 
   const handleCheckSpecialistTurn = () => {
+    studyActivity.start();
     if (!currentSpecialistTurn || !userReply.trim()) return;
 
     const normUser = normalizeEnglishText(userReply);
@@ -134,11 +138,13 @@ export default function ITEnglishView({
     if (nextIdx < activeScenario.turns.length) {
       setCurrentTurnIdx(nextIdx);
     } else {
+      studyActivity.finish();
       setCurrentTurnIdx(1);
     }
   };
 
   const handleVoiceReply = () => {
+    studyActivity.start();
     if (isListening && stopRecFn) {
       stopRecFn();
       setIsListening(false);

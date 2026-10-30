@@ -1,4 +1,5 @@
 'use client';
+import { useStudyActivity } from '../lib/study-activity';
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -51,9 +52,11 @@ export default function LessonsView({
   onUpdateSentencePosition,
   onToggleSaveSentence,
   onCompleteLesson,
-  onSpeak,
+  onSpeak: speakAudio,
   onRecordSpeakingAttempt,
 }: LessonsViewProps) {
+  const studyActivity = useStudyActivity();
+  const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const [selectedCategory, setSelectedCategory] = useState<LessonCategoryId | 'all' | 'profession'>('all');
   const [selectedProfessionFilter, setSelectedProfessionFilter] = useState<ProfessionId>(
     progress.profile?.profession || 'IT Specialist'
@@ -96,7 +99,7 @@ export default function LessonsView({
   // Auto-play audio if enabled in settings
   useEffect(() => {
     if (progress.settings?.autoPlayAudio && currentSentence?.english) {
-      onSpeak(currentSentence.english, progress.settings.speechRate);
+      speakAudio(currentSentence.english, progress.settings.speechRate);
     }
   }, [activeLesson.id, activeSentenceIdx]);
 
@@ -148,6 +151,7 @@ export default function LessonsView({
   };
 
   const handleSpeakPractice = () => {
+    studyActivity.start();
     if (isListening && stopRecognitionFn) {
       stopRecognitionFn();
       setIsListening(false);
@@ -193,6 +197,7 @@ export default function LessonsView({
   };
 
   const handleCheckManualFallback = () => {
+    studyActivity.start();
     if (!manualTextFallback.trim()) return;
     const res = compareSpokenToTarget(manualTextFallback, currentSentence.english);
     setSpokenTranscript(manualTextFallback);
