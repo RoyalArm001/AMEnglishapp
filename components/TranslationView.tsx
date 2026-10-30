@@ -81,7 +81,7 @@ export default function TranslationView({ onSpeak }: { onSpeak: (text: string) =
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <label htmlFor="translation-input" className="mb-2 block text-sm font-semibold">Թարգմանվող տեքստը</label>
-            <textarea id="translation-input" value={text} maxLength={MAX_TRANSLATION_CHARACTERS} onChange={(event) => { resetRequest(); setText(event.target.value); }} placeholder={from === 'en' ? 'Օրինակ՝ I am learning English.' : 'Օրինակ՝ Ես անգլերեն եմ սովորում։'} className="min-h-44 w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 p-4 text-base outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800" />
+            <textarea data-learning-text={from === 'en' ? 'english' : 'armenian'} id="translation-input" value={text} maxLength={MAX_TRANSLATION_CHARACTERS} onChange={(event) => { resetRequest(); setText(event.target.value); }} placeholder={from === 'en' ? 'Օրինակ՝ I am learning English.' : 'Օրինակ՝ Ես անգլերեն եմ սովորում։'} className="min-h-44 w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 p-4 text-base outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800" />
             <p className="mt-1 text-right text-xs text-slate-400">{text.length}/{MAX_TRANSLATION_CHARACTERS}</p>
           </div>
           <div>
@@ -89,8 +89,8 @@ export default function TranslationView({ onSpeak }: { onSpeak: (text: string) =
             <div role="status" aria-live="polite" aria-busy={loading} className="min-h-44 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 dark:border-emerald-900 dark:bg-emerald-950/30">
               {loading ? <p className="flex items-center gap-2 text-sm text-slate-500"><Loader2 size={17} className="animate-spin" /> Թարգմանվում է…</p> : result ? (
                 <>
-                  <p lang={result.to} className="whitespace-pre-wrap break-words text-lg font-medium">{result.text}</p>
-                  {result.pronunciation && <p className="mt-3 text-xs text-slate-500">Անգլերենը կարդացվում է՝ {result.pronunciation}</p>}
+                  <p data-learning-text={result.to === 'en' ? 'english' : 'armenian'} lang={result.to} className="whitespace-pre-wrap break-words text-lg font-medium">{result.text}</p>
+                  {result.pronunciation && <p className="mt-3 text-xs text-slate-500">Անգլերենը կարդացվում է՝ <span data-learning-text="pronunciation">{result.pronunciation}</span></p>}
                   <p className="mt-4 text-xs font-semibold text-emerald-700 dark:text-emerald-300">{result.source === 'dictionary' ? 'Աղբյուր՝ HayLingo-ի ուսումնական բազա' : `Աղբյուր՝ MyMemory · առցանց առաջարկ${result.cached ? ' · այս էջում արդեն ստացված' : ''}`}</p>
                   {result.source === 'mymemory' && <p className="mt-1 text-xs text-slate-500">Թարգմանությունը կարող է անճշտություններ պարունակել։ Այն չի ավելացվում դասերի պատասխաններին։</p>}
                 </>
@@ -125,8 +125,8 @@ export default function TranslationView({ onSpeak }: { onSpeak: (text: string) =
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {matches.slice(0, visibleCount).map((entry) => <article key={`${entry.english}|${entry.armenian}`} className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
             <p className="text-xs text-emerald-600 dark:text-emerald-400">{entry.category}</p>
-            <p lang="en" className="mt-2 font-semibold">{entry.english}</p>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{entry.armenian}</p>
+            <p lang="en" className="mt-2 font-semibold"><span data-learning-text="english">{entry.english}</span></p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300"><span data-learning-text="armenian">{entry.armenian}</span></p>
             <button type="button" aria-label={`Լսել՝ ${entry.english}`} onClick={() => onSpeak(entry.english)} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-emerald-600"><Volume2 size={14} /> Լսել</button>
           </article>)}
         </div>

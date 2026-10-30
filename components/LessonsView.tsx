@@ -30,7 +30,7 @@ interface LessonsViewProps {
   progress: UserProgressData;
   selectedLessonId: string;
   initialSentenceIdx?: number;
-  onSelectLesson: (lessonId: string, sentenceIdx?: number) => void;
+  onSelectLesson: (lessonId: string, sentenceIdx?: number, startSession?: boolean) => void;
   onUpdateSentencePosition: (lessonId: string, sentenceIdx: number) => void;
   onToggleSaveSentence: (sentenceId: string) => void;
   onCompleteLesson: (lessonId: string) => void;
@@ -130,7 +130,7 @@ export default function LessonsView({
       onCompleteLesson(activeLesson.id);
       const currentIdx = LESSONS_DATA.findIndex((l) => l.id === activeLesson.id);
       if (currentIdx >= 0 && currentIdx + 1 < LESSONS_DATA.length) {
-        onSelectLesson(LESSONS_DATA[currentIdx + 1].id, 0);
+        onSelectLesson(LESSONS_DATA[currentIdx + 1].id, 0, false);
         setActiveSentenceIdx(0);
       } else {
         setActiveSentenceIdx(0);
@@ -291,7 +291,7 @@ export default function LessonsView({
               {UI_TEXT.mandatoryFields.english}
             </div>
             <p className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-snug">
-              {currentSentence.english}
+              <span data-learning-text="english">{currentSentence.english}</span>
             </p>
           </div>
 
@@ -300,7 +300,7 @@ export default function LessonsView({
               {UI_TEXT.mandatoryFields.pronunciation}
             </div>
             <p className="text-lg md:text-xl font-semibold text-emerald-800 dark:text-emerald-300">
-              {currentSentence.pronunciation}
+              <span data-learning-text="pronunciation">{currentSentence.pronunciation}</span>
             </p>
           </div>
 
@@ -309,7 +309,7 @@ export default function LessonsView({
               {UI_TEXT.mandatoryFields.armenian}
             </div>
             <p className="text-lg md:text-xl font-medium text-slate-800 dark:text-slate-100">
-              {currentSentence.armenian}
+              <span data-learning-text="armenian">{currentSentence.armenian}</span>
             </p>
           </div>
 
@@ -414,7 +414,7 @@ export default function LessonsView({
                           : 'bg-rose-500/20 text-rose-800 dark:text-rose-300 underline'
                       }`}
                     >
-                      {item.word}
+                      <span data-learning-text="english">{item.word}</span>
                     </span>
                   ))}
                 </div>
@@ -428,7 +428,7 @@ export default function LessonsView({
             {/* Text Mode Fallback */}
             <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
               <div className="flex flex-col sm:flex-row gap-2">
-                <input
+                <input data-learning-text="english"
                   type="text"
                   value={manualTextFallback}
                   onChange={(e) => setManualTextFallback(e.target.value)}

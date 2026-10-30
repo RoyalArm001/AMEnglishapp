@@ -39,6 +39,13 @@ export function isValidProgressBackup(value: unknown): boolean {
     const settings = data.settings as Record<string, unknown>;
     for (const key of ['timezone','selectedVoiceURI','autoLightStartTime','autoDarkStartTime','preferredMorningTime']) if (key in settings && typeof settings[key] !== 'string') return false;
     if ('timezone' in settings) { try { new Intl.DateTimeFormat('en', { timeZone: String(settings.timezone) }); } catch { return false; } }
+    if ('userId' in settings && (typeof settings.userId !== 'string' || !settings.userId)) return false;
+    if ('keepScreenAwake' in settings && typeof settings.keepScreenAwake !== 'boolean') return false;
+    if ('displayMode' in settings && !['auto','desktop','mobile'].includes(String(settings.displayMode))) return false;
+    if ('fontSizes' in settings) {
+      if (!settings.fontSizes || typeof settings.fontSizes !== 'object' || Array.isArray(settings.fontSizes)) return false;
+      for (const size of Object.values(settings.fontSizes)) if (typeof size !== 'number' || !Number.isInteger(size) || size < 14 || size > 30) return false;
+    }
     if ('themeMode' in settings && !['light','dark','auto'].includes(String(settings.themeMode))) return false;
     for (const key of ['autoDetectTimezone','autoPlayAudio','hintsEnabled','autoRepeatMistakes','autoAdvanceExercises']) if (key in settings && typeof settings[key] !== 'boolean') return false;
     for (const key of ['voiceSpeedNumeric','dailyGoalMinutes']) if (key in settings && (typeof settings[key] !== 'number' || Number(settings[key]) <= 0)) return false;

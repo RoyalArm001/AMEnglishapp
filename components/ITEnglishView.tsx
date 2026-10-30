@@ -229,15 +229,15 @@ export default function ITEnglishView({
               <div className="space-y-1">
                 <p className="font-bold text-base text-slate-900 dark:text-white">
                   <span className="text-xs uppercase text-slate-400 block">English:</span>
-                  {phrase.english}
+                  <span data-learning-text="english">{phrase.english}</span>
                 </p>
                 <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
                   <span className="text-xs uppercase text-slate-400 block">Կարդացվում է:</span>
-                  {phrase.pronunciation}
+                  <span data-learning-text="pronunciation">{phrase.pronunciation}</span>
                 </p>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
                   <span className="text-xs uppercase text-slate-400 block">Հայերեն:</span>
-                  {phrase.armenian}
+                  <span data-learning-text="armenian">{phrase.armenian}</span>
                 </p>
               </div>
               <button
@@ -352,12 +352,12 @@ export default function ITEnglishView({
                       <Volume2 size={15} />
                     </button>
                   </div>
-                  <p className="font-bold text-base">{turn.english}</p>
+                  <p className="font-bold text-base"><span data-learning-text="english">{turn.english}</span></p>
                   <p className="text-xs md:text-sm text-emerald-700 dark:text-emerald-300 mt-1">
-                    🔊 {turn.pronunciation}
+                    🔊 <span data-learning-text="pronunciation">{turn.pronunciation}</span>
                   </p>
                   <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-                    🇦🇲 {turn.armenian}
+                    🇦🇲 <span data-learning-text="armenian">{turn.armenian}</span>
                   </p>
                 </div>
               );
@@ -379,12 +379,12 @@ export default function ITEnglishView({
                     <Volume2 size={14} /> Լսել աշխատակցին
                   </button>
                 </div>
-                <p className="text-lg md:text-xl font-bold">{previousEmployeeTurn.english}</p>
+                <p className="text-lg md:text-xl font-bold"><span data-learning-text="english">{previousEmployeeTurn.english}</span></p>
                 <p className="text-xs md:text-sm text-emerald-700 dark:text-emerald-300">
-                  🔊 {previousEmployeeTurn.pronunciation}
+                  🔊 <span data-learning-text="pronunciation">{previousEmployeeTurn.pronunciation}</span>
                 </p>
                 <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300">
-                  🇦🇲 {previousEmployeeTurn.armenian}
+                  🇦🇲 <span data-learning-text="armenian">{previousEmployeeTurn.armenian}</span>
                 </p>
               </div>
             )}
@@ -405,7 +405,7 @@ export default function ITEnglishView({
 
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                   Պատասխանեք անգլերեն՝ արտահայտելով հետևյալ միտքը․{' '}
-                  <strong>«{currentSpecialistTurn.armenian}»</strong>
+                  <strong>«<span data-learning-text="armenian">{currentSpecialistTurn.armenian}</span>»</strong>
                 </p>
 
                 {showHint && (
@@ -415,7 +415,7 @@ export default function ITEnglishView({
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <input
+                  <input data-learning-text="english"
                     type="text"
                     value={userReply}
                     onChange={(e) => setUserReply(e.target.value)}
@@ -453,10 +453,10 @@ export default function ITEnglishView({
                     </p>
                     <div className="text-sm">
                       <span className="font-semibold">Օրինակելի պատասխան (English)․ </span>
-                      <strong>{currentSpecialistTurn.english}</strong>
+                      <strong><span data-learning-text="english">{currentSpecialistTurn.english}</span></strong>
                     </div>
                     <div className="text-xs text-emerald-700 dark:text-emerald-300">
-                      🔊 <strong>Pronunciation:</strong> {currentSpecialistTurn.pronunciation}
+                      🔊 <strong>Pronunciation:</strong> <span data-learning-text="pronunciation">{currentSpecialistTurn.pronunciation}</span>
                     </div>
                     <div className="pt-2 flex items-center gap-2">
                       <button

@@ -248,6 +248,10 @@ export interface UserProfileRecord {
 
 export interface UserSettingsRecord {
   id: string;
+  userId: string;
+  keepScreenAwake: boolean;
+  displayMode: 'auto' | 'desktop' | 'mobile';
+  fontSizes: { interface: number; english: number; pronunciation: number; armenian: number };
   themeMode: ThemeMode; // 'light' | 'dark' | 'auto'
   autoLightStartTime: string; // Default '07:00'
   autoDarkStartTime: string;  // Default '19:00'

@@ -180,8 +180,8 @@ export default function LearningHistoryView({
                 </span>
               </div>
               <div className="space-y-2">
-                <p className="text-sm text-slate-500">{currentQ.questionAm}</p>
-                <h3 className="text-xl font-bold">{currentQ.questionEn}</h3>
+                <p className="text-sm text-slate-500"><span data-learning-text="armenian">{currentQ.questionAm}</span></p>
+                <h3 className="text-xl font-bold"><span data-learning-text="english">{currentQ.questionEn}</span></h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {currentQ.options.map((opt, idx) => (
@@ -190,7 +190,7 @@ export default function LearningHistoryView({
                     onClick={() => handleSelectOption(idx)}
                     className="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 text-left font-bold text-sm"
                   >
-                    {idx + 1}. {opt}
+                    {idx + 1}. <span data-learning-text="english">{opt}</span>
                   </button>
                 ))}
               </div>
@@ -401,9 +401,9 @@ export default function LearningHistoryView({
                       </button>
                     )}
                   </div>
-                  <div className="text-xs text-rose-500 line-through">{m.userAnswer}</div>
+                  <div className="text-xs text-rose-500 line-through"><span data-learning-text="english">{m.userAnswer}</span></div>
                   <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                    Ճիշտ՝ {m.correctAnswer}
+                    Ճիշտ՝ <span data-learning-text="english">{m.correctAnswer}</span>
                   </div>
                 </div>
               ))}
@@ -434,9 +434,9 @@ export default function LearningHistoryView({
                   className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between"
                 >
                   <div>
-                    <div className="font-bold text-sm">{w.word}</div>
+                    <div className="font-bold text-sm"><span data-learning-text="english">{w.word}</span></div>
                     <div className="text-xs text-slate-500">
-                      {w.pronunciation} · {w.armenian}
+                      <span data-learning-text="pronunciation">{w.pronunciation}</span> · <span data-learning-text="armenian">{w.armenian}</span>
                     </div>
                   </div>
                   <button

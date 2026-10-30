@@ -2,6 +2,14 @@
 
 Փոփոխությունների վայրը նշված է յուրաքանչյուր տարբերակի տակ։ Տարբերակի համարը պահվում է `package.json`, `lib/pwa.ts` և `public/sw.js` ֆայլերում։
 
+## v1.2.0 — 2026-10-30 — էկրանի և տառաչափի կարգավորումներ
+
+- Screen Wake Lock՝ դասի lifecycle, hide/show, release, retry և հայերեն fallback. `lib/wake-lock.ts`, `lib/use-wake-lock.ts`, `app/page.tsx`։
+- Համակարգչային / Բջջային / Ավտոմատ ցուցադրում, keyboard navigation. `app/globals.css`, `lib/use-display-settings.ts`։
+- Անգլերեն, արտասանություն, թարգմանություն և UI՝ առանձին 14–30px չափերով ու live preview. `components/DisplaySettings.tsx` և ուսումնական բաղադրիչներ։
+- Local userId-ին կապված կարգավորումներ, անվտանգ legacy defaults, IndexedDB persistence. `lib/storage.ts`, `lib/display-settings.ts`, `lib/progress-validation.ts`։
+- Թեստերը և սահմանափակումները՝ [DISPLAY_SETTINGS_REPORT.md](DISPLAY_SETTINGS_REPORT.md)։ Production-ում չի հրապարակվել։
+
 ## v1.1.4 — 2026-10-29 — պատրաստված փոփոխություններ, production-ում չհրապարակված
 
 - **Ուսումնական նյութեր.** `data/additional-lessons.ts`, `data/lessons.ts`, `data/exercises.ts`: 2 նոր դաս, 8 նախադասություն և 8 լսողական/թարգմանական վարժություն։ Ընդամենը՝ 28 դաս, 139 նախադասություն, 116 վարժություն։

@@ -196,10 +196,10 @@ export default function VocabularyView({
             {!isFlipped ? (
               <div className="text-center py-8 space-y-3">
                 <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white">
-                  {currentCard.word}
+                  <span data-learning-text="english">{currentCard.word}</span>
                 </h2>
                 <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
-                  🔊 {currentCard.pronunciation}
+                  🔊 <span data-learning-text="pronunciation">{currentCard.pronunciation}</span>
                 </p>
                 <p className="text-xs text-slate-400 pt-4">
                   Սեղմեք քարտի վրա՝ հայերեն նշանակությունը և օրինակը տեսնելու համար
@@ -212,7 +212,7 @@ export default function VocabularyView({
                     Հայերեն նշանակություն
                   </div>
                   <p className="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                    {currentCard.armenian}
+                    <span data-learning-text="armenian">{currentCard.armenian}</span>
                   </p>
                 </div>
 
@@ -229,12 +229,12 @@ export default function VocabularyView({
                       <Volume2 size={14} /> Լսել օրինակը
                     </button>
                   </div>
-                  <p className="font-bold text-base">{currentCard.exampleEn}</p>
+                  <p className="font-bold text-base"><span data-learning-text="english">{currentCard.exampleEn}</span></p>
                   <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                    🔊 {currentCard.examplePronunciation}
+                    🔊 <span data-learning-text="pronunciation">{currentCard.examplePronunciation}</span>
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-300">
-                    🇦🇲 {currentCard.exampleAm}
+                    🇦🇲 <span data-learning-text="armenian">{currentCard.exampleAm}</span>
                   </p>
                 </div>
               </div>
@@ -370,7 +370,7 @@ export default function VocabularyView({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-xl font-extrabold text-slate-900 dark:text-white">
-                              {item.word}
+                              <span data-learning-text="english">{item.word}</span>
                             </span>
                             <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-bold">
                               {item.level}
@@ -380,7 +380,7 @@ export default function VocabularyView({
                             )}
                           </div>
                           <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                            🔊 {item.pronunciation}
+                            🔊 <span data-learning-text="pronunciation">{item.pronunciation}</span>
                           </p>
                         </div>
 
@@ -406,7 +406,7 @@ export default function VocabularyView({
                       </div>
 
                       <p className="text-base font-bold text-slate-800 dark:text-slate-100 mt-2">
-                        🇦🇲 {item.armenian}
+                        🇦🇲 <span data-learning-text="armenian">{item.armenian}</span>
                       </p>
                     </div>
 
@@ -422,12 +422,12 @@ export default function VocabularyView({
                           <Volume2 size={13} /> Լսել
                         </button>
                       </div>
-                      <p className="text-xs md:text-sm font-semibold">{item.exampleEn}</p>
+                      <p className="text-xs md:text-sm font-semibold"><span data-learning-text="english">{item.exampleEn}</span></p>
                       <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                        {item.examplePronunciation}
+                        <span data-learning-text="pronunciation">{item.examplePronunciation}</span>
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {item.exampleAm}
+                        <span data-learning-text="armenian">{item.exampleAm}</span>
                       </p>
                     </div>
 

@@ -155,7 +155,7 @@ export default function DashboardView({
                       <span className="text-xs text-emerald-200 mr-1.5">
                         {UI_TEXT.mandatoryFields.english}
                       </span>
-                      {recommendedByProfession.sentences[0].english}
+                      <span data-learning-text="english">{recommendedByProfession.sentences[0].english}</span>
                     </p>
                     <button
                       onClick={() => onSpeak(recommendedByProfession.sentences[0].english)}
@@ -167,11 +167,11 @@ export default function DashboardView({
                   </div>
                   <p className="text-xs md:text-sm text-emerald-200">
                     <strong>{UI_TEXT.mandatoryFields.pronunciation}</strong>{' '}
-                    {recommendedByProfession.sentences[0].pronunciation}
+                    <span data-learning-text="pronunciation">{recommendedByProfession.sentences[0].pronunciation}</span>
                   </p>
                   <p className="text-xs md:text-sm text-slate-200">
                     <strong>{UI_TEXT.mandatoryFields.armenian}</strong>{' '}
-                    {recommendedByProfession.sentences[0].armenian}
+                    <span data-learning-text="armenian">{recommendedByProfession.sentences[0].armenian}</span>
                   </p>
                 </div>
               )}
@@ -503,13 +503,13 @@ export default function DashboardView({
               >
                 <div className="space-y-0.5">
                   <p className="font-semibold text-sm">
-                    <strong>{UI_TEXT.mandatoryFields.english}</strong> {s.english}
+                    <strong>{UI_TEXT.mandatoryFields.english}</strong> <span data-learning-text="english">{s.english}</span>
                   </p>
                   <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                    <strong>{UI_TEXT.mandatoryFields.pronunciation}</strong> {s.pronunciation}
+                    <strong>{UI_TEXT.mandatoryFields.pronunciation}</strong> <span data-learning-text="pronunciation">{s.pronunciation}</span>
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    <strong>{UI_TEXT.mandatoryFields.armenian}</strong> {s.armenian}
+                    <strong>{UI_TEXT.mandatoryFields.armenian}</strong> <span data-learning-text="armenian">{s.armenian}</span>
                   </p>
                 </div>
                 <button

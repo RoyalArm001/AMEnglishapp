@@ -118,9 +118,9 @@ export default function PersonalSystemView({
 
               <div className="space-y-2">
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  🇦🇲 {currentQ.questionAm}
+                  🇦🇲 <span data-learning-text="armenian">{currentQ.questionAm}</span>
                 </p>
-                <h3 className="text-xl md:text-2xl font-bold">{currentQ.questionEn}</h3>
+                <h3 className="text-xl md:text-2xl font-bold"><span data-learning-text="english">{currentQ.questionEn}</span></h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -130,7 +130,7 @@ export default function PersonalSystemView({
                     onClick={() => handleSelectOption(idx)}
                     className="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:bg-emerald-500/10 text-left font-bold text-sm md:text-base transition"
                   >
-                    {idx + 1}. {opt}
+                    {idx + 1}. <span data-learning-text="english">{opt}</span>
                   </button>
                 ))}
               </div>
@@ -314,10 +314,10 @@ export default function PersonalSystemView({
                   </div>
                   <p className="text-xs text-slate-500">{m.prompt}</p>
                   <p className="text-xs text-rose-600 dark:text-rose-400 line-through">
-                    Ձեր տարբերակը՝ {m.userAnswer}
+                    Ձեր տարբերակը՝ <span data-learning-text="english">{m.userAnswer}</span>
                   </p>
                   <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
-                    Ճիշտը՝ {m.correctAnswer}
+                    Ճիշտը՝ <span data-learning-text="english">{m.correctAnswer}</span>
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-300">{m.explanationAm}</p>
                 </div>

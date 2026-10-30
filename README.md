@@ -2,9 +2,13 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.1.4**
+**English learning for Armenian speakers · v1.2.0**
 
 [Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Իրականացման հաշվետվություն](CODEX_IMPLEMENTATION_REPORT.md)
+
+Նոր՝ էկրանը միացված պահել, Համակարգչային/Բջջային/Ավտոմատ ռեժիմ և չորս անկախ տառաչափեր (14–30px)։ [Ստուգման հաշվետվություն](DISPLAY_SETTINGS_REPORT.md)։
+
+New: study-session screen wake lock, Desktop/Mobile/Auto layouts, and independent interface, English, pronunciation and Armenian font sizes with live preview.
 
 ## Հայերեն
 

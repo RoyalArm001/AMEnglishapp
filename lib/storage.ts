@@ -1,3 +1,4 @@
+import { DEFAULT_FONT_SIZES, normalizeDisplaySettings } from './display-settings';
 import { isValidProgressBackup } from './progress-validation';
 import {
   AchievementRecord,
@@ -67,6 +68,10 @@ export const DEFAULT_USER_PROFILE: UserProfileRecord = {
 
 export const DEFAULT_USER_SETTINGS: UserSettingsRecord = {
   id: 'settings-main',
+  userId: 'user-main',
+  keepScreenAwake: true,
+  displayMode: 'auto',
+  fontSizes: DEFAULT_FONT_SIZES,
   themeMode: 'light',
   autoLightStartTime: '07:00',
   autoDarkStartTime: '19:00',
@@ -226,6 +231,11 @@ export function normalizeAndValidateState(raw: Partial<UserProgressData>): UserP
     learningStartDate: raw.profile?.learningStartDate || todayInTz,
   };
 
+  const userId = mergedProfile.id || DEFAULT_USER_PROFILE.id;
+  mergedProfile.id = userId;
+  const displaySource = raw.settings?.userId && raw.settings.userId !== userId ? {} : raw.settings || {};
+  Object.assign(mergedSettings, normalizeDisplaySettings(displaySource, userId), { id: 'settings-' + userId });
+
   const derivedName =
     mergedProfile.firstName.trim()
       ? `${mergedProfile.firstName.trim()}${mergedProfile.lastName.trim() ? ' ' + mergedProfile.lastName.trim() : ''}`
@@ -382,7 +392,8 @@ class LocalLearningRepository implements ILearningRepository {
             } catch {
               // Ignore quota errors
             }
-            resolve(merged);
+            // Persist additive defaults and the owner-scoped settings record on legacy reads.
+            this.saveProgress(merged).then(() => resolve(merged)).catch(() => resolve(merged));
           } else {
             // Seed IndexedDB stores with current state
             this.saveProgress(syncState).then(() => resolve(syncState)).catch(() => resolve(syncState));
@@ -450,7 +461,7 @@ class LocalLearningRepository implements ILearningRepository {
         // 3. settings store
         tx.objectStore(IDB_STORES.settings).put({
           ...normalized.settings,
-          id: 'settings-main',
+          id: normalized.settings.id,
           updatedAt: Date.now(),
         });
 

@@ -276,12 +276,12 @@ export default function VoicePracticeView({
               </button>
             </div>
           </div>
-          <p className="text-lg md:text-xl font-bold">{currentItem.questionEn}</p>
+          <p className="text-lg md:text-xl font-bold"><span data-learning-text="english">{currentItem.questionEn}</span></p>
           <p className="text-xs md:text-sm text-emerald-700 dark:text-emerald-300">
-            🔊 {currentItem.questionPronunciation}
+            🔊 <span data-learning-text="pronunciation">{currentItem.questionPronunciation}</span>
           </p>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400">
-            🇦🇲 {currentItem.questionAm}
+            🇦🇲 <span data-learning-text="armenian">{currentItem.questionAm}</span>
           </p>
         </div>
 
@@ -307,13 +307,13 @@ export default function VoicePracticeView({
             </div>
           </div>
           <p className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white">
-            “{currentItem.targetAnswerEn}”
+            “<span data-learning-text="english">{currentItem.targetAnswerEn}</span>”
           </p>
           <p className="text-sm md:text-base font-semibold text-emerald-800 dark:text-emerald-300">
-            🔊 {currentItem.targetPronunciation}
+            🔊 <span data-learning-text="pronunciation">{currentItem.targetPronunciation}</span>
           </p>
           <p className="text-sm text-slate-700 dark:text-slate-200">
-            🇦🇲 {currentItem.targetAnswerAm}
+            🇦🇲 <span data-learning-text="armenian">{currentItem.targetAnswerAm}</span>
           </p>
         </div>
 
@@ -372,7 +372,7 @@ export default function VoicePracticeView({
                           : 'bg-rose-500/20 text-rose-800 dark:text-rose-300 underline'
                       }`}
                     >
-                      {w.word}
+                      <span data-learning-text="english">{w.word}</span>
                     </span>
                   ))}
                 </div>
@@ -390,7 +390,7 @@ export default function VoicePracticeView({
             ⌨️ Տեքստային ռեժիմ (եթե միկրոֆոնը անհասանելի է կամ ցանկանում եք մուտքագրել ձեռքով)․
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <input
+            <input data-learning-text="english"
               type="text"
               value={manualText}
               onChange={(e) => setManualText(e.target.value)}

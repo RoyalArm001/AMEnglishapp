@@ -259,7 +259,7 @@ export default function ExercisesView({
         {/* Prompt Display Based on Exercise Type */}
         <div className="space-y-4">
           <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">
-            🇦🇲 {currentExercise.promptAm}
+            🇦🇲 <span data-learning-text="armenian">{currentExercise.promptAm}</span>
           </p>
 
           {/* Exercise A: Fill in the blank */}
@@ -268,10 +268,10 @@ export default function ExercisesView({
               <p className="text-xl md:text-2xl font-bold leading-relaxed">
                 {currentExercise.promptEn.split('___').map((part, i, arr) => (
                   <React.Fragment key={i}>
-                    {part}
+                    <span data-learning-text="english">{part}</span>
                     {i < arr.length - 1 && (
                       <span className="inline-block min-w-[90px] px-3 py-0.5 mx-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-b-2 border-emerald-500 text-center">
-                        {userInput || '___'}
+                        <span data-learning-text="english">{userInput || '___'}</span>
                       </span>
                     )}
                   </React.Fragment>
@@ -287,7 +287,7 @@ export default function ExercisesView({
                 Թարգմանեք անգլերեն․
               </div>
               <p className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
-                {currentExercise.promptEn}
+                <span data-learning-text="english">{currentExercise.promptEn}</span>
               </p>
             </div>
           )}
@@ -299,7 +299,7 @@ export default function ExercisesView({
                 ❌ Սխալ նախադասություն (Գտեք և գրեք ճիշտ տարբերակը)․
               </div>
               <p className="text-xl md:text-2xl font-bold text-rose-900 dark:text-rose-200 line-through decoration-rose-500/60">
-                {currentExercise.incorrectSentence || currentExercise.promptEn}
+                <span data-learning-text="english">{currentExercise.incorrectSentence || currentExercise.promptEn}</span>
               </p>
             </div>
           )}
@@ -319,7 +319,7 @@ export default function ExercisesView({
                       onClick={() => handleToggleWordChip(item.word, item.origIdx)}
                       className="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-sm"
                     >
-                      {item.word}
+                      <span data-learning-text="english">{item.word}</span>
                     </button>
                   ))
                 )}
@@ -339,7 +339,7 @@ export default function ExercisesView({
                           : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:border-emerald-500'
                       }`}
                     >
-                      {word}
+                      <span data-learning-text="english">{word}</span>
                     </button>
                   );
                 })}
@@ -395,7 +395,7 @@ export default function ExercisesView({
                   <div className="text-xs font-bold uppercase text-indigo-600 dark:text-indigo-400">
                     🎙️ Հարցին պատասխանեք ձայնով (կամ տեքստով)
                   </div>
-                  <p className="text-xl font-bold mt-1">{currentExercise.promptEn}</p>
+                  <p className="text-xl font-bold mt-1"><span data-learning-text="english">{currentExercise.promptEn}</span></p>
                 </div>
                 <button
                   onClick={() =>
@@ -431,7 +431,7 @@ export default function ExercisesView({
           {/* Input Box for A, B, C, E, F */}
           {currentExercise.type !== 'build-sentence' && (
             <div>
-              <input
+              <input data-learning-text="english"
                 type="text"
                 disabled={Boolean(checkedResult)}
                 value={userInput}
@@ -536,7 +536,7 @@ export default function ExercisesView({
             <div className="text-sm md:text-base">
               <span className="font-semibold">Ճիշտ տարբերակը․ </span>
               <strong className="text-emerald-700 dark:text-emerald-300">
-                {currentExercise.correctAnswer}
+                <span data-learning-text="english">{currentExercise.correctAnswer}</span>
               </strong>
             </div>
 

@@ -191,13 +191,13 @@ export default function TeacherView({
 
         <div>
           <p className="text-xl md:text-2xl font-bold leading-snug">
-            “{activeQuestion.questionEn}”
+            “<span data-learning-text="english">{activeQuestion.questionEn}</span>”
           </p>
           <p className="text-xs md:text-sm text-purple-200 mt-1.5">
-            🔊 {activeQuestion.questionPronunciation}
+            🔊 <span data-learning-text="pronunciation">{activeQuestion.questionPronunciation}</span>
           </p>
           <p className="text-xs md:text-sm text-slate-200 mt-0.5">
-            🇦🇲 {activeQuestion.questionAm}
+            🇦🇲 <span data-learning-text="armenian">{activeQuestion.questionAm}</span>
           </p>
         </div>
 
@@ -250,7 +250,7 @@ export default function TeacherView({
             m.role === 'user' ? (
               <div key={m.id} className="flex justify-end">
                 <div className="max-w-[80%] px-4 py-3 rounded-2xl bg-emerald-600 text-white text-sm font-medium shadow-sm">
-                  {m.textEn}
+                  <span data-learning-text="english">{m.textEn}</span>
                 </div>
               </div>
             ) : (
@@ -270,7 +270,7 @@ export default function TeacherView({
                     )}
                   </div>
 
-                  <p className="font-bold text-sm md:text-base">{m.textEn}</p>
+                  <p className="font-bold text-sm md:text-base"><span data-learning-text="english">{m.textEn}</span></p>
 
                   {m.explanationAm && (
                     <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 bg-white/70 dark:bg-slate-900/60 p-3 rounded-xl">
@@ -283,7 +283,7 @@ export default function TeacherView({
                       <span className="font-bold text-purple-600 dark:text-purple-400">
                         Հաջորդ հարցը ({m.level})․{' '}
                       </span>
-                      <span className="font-semibold">{m.nextQuestionEn}</span>
+                      <span className="font-semibold"><span data-learning-text="english">{m.nextQuestionEn}</span></span>
                     </div>
                   )}
                 </div>
@@ -295,7 +295,7 @@ export default function TeacherView({
 
       {/* Input Area */}
       <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row gap-2.5">
-        <input
+        <input data-learning-text="english"
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}

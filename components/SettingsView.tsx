@@ -1,5 +1,6 @@
 'use client';
 
+import DisplaySettings from './DisplaySettings';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Bell,
@@ -160,6 +161,8 @@ export default function SettingsView({
           Համակարգի և ուսուցման կարգավորումներ
         </h1>
       </div>
+
+      <DisplaySettings settings={settings} onChange={onUpdateSettings} />
 
       {/* A. Արտաքին տեսք (Appearance: Light / Dark / Auto) */}
       <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">

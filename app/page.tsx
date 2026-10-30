@@ -45,6 +45,9 @@ import {
   UserProgressData,
   UserSettingsRecord,
 } from '../lib/types';
+import { useDisplaySettings } from '../lib/use-display-settings';
+import { useWakeLock } from '../lib/use-wake-lock';
+import { WAKE_STATUS_AM } from '../lib/wake-lock';
 import { useStudyTimer } from '../lib/use-study-timer';
 import { LESSONS_DATA, LESSON_CATEGORIES } from '../data/lessons';
 import { speakEnglish, compareSpokenToTarget } from '../lib/speech';
@@ -96,6 +99,16 @@ const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] =
   { id: 'Settings', labelAm: UI_TEXT.nav.settings, subAm: 'Տեսք, Ժամ և Տվյալներ', icon: Settings },
 ];
 
+function navigateByKey(event: React.KeyboardEvent<HTMLElement>) {
+  if (!['ArrowDown','ArrowUp','Home','End'].includes(event.key)) return;
+  const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button'));
+  const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+  if (index < 0) return;
+  event.preventDefault();
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length-1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length;
+  buttons[next]?.focus();
+}
+
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTabId>('Dashboard');
   const navigateTab = useCallback((tab: string) => setActiveTab(tab as NavTabId), []);
@@ -105,6 +118,17 @@ export default function HomePage() {
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [storageError, setStorageError] = useState(false);
   const [startInPlacement, setStartInPlacement] = useState<boolean>(false);
+  const [sessionRunning, setSessionRunning] = useState(true);
+  const isLearning = ['Lessons','Exercises','Study Assistant','Voice Practice','IT English','Vocabulary'].includes(activeTab) || (activeTab === 'My Progress' && startInPlacement);
+  useDisplaySettings(progress.settings);
+  const wake = useWakeLock(hydrated && progress.onboardingCompleted && isLearning && sessionRunning && progress.settings.keepScreenAwake);
+  useEffect(() => { setSessionRunning(true); }, [activeTab]);
+  useEffect(() => {
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape' && mobileMenuOpen) { setMobileMenuOpen(false); document.querySelector<HTMLButtonElement>('[aria-label="Մենյու"]')?.focus(); } };
+    window.addEventListener('keydown', escape);
+    return () => window.removeEventListener('keydown', escape);
+  }, [mobileMenuOpen]);
+
   const [lessonSentenceResumeIdx, setLessonSentenceResumeIdx] = useState<number>(0);
 
   // Load persisted state from LocalStorage + IndexedDB on mount
@@ -265,7 +289,8 @@ export default function HomePage() {
     }));
   };
 
-  const handleOpenLesson = (lessonId: string, sentenceIdx: number = 0) => {
+  const handleOpenLesson = (lessonId: string, sentenceIdx: number = 0, startSession = true) => {
+    setSessionRunning(startSession);
     setLessonSentenceResumeIdx(sentenceIdx);
     updateAndPersist((prev): UserProgressData => {
       const existingLp = prev.lessonProgressMap?.[lessonId];
@@ -292,6 +317,7 @@ export default function HomePage() {
   };
 
   const handleUpdateSentencePosition = (lessonId: string, sentenceIdx: number) => {
+    setSessionRunning(true);
     updateAndPersist((prev): UserProgressData => {
       const existingLp = prev.lessonProgressMap?.[lessonId];
       const completedIndices = Array.from(
@@ -329,6 +355,7 @@ export default function HomePage() {
   };
 
   const handleCompleteLesson = (lessonId: string) => {
+    setSessionRunning(false);
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       if (prev.completedLessonIds.includes(lessonId)) return prev;
@@ -536,6 +563,7 @@ export default function HomePage() {
   };
 
   const handleCompletePlacement = (calculatedLevel: CEFRLevel, scorePercent: number) => {
+    setSessionRunning(false);
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
       const tz = prev.settings?.timezone || 'Asia/Yerevan';
@@ -623,10 +651,11 @@ export default function HomePage() {
       : '☀️ Ցերեկային տեսք';
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="app-shell min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {storageError && <div role="alert" className="fixed top-0 inset-x-0 z-50 bg-amber-100 text-amber-950 p-3 text-center">Առաջընթացը չի պահպանվել բրաուզերում։ Էջը փակելուց առաջ Կարգավորումներից արտահանեք JSON պահուստը։</div>}
+      <a href="#learning-main" className="skip-link">Անցնել պարապմունքին</a>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 justify-between z-30 overflow-y-auto">
+      <aside aria-label="Ձախ ընտրացանկ" className="app-sidebar bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 justify-between z-30 overflow-y-auto">
         <div className="space-y-4">
           {/* Brand Logo */}
           <div className="px-2 pt-1">
@@ -634,7 +663,7 @@ export default function HomePage() {
           </div>
 
           {/* Navigation Menu */}
-          <nav className="space-y-1">
+          <nav aria-label="Բաժինների ընտրություն" onKeyDown={navigateByKey} className="space-y-1">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const active = activeTab === item.id;
@@ -700,7 +729,7 @@ export default function HomePage() {
       </aside>
 
       {/* Mobile Header */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-2.5 flex items-center justify-between">
+      <header className="app-header sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <LogoIcon size={34} />
           <div>
@@ -738,8 +767,10 @@ export default function HomePage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="lg:hidden fixed inset-x-0 top-[57px] z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 shadow-xl space-y-1 max-h-[80vh] overflow-y-auto"
+            role="navigation" aria-label="Բջջային ընտրացանկ" onKeyDown={navigateByKey}
+            className="app-drawer fixed inset-x-0 top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 shadow-xl space-y-1 max-h-[80vh] overflow-y-auto"
           >
+            <button type="button" onClick={() => setMobileMenuOpen(false)} className="p-3 underline">Փակել ընտրացանկը</button>
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const active = activeTab === item.id;
@@ -770,15 +801,15 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="flex-1 lg:pl-72 pb-24 lg:pb-8">
+      <main id="learning-main" tabIndex={-1} className="app-main">
         <PWAManager
           morningPracticeTime={progress.settings?.preferredMorningTime || '08:30'}
           timezone={progress.settings?.timezone || 'Asia/Yerevan'}
           onNavigateTab={navigateTab}
         />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
+        <div className="app-content mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
           {/* Top Status Bar */}
-          <div className="hidden md:flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80 dark:border-slate-800/80">
+          <div className="app-top-status hidden md:flex flex-wrap gap-3 items-center justify-between mb-6 pb-4 border-b border-slate-200/80 dark:border-slate-800/80">
             <div>
               <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 ԱՆԳԼԵՐԵՆԻ ՈՒՍՈՒՑՄԱՆ ԱՆՁՆԱԿԱՆ ՀԱՐԹԱԿ ·{' '}
@@ -816,6 +847,11 @@ export default function HomePage() {
             </div>
           </div>
 
+          {isLearning && <section aria-label="Պարապմունքի էկրանը" className="study-session-bar mb-5 p-3 rounded-xl border border-emerald-300 flex flex-wrap gap-3 items-center justify-between">
+            <div><p>{sessionRunning ? 'Պարապմունքն ընթացքի մեջ է' : 'Պարապմունքն ավարտված կամ դադարեցված է'}</p><p data-wake-status={wake.status} className="text-sm">{WAKE_STATUS_AM[wake.status]}</p></div>
+            <button type="button" className="rounded-xl px-3 py-2 bg-emerald-600 text-white" onClick={() => setSessionRunning(value => !value)}>{sessionRunning ? 'Ավարտել պարապմունքը' : 'Սկսել պարապմունքը'}</button>
+            {['released','denied'].includes(wake.status) && <button type="button" className="underline" onClick={wake.retry}>Կրկին միացնել էկրանի պահումը</button>}
+          </section>}
           {activeTab === 'Dashboard' && (
             <DashboardView
               progress={progress}
@@ -835,7 +871,7 @@ export default function HomePage() {
               progress={progress}
               selectedLessonId={progress.currentLessonId}
               initialSentenceIdx={lessonSentenceResumeIdx}
-              onSelectLesson={(lessonId, sIdx = 0) => handleOpenLesson(lessonId, sIdx)}
+              onSelectLesson={handleOpenLesson}
               onUpdateSentencePosition={handleUpdateSentencePosition}
               onToggleSaveSentence={handleToggleSaveSentence}
               onCompleteLesson={handleCompleteLesson}
@@ -926,7 +962,7 @@ export default function HomePage() {
       {/* Mobile Bottom Navigation Bar (PWA Native App Experience) */}
       <nav
         aria-label="Հիմնական բաժիններ"
-        className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around shadow-lg"
+        className="app-bottom-nav fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around shadow-lg"
       >
         <button
           onClick={() => {

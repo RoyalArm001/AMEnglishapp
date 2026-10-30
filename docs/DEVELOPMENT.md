@@ -22,7 +22,7 @@ npm start
 
 Unit/integration tests cover translation, grading, progress, twelve IndexedDB stores, migration, import/export, streaks, study charts, and content integrity. Playwright runs installed Chrome at desktop, tablet and mobile viewport sizes against a local production server on port 3015. Install Chrome before running E2E tests. The production build checks TypeScript.
 
-See `CODEX_IMPLEMENTATION_REPORT.md` for the actual run results and hardware/browser limitations. New work stays on `codex/haylingo-v1.1.4`; merging or pushing to `main` can deploy to production and requires the owner's separate approval.
+See `CODEX_IMPLEMENTATION_REPORT.md` for the actual run results and hardware/browser limitations. New work stays on review branches; merging or pushing to `main` can deploy to production and requires the owner's separate approval.
 
 ## Learning content
 
