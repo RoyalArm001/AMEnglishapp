@@ -58,6 +58,7 @@ export interface LessonSentence {
   pronunciation: string; // Կարդացվում է (natural Armenian transcription)
   armenian: string;      // Հայերեն թարգմանություն
   grammarNoteAm?: string;
+  colorHex?: string;
   speechText?: string;
   writingTask?: {
     promptAm: string;
@@ -76,6 +77,8 @@ export interface LessonItem {
   level: CEFRLevel;
   estimatedMinutes: number;
   grammarTipAm: string;
+  outcomeAm?: string;
+  sourceIds?: string[];
   recommendedProfessions?: ProfessionId[];
   sentences: LessonSentence[];
 }
@@ -792,6 +795,7 @@ export interface UserProgressData {
     writtenSentenceIds?: string[];
     readingAnswerIds?: string[];
     assessmentAnswerIds?: string[];
+    curriculumRevision?: number;
   };
   onboardingCompleted: boolean;
   profile: UserProfileRecord;

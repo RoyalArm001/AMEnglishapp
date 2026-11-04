@@ -32,6 +32,7 @@ export function isValidProgressBackup(value: unknown): boolean {
     for (const key of ['readingAnswerIds', 'assessmentAnswerIds']) {
       if (path[key] !== undefined && (!Array.isArray(path[key]) || !(path[key] as unknown[]).every(id => typeof id === 'string'))) return false;
     }
+    if (path.curriculumRevision !== undefined && (typeof path.curriculumRevision !== 'number' || !Number.isInteger(path.curriculumRevision) || path.curriculumRevision < 1)) return false;
   }
   if (data.profileDraft !== undefined) {
     const draft = data.profileDraft as Record<string, unknown>;

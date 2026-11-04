@@ -6,6 +6,7 @@ import { A1_EXTRA_READING, A1_FINAL_QUESTIONS, A1_FINAL_READING, A1_TEXTBOOKS, g
 import { isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete } from '../lib/learning-path';
 import { useStudyActivity } from '../lib/study-activity';
 import type { LessonItem, UserProgressData } from '../lib/types';
+import LessonSources from './LessonSources';
 
 interface StudyProps {
   progress: UserProgressData;
@@ -44,6 +45,7 @@ export function CourseReadingPanel({lesson, progress, onVerify, onSpeak, onCompl
     {question && <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} onAnswer={answer => onVerify('reading', question.id, answer)} />}
     {checked && <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300"><CheckCircle2 size={19} />Գլուխն ու ստուգումն ավարտված են։</p>}
     {!done && <button type="button" disabled={!checked} onClick={() => onCompleteLesson(lesson.id)} className={buttonClass}>Ավարտել դասը</button>}
+    <LessonSources lesson={lesson} age={progress.profile.age} onSpeak={onSpeak} />
     {done && lesson.id === 'lesson-8-daily-greetings' && <details className="rounded-xl border p-4">
       <summary className="cursor-pointer font-semibold">Լրացուցիչ ընթերցանություն · British Council</summary>
       <p className="my-3 text-sm text-slate-500">Ոչ պարտադիր նյութեր․ բացվում են առանձին կայքում և պահանջում են ինտերնետ։</p>

@@ -1,4 +1,5 @@
 import { LESSONS_DATA } from './lessons';
+import { INTERNATIONAL_CHAPTERS } from './international-chapters';
 import type { LessonSentence } from '../lib/types';
 
 export interface CourseQuestion extends LessonSentence {
@@ -15,7 +16,7 @@ export interface CourseChapter {
 }
 
 export const A1_TEXTBOOKS = [
-  {id: 'first-steps', titleAm: 'Իմ առաջին անգլերենը', subtitleAm: 'Տառեր, մարդիկ, առօրյա բառեր և ողջույններ'},
+  {id: 'first-steps', titleAm: 'Իմ առաջին անգլերենը', subtitleAm: 'Տառեր ու հնչյուններ, ընտանիք, գույներ և առաջին բառերը'},
   {id: 'numbers-and-me', titleAm: 'Թվերը և ես', subtitleAm: 'Հաշվել, ներկայանալ և կարդալ տարեթվերը'},
   {id: 'everyday-reading', titleAm: 'Իմ առօրյան', subtitleAm: 'Փոքր զրույցներ, օրեր, ժամեր և ուղղություններ'},
 ] as const;
@@ -139,6 +140,8 @@ export const A1_CHAPTERS: CourseChapter[] = [
     ['I am from Armenia. I am a student.', 'Այ էմ ֆրոմ Արմինիա։ Այ էմ ը սթյուդընթ։', 'Ես Հայաստանից եմ։ Ես ուսանող եմ։'],
     ['Nice to meet you. See you tomorrow!', 'Նայս թու միթ յու։ Սի յու թըմորոու։', 'Ուրախ եմ ծանոթանալու համար։ Կհանդիպենք վաղը։'],
   ], [['Ո՞ր երկրից է Աննան։ Գրիր երկրի անգլերեն անունը։', 'Armenia'], ['Լրացրու տեքստից՝ I am a ___.', 'student']]),
+  // Append to preserve the existing final-review question modes and IDs.
+  ...INTERNATIONAL_CHAPTERS,
 ];
 
 export const getA1Chapter = (lessonId: string) => A1_CHAPTERS.find(chapter => chapter.lessonId === lessonId);

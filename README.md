@@ -2,7 +2,7 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.6.0**
+**English learning for Armenian speakers · v1.7.0**
 
 [Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Իրականացման հաշվետվություն](CODEX_IMPLEMENTATION_REPORT.md)
 
@@ -10,9 +10,13 @@
 
 The guided A1 path starts with uppercase and lowercase letters, simple words, numbers, first sentences, years and short conversations. Study and listen, then type the answer yourself. Each step requires correct writing before you can continue.
 
-A1-ի դասերին կցված են HayLingo-ի երեք ուսումնական դասագրքեր՝ 21 գլուխ և 42 ընթերցանության հարց։ Բոլոր դասերից հետո պարտադիր է 25 առաջադրանքով ամփոփիչ աշխատանքը․ միայն դրա ավարտն է բացում A2-ն ու մյուս ուսումնական էջերը։ Գլուխները հասանելի են հենց դասապլանում՝ առանց ընդհանուր գրադարանի բացմանը սպասելու։ Պրոֆիլի չավարտված խմբագրումները պահվում են որպես սևագիր՝ էջից դուրս գալուց և refresh-ից հետո շարունակելու համար։
+A1-ի դասերին կցված են HayLingo-ի երեք ուսումնական դասագրքեր՝ 29 գլուխ և 58 ընթերցանության հարց։ Բոլոր դասերից հետո պարտադիր է 33 առաջադրանքով ամփոփիչ աշխատանքը․ միայն դրա ավարտն է բացում A2-ն ու մյուս ուսումնական էջերը։ Գլուխները հասանելի են հենց դասապլանում՝ առանց ընդհանուր գրադարանի բացմանը սպասելու։ Պրոֆիլի չավարտված խմբագրումները պահվում են որպես սևագիր՝ էջից դուրս գալուց և refresh-ից հետո շարունակելու համար։
 
-Three original HayLingo A1 coursebooks provide 21 lesson-linked chapters and 42 reading checks. A required 25-task final review covers writing, listening and reading before A2 and the other study pages unlock. Profile drafts survive navigation and refresh; saving applies them to the profile, while discarding a draft is a separate action.
+Three HayLingo A1 coursebooks provide 29 lesson-linked chapters and 58 reading checks. A required 33-task final review covers writing, listening and reading before A2 and the other study pages unlock. Profile drafts survive navigation and refresh; saving applies them to the profile, while discarding a draft is a separate action.
+
+Միջազգային բաց նյութերի ուսումնասիրությունից հետո ավելացվել են հնչյուններ, ընտանիք, գույներ, a/an և հոգնակի, be-ով հարցեր, have/has, սնունդ և առօրյա։ Օրինակներն ու հայերեն աջակցությունը պատրաստված են HayLingo-ի համար։ Դասերին կցված են սկզբնաղբյուրները, իսկ ծանոթության բաժնում՝ VOA-ի կրճատված երկխոսությունը։ [Աղբյուրներ և օգտագործման պայմաններ](CONTENT_SOURCES.md)։
+
+Eight additional beginner units draw on open ESOL teaching topics and A1 learning goals, with locally authored examples and Armenian support. Selected lessons include an abridged VOA dialogue and optional official resource links. [Source and attribution notes](CONTENT_SOURCES.md).
 
 Նոր՝ էկրանը միացված պահել, Համակարգչային/Բջջային/Ավտոմատ ռեժիմ և չորս անկախ տառաչափեր (14–30px)։ [Ստուգման հաշվետվություն](DISPLAY_SETTINGS_REPORT.md)։
 
@@ -38,10 +42,10 @@ HayLingo-ն օգնում է անգլերեն սովորել հասկանալի �
 
 | Բովանդակություն | Ներկա ծավալը |
 | --- | ---: |
-| Դասերի բաժիններ / դասեր | 16 / 42 |
-| Ուսումնական քայլեր՝ տառեր, բառեր և նախադասություններ | 240 |
-| A1 դասագրքեր / դասերին կցված գլուխներ | 3 / 21 |
-| Ընթերցանության հարցեր / ամփոփիչ առաջադրանքներ | 42 / 25 |
+| Դասերի բաժիններ / դասեր | 16 / 50 |
+| Ուսումնական քայլեր՝ տառեր, բառեր և նախադասություններ | 287 |
+| A1 դասագրքեր / դասերին կցված գլուխներ | 3 / 29 |
+| Ընթերցանության հարցեր / ամփոփիչ առաջադրանքներ | 58 / 33 |
 | Բառաքարտերի բառեր | 210 |
 | Վարժություններ | 116 |
 | ՏՏ թեմաներ / պատրաստի երկխոսություններ | 13 / 21 |

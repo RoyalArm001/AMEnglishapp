@@ -1,5 +1,6 @@
 import { ADDITIONAL_LESSONS } from './additional-lessons';
 import { FOUNDATION_LESSONS } from './foundation-lessons';
+import { INTERNATIONAL_LESSONS } from './international-lessons';
 import { LessonCategoryMeta, LessonItem, LessonSentence } from '../lib/types';
 import { PROFESSION_LESSONS } from './professions';
 
@@ -136,6 +137,7 @@ export const LESSON_CATEGORIES: LessonCategoryMeta[] = [
 
 export const LESSONS_DATA: LessonItem[] = [
   ...FOUNDATION_LESSONS,
+  ...INTERNATIONAL_LESSONS,
   // 1. Days of the Week (2 lessons)
   {
     id: 'lesson-1-days',

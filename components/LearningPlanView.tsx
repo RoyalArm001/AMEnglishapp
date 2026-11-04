@@ -81,9 +81,12 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
 
   return <section className="min-w-0 space-y-5 break-words rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
     <div><p className="text-xs font-semibold text-slate-500">Քայլ {index + 1} / {lesson.sentences.length}</p><h2 className="mt-1 text-xl font-bold">{lesson.titleAm}</h2></div>
+    {lesson.outcomeAm && <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Այս դասից հետո՝ {lesson.outcomeAm}</p>}
     {showMaterial && <p className="rounded-xl bg-slate-50 p-3 text-sm leading-relaxed dark:bg-slate-800">{lesson.grammarTipAm}</p>}
     <div className="space-y-2">
+      {showMaterial && sentence.colorHex && <span className="block h-16 w-16 rounded-2xl border border-slate-400" style={{backgroundColor: sentence.colorHex}} role="img" aria-label={sentence.armenian} />}
       {showMaterial && <><p lang="en" data-learning-text="english" className="font-bold">{sentence.english}</p><p data-learning-text="pronunciation" className="text-emerald-700 dark:text-emerald-300">{sentence.pronunciation}</p><p data-learning-text="armenian">{sentence.armenian}</p></>}
+      {showMaterial && sentence.grammarNoteAm && <p className="text-sm leading-relaxed text-slate-500">{sentence.grammarNoteAm}</p>}
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={() => {study.start(); onSpeak(sentence.speechText || sentence.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2"><Volume2 size={18} />Լսել դանդաղ</button>
         <button type="button" aria-pressed={progress.savedSentenceIds.includes(sentence.id)} onClick={() => onToggleSaveSentence(sentence.id)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2"><Star size={18} />{progress.savedSentenceIds.includes(sentence.id) ? 'Պահպանված է' : 'Պահպանել'}</button>

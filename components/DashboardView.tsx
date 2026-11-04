@@ -8,7 +8,7 @@ import {
 import { SITE_UPDATES } from '../data/site-updates';
 import { APP_VERSION } from '../lib/pwa';
 import { A1_CHAPTERS, A1_TEXTBOOKS } from '../data/a1-course';
-import { areCourseLessonsComplete, canOpenCourseLesson, getCurrentCourseLesson, isLevelCourseComplete } from '../lib/learning-path';
+import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getCurrentCourseLesson, isLevelCourseComplete } from '../lib/learning-path';
 import type { UserProgressData } from '../lib/types';
 import styles from './DashboardView.module.css';
 
@@ -64,8 +64,10 @@ export default function DashboardView({ onNavigate, canNavigate, progress, onOpe
   const beginner = progress.level === 'A1';
   const currentLesson = getCurrentCourseLesson(progress);
   const assessmentPending = beginner && areCourseLessonsComplete(progress) && !isLevelCourseComplete(progress);
+  const courseOrder = getCourseLessons(progress.level).map(lesson => lesson.id);
   const books = A1_TEXTBOOKS.map(book => ({...book,
-    chapters: A1_CHAPTERS.filter(chapter => chapter.bookId === book.id && canOpenCourseLesson(progress, chapter.lessonId)),
+    chapters: A1_CHAPTERS.filter(chapter => chapter.bookId === book.id && canOpenCourseLesson(progress, chapter.lessonId))
+      .sort((a, b) => courseOrder.indexOf(a.lessonId) - courseOrder.indexOf(b.lessonId)),
   })).filter(book => book.chapters.length > 0);
 
   return (

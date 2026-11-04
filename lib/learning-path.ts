@@ -3,6 +3,7 @@ import { A1_CHAPTERS, A1_FINAL_QUESTIONS, getA1Chapter } from '../data/a1-course
 import type { CEFRLevel, LessonItem, LessonSentence, UserProgressData } from './types';
 
 export const COURSE_LEVELS: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+export const CURRENT_CURRICULUM_REVISION = 2;
 export const isAtOrBelowLevel = (level: CEFRLevel, maximum: CEFRLevel) =>
   COURSE_LEVELS.indexOf(level) >= 0 && COURSE_LEVELS.indexOf(level) <= COURSE_LEVELS.indexOf(maximum);
 
@@ -83,7 +84,7 @@ export function normalizeLearningPath(progress: UserProgressData): UserProgressD
     ? saved.entryLevel : COURSE_LEVELS.includes(progress.level) ? progress.level : 'A1';
   // Keep a previously earned level during the one-time writing-check migration.
   // Multiple-choice history remains stored, but does not count as a written answer.
-  if (sameUser && saved && (saved.writtenSentenceIds === undefined || saved.readingAnswerIds === undefined) &&
+  if (sameUser && saved && (saved.writtenSentenceIds === undefined || saved.readingAnswerIds === undefined || saved.curriculumRevision !== CURRENT_CURRICULUM_REVISION) &&
     COURSE_LEVELS.includes(progress.level) && isAtOrBelowLevel(entryLevel, progress.level)) {
     entryLevel = progress.level;
   }
@@ -98,7 +99,7 @@ export function normalizeLearningPath(progress: UserProgressData): UserProgressD
     ? [...new Set(saved.readingAnswerIds.filter(id => readingIds.has(id)))] : [];
   const assessmentAnswerIds = sameUser && Array.isArray(saved?.assessmentAnswerIds)
     ? [...new Set(saved.assessmentAnswerIds.filter(id => assessmentIds.has(id)))] : [];
-  const result = {...progress, learningPath: {userId: progress.profile.id, entryLevel, verifiedSentenceIds, writtenSentenceIds, readingAnswerIds, assessmentAnswerIds}};
+  const result = {...progress, learningPath: {userId: progress.profile.id, entryLevel, verifiedSentenceIds, writtenSentenceIds, readingAnswerIds, assessmentAnswerIds, curriculumRevision: CURRENT_CURRICULUM_REVISION}};
   let highest = entryLevel;
   while (isLevelCourseComplete(result, highest)) {
     const next = COURSE_LEVELS[COURSE_LEVELS.indexOf(highest) + 1];
