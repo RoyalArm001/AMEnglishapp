@@ -59,7 +59,7 @@ export default function LessonsView({
   const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const [selectedCategory, setSelectedCategory] = useState<LessonCategoryId | 'all' | 'profession'>('all');
   const [selectedProfessionFilter, setSelectedProfessionFilter] = useState<ProfessionId>(
-    progress.profile?.profession || 'IT Specialist'
+    progress.profile?.profession || 'Other'
   );
   const [activeSentenceIdx, setActiveSentenceIdx] = useState<number>(initialSentenceIdx);
   const [isListening, setIsListening] = useState<boolean>(false);

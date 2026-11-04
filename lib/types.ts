@@ -58,6 +58,12 @@ export interface LessonSentence {
   pronunciation: string; // Կարդացվում է (natural Armenian transcription)
   armenian: string;      // Հայերեն թարգմանություն
   grammarNoteAm?: string;
+  speechText?: string;
+  writingTask?: {
+    promptAm: string;
+    acceptedAnswers?: string[];
+    caseSensitive?: boolean;
+  };
 }
 
 export interface LessonItem {
@@ -453,6 +459,7 @@ export interface DailyQuestionAnswerRecord {
 }
 
 export interface DailyQuestionDayState {
+  level?: CEFRLevel;
   id: string;
   userId: string;
   date: string;
@@ -765,7 +772,27 @@ export interface PageMemoryState {
   updatedAt?: number;
 }
 
+export interface ProfileDraft {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  age: string;
+  profession: ProfessionId;
+  customProfession: string;
+  learningGoal: LearningGoalId;
+  customGoal: string;
+}
+
 export interface UserProgressData {
+  profileDraft?: ProfileDraft;
+  learningPath?: {
+    userId: string;
+    entryLevel: CEFRLevel;
+    verifiedSentenceIds: string[];
+    writtenSentenceIds?: string[];
+    readingAnswerIds?: string[];
+    assessmentAnswerIds?: string[];
+  };
   onboardingCompleted: boolean;
   profile: UserProfileRecord;
   settings: UserSettingsRecord;

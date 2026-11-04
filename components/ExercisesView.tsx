@@ -1,5 +1,6 @@
 'use client';
 import { useStudyActivity } from '../lib/study-activity';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { evaluateExerciseAnswer } from '../lib/exercise-validation';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -69,9 +70,9 @@ export default function ExercisesView({
       const matchType = selectedType === 'all' || ex.type === selectedType;
       const levels: CEFRLevel[] = ['A1','A2','B1','B2','C1','C2'];
       const difficulty = progress.settings.exerciseDifficulty;
-      const allowed = difficulty === 'easy' ? ['A1','A2'] : difficulty === 'medium' ? ['B1','B2'] : difficulty === 'hard' ? ['C1','C2'] : levels.filter((_,i)=>Math.abs(i-levels.indexOf(progress.level))<=1);
+      const allowed = difficulty === 'easy' ? levels.filter(lvl => isAtOrBelowLevel(lvl, progress.level)) : [progress.level];
       const matchLevel = selectedLevel !== 'all' ? ex.level === selectedLevel : allowed.includes(ex.level);
-      return matchType && matchLevel;
+      return matchType && matchLevel && isAtOrBelowLevel(ex.level, progress.level);
     });
   }, [selectedType, selectedLevel, progress.settings.exerciseDifficulty, progress.level]);
 
@@ -217,7 +218,7 @@ export default function ExercisesView({
         {/* CEFR Level Filter */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-slate-400 mr-1">Մակարդակ․</span>
-          {(['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const).map((lvl) => (
+          {(['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const).filter(lvl => lvl === 'all' || isAtOrBelowLevel(lvl, progress.level)).map((lvl) => (
             <button
               key={lvl}
               onClick={() => {

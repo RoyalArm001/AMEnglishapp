@@ -23,6 +23,24 @@ export function isValidProgressBackup(value: unknown): boolean {
     return Object.entries(item).every(([key, v]) => !['__proto__', 'prototype', 'constructor'].includes(key) && safe(v));
   };
   if (!safe(data)) return false;
+  if (data.learningPath !== undefined) {
+    const path = data.learningPath as Record<string, unknown>;
+    if (!path || typeof path !== 'object' || Array.isArray(path)) return false;
+    if (typeof path.userId !== 'string' || !['A1','A2','B1','B2','C1','C2'].includes(String(path.entryLevel))) return false;
+    if (!Array.isArray(path.verifiedSentenceIds) || !path.verifiedSentenceIds.every(id => typeof id === 'string')) return false;
+    if (path.writtenSentenceIds !== undefined && (!Array.isArray(path.writtenSentenceIds) || !path.writtenSentenceIds.every(id => typeof id === 'string'))) return false;
+    for (const key of ['readingAnswerIds', 'assessmentAnswerIds']) {
+      if (path[key] !== undefined && (!Array.isArray(path[key]) || !(path[key] as unknown[]).every(id => typeof id === 'string'))) return false;
+    }
+  }
+  if (data.profileDraft !== undefined) {
+    const draft = data.profileDraft as Record<string, unknown>;
+    if (!draft || typeof draft !== 'object' || Array.isArray(draft)) return false;
+    for (const key of ['userId', 'firstName', 'lastName', 'age', 'profession', 'customProfession', 'learningGoal', 'customGoal']) {
+      if (typeof draft[key] !== 'string') return false;
+    }
+    if (!PROFESSIONS_LIST.some(profession => profession.id === draft.profession)) return false;
+  }
   for (const key of ['profile', 'settings', 'skills', 'teacherSession', 'lessonProgressMap', 'srsWords']) {
     if (key in data && (!data[key] || typeof data[key] !== 'object' || Array.isArray(data[key]))) return false;
   }

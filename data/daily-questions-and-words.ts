@@ -5,6 +5,7 @@ import {
   DailyWordChallengeState,
   DailyQuestionDayState,
 } from '../lib/types';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 
 export const DAILY_WORDS_POOL: DailyWordItem[] = [
   // A1 Level (12 words)
@@ -885,7 +886,7 @@ export const DAILY_QUESTIONS_POOL: DailyQuestionItem[] = [
     type: 'translate-am-en',
     level: 'A1',
     difficultyRank: 1,
-    professions: [],
+    professions: ['IT Specialist', 'Software Developer'],
     questionEn: 'Translate into English: «Իմ անունն է Դավիթ, և ես ծրագրավորող եմ։»',
     questionPronunciation: 'Թրանսլեյթ ինթու Ինգլիշ: Իմ անունն է Դավիթ...',
     questionAm: 'Իմ անունն է Դավիթ, և ես ծրագրավորող եմ։',
@@ -1812,7 +1813,7 @@ export function getDailyWordsChallenge(
   }
 
   const matchingLevel = DAILY_WORDS_POOL.filter((w) => w.level === level);
-  const pool = matchingLevel.length >= count ? matchingLevel : DAILY_WORDS_POOL;
+  const pool = matchingLevel.length >= count ? matchingLevel : DAILY_WORDS_POOL.filter(word => isAtOrBelowLevel(word.level, level));
 
   const selected: DailyWordItem[] = [];
   const poolCopy = [...pool];
@@ -1826,6 +1827,7 @@ export function getDailyWordsChallenge(
     id: `dw-${date}`,
     userId: 'user-main',
     date,
+    level,
     isCompleted: false,
     completedCount: 0,
     currentWordIndex: 0,
@@ -1846,29 +1848,39 @@ export function getDailyQuestionsDayState(
     seed = (seed * 37 + date.charCodeAt(i)) % 100000;
   }
 
-  let pool = DAILY_QUESTIONS_POOL.filter((q) => q.level === level);
-  if (profession) {
-    const profMatch = pool.filter((q) => q.professions?.includes(profession as any));
-    if (profMatch.length >= 3) {
-      pool = [...profMatch, ...pool.filter((q) => !q.professions?.includes(profession as any))];
-    }
-  }
-  if (pool.length < count) {
-    pool = DAILY_QUESTIONS_POOL;
-  }
-
+  // Never fill a nontechnical learner's day with another profession's questions.
+  const aliases: Record<string, string[]> = {
+    Manager: ['Business Manager'],
+    'Business Owner': ['Business Manager'],
+    'System Administrator': ['DevOps / SysAdmin'],
+    'Network Administrator': ['DevOps / SysAdmin'],
+  };
+  const selectedProfessions = profession ? [profession, ...(aliases[profession] || [])] : [];
+  const eligible = DAILY_QUESTIONS_POOL.filter(question =>
+    !question.professions?.length || question.professions.some(tag => selectedProfessions.includes(tag))
+  );
+  const levels: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  const targetLevel = levels.indexOf(level);
+  const closestLevels = levels.filter(candidate => isAtOrBelowLevel(candidate, level)).sort((a, b) =>
+    Math.abs(levels.indexOf(a) - targetLevel) - Math.abs(levels.indexOf(b) - targetLevel)
+    || levels.indexOf(a) - levels.indexOf(b)
+  );
   const selected: DailyQuestionItem[] = [];
-  const poolCopy = [...pool];
-  for (let i = 0; i < count && poolCopy.length > 0; i++) {
-    const idx = (seed + i * 11) % poolCopy.length;
-    selected.push(poolCopy[idx]);
-    poolCopy.splice(idx, 1);
+  for (const candidateLevel of closestLevels) {
+    const pool = eligible.filter(question => question.level === candidateLevel);
+    while (selected.length < count && pool.length > 0) {
+      const idx = (seed + selected.length * 11) % pool.length;
+      selected.push(pool[idx]);
+      pool.splice(idx, 1);
+    }
+    if (selected.length >= count) break;
   }
 
   return {
     id: `dq-${date}`,
     userId: 'user-main',
     date,
+    level,
     totalQuestions: selected.length,
     currentIndex: 0,
     isCompleted: false,

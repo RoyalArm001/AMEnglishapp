@@ -19,6 +19,7 @@ import {
   DailyWordAttemptRecord,
 } from '@/lib/types';
 import { getDailyWordsChallenge } from '@/data/daily-questions-and-words';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { speakEnglishText } from '@/lib/speech';
 import { setPageMemory } from '@/lib/page-memory';
 import { calculateNextSRS, getTodayDateString, recordLearningAttempt } from '@/lib/storage';
@@ -40,8 +41,11 @@ export default function DailyWordsView({
 
   // Initialize or restore challenge state
   const [challenge, setChallenge] = useState<DailyWordChallengeState>(() => {
-    if (userProgress.dailyWordsChallenge && userProgress.dailyWordsChallenge.date === todayStr) {
-      return userProgress.dailyWordsChallenge;
+    const saved = userProgress.dailyWordsChallenge;
+    if (saved && saved.date === todayStr && Array.isArray(saved.words) &&
+      (saved.level === userProgress.level || (!saved.level && saved.words.every(word => word.level === userProgress.level))) &&
+      saved.words.every(word => isAtOrBelowLevel(word.level, userProgress.level))) {
+      return saved;
     }
     return getDailyWordsChallenge(todayStr, userProgress.level, 3);
   });

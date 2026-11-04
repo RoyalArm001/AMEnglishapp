@@ -28,8 +28,8 @@ import {
   BookGlossaryEntry,
 } from '@/lib/types';
 import {
-  BOOKS_DATA,
-  POEMS_DATA,
+  BOOKS_DATA as ALL_BOOKS,
+  POEMS_DATA as ALL_POEMS,
   BOOK_CATEGORIES_DATA,
   lookupWordInLibrary,
 } from '@/data/books-and-poetry';
@@ -37,6 +37,7 @@ import { speakEnglishText } from '@/lib/speech';
 import { setPageMemory } from '@/lib/page-memory';
 import { useWakeLock } from '@/lib/use-wake-lock';
 import { recordLearningAttempt } from '@/lib/storage';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 
 interface BookLibraryViewProps {
   userProgress: UserProgressData;
@@ -55,6 +56,8 @@ export default function BookLibraryView({
   initialStep,
   initialMode,
 }: BookLibraryViewProps) {
+  const BOOKS_DATA = ALL_BOOKS.filter(item => isAtOrBelowLevel(item.level, userProgress.level));
+  const POEMS_DATA = ALL_POEMS.filter(item => isAtOrBelowLevel(item.level, userProgress.level));
   const [activeTab, setActiveTab] = useState<'reading' | 'poetry'>(initialMode || 'reading');
   const [selectedCategory, setSelectedCategory] = useState<BookCategory | 'all'>('all');
   const [selectedBookId, setSelectedBookId] = useState<string | null>(() => {
@@ -244,7 +247,7 @@ export default function BookLibraryView({
               Գրադարան և Պոեզիա
             </h1>
             <p className="text-xs sm:text-sm text-slate-400">
-              10 երկար պատմվածքներ, 5 բազմագլուխ գրքեր և 10 դասական պոեմներ՝ բառարանով ու ձայնով։
+              {userProgress.level} մակարդակին հասանելի նյութեր՝ {BOOKS_DATA.length} գիրք և պատմվածք, {POEMS_DATA.length} պոեմ։
             </p>
           </div>
 

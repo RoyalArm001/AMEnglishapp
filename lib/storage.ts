@@ -20,8 +20,9 @@ import {
   detectBrowserTimezone,
   getDateStringInTimezone,
 } from './i18n';
-import { PROFESSIONS_LIST } from '../data/professions';
+import { DEFAULT_PROFESSION, PROFESSIONS_LIST, resolveProfession } from '../data/professions';
 import { LESSONS_DATA } from '../data/lessons';
+import { normalizeLearningPath } from './learning-path';
 
 const SNAPSHOT_STORAGE_KEY = 'am_english_learning_snapshot_v3';
 const LEGACY_STORAGE_KEY_V2 = 'am_english_learning_state_v2';
@@ -71,9 +72,9 @@ export const DEFAULT_USER_PROFILE: UserProfileRecord = {
   firstName: '',
   lastName: '',
   age: 25,
-  profession: 'IT Specialist',
+  profession: DEFAULT_PROFESSION,
   customProfession: '',
-  proficiencyTier: 'Elementary',
+  proficiencyTier: 'Beginner',
   learningGoal: 'work',
   customGoal: '',
   learningStartDate: getDateStringInTimezone(DEFAULT_TIMEZONE),
@@ -121,7 +122,7 @@ export const DEFAULT_USER_PROGRESS: UserProgressData = {
   profile: DEFAULT_USER_PROFILE,
   settings: DEFAULT_USER_SETTINGS,
   userName: 'Սովորող',
-  level: 'A2',
+  level: 'A1',
   placementCompleted: false,
   completedLessonIds: [],
   currentLessonId: 'lesson-1-days',
@@ -267,6 +268,7 @@ export function normalizeAndValidateState(raw: Partial<UserProgressData>): UserP
   const mergedProfile: UserProfileRecord = {
     ...DEFAULT_USER_PROFILE,
     ...(raw.profile || {}),
+    profession: resolveProfession(raw.profile?.profession),
     learningStartDate: raw.profile?.learningStartDate || todayInTz,
   };
 
@@ -291,6 +293,7 @@ export function normalizeAndValidateState(raw: Partial<UserProgressData>): UserP
     ...DEFAULT_USER_PROGRESS,
     ...raw,
     profile: mergedProfile,
+    profileDraft: raw.profileDraft?.userId === userId ? raw.profileDraft : undefined,
     settings: mergedSettings,
     userName: derivedName,
     darkMode: effectiveDark,
@@ -390,10 +393,13 @@ export function normalizeAndValidateState(raw: Partial<UserProgressData>): UserP
   }
   updated.achievements = nextAchievements;
 
-  return updated;
+  return normalizeLearningPath(updated);
 }
 
 class LocalLearningRepository implements ILearningRepository {
+  private writeQueue: Promise<void> = Promise.resolve();
+  private memoryState?: UserProgressData;
+  private revision = 0;
   loadProgressSync(): UserProgressData {
     if (typeof window === 'undefined') {
       return DEFAULT_USER_PROGRESS;
@@ -419,43 +425,50 @@ class LocalLearningRepository implements ILearningRepository {
   }
 
   async loadProgressAsync(): Promise<UserProgressData> {
+    const initialRevision = this.revision;
     const syncState = this.loadProgressSync();
     let hasLocalSnapshot = false;
     try { const rawLocal = window.localStorage.getItem(SNAPSHOT_STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY_V2); hasLocalSnapshot = Boolean(rawLocal && isValidProgressBackup(JSON.parse(rawLocal))); } catch {}
     const db = await openIndexedDB();
     if (!db) {
-      return syncState;
+      return this.memoryState || syncState;
     }
 
     return new Promise((resolve) => {
       try {
         const tx = db.transaction([IDB_STORES.users], 'readonly');
         tx.oncomplete = () => db.close();
-        tx.onabort = () => { db.close(); resolve(syncState); };
+        tx.onabort = () => { db.close(); resolve(this.memoryState || syncState); };
         const usersStore = tx.objectStore(IDB_STORES.users);
         const req = usersStore.get('user-main');
         req.onsuccess = () => {
+          if (this.revision !== initialRevision && this.memoryState) {
+            resolve(this.memoryState);
+            return;
+          }
           if (req.result && req.result.payload && isValidProgressBackup(req.result.payload)) {
             const idbPayload = req.result.payload as Partial<UserProgressData>;
+            const localState = this.loadProgressSync();
             const merged = normalizeAndValidateState({
-              ...(!hasLocalSnapshot || Number(idbPayload.lastActiveTimestamp || 0) >= Number(syncState.lastActiveTimestamp || 0)
-                ? { ...syncState, ...idbPayload } : { ...idbPayload, ...syncState }),
+              ...(!hasLocalSnapshot || Number(idbPayload.lastActiveTimestamp || 0) > Number(localState.lastActiveTimestamp || 0)
+                ? { ...localState, ...idbPayload } : { ...idbPayload, ...localState }),
             });
             try {
               window.localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(merged));
             } catch {
               // Ignore quota errors
             }
-            // Persist additive defaults and the owner-scoped settings record on legacy reads.
-            this.saveProgress(merged).then(() => resolve(merged)).catch(() => resolve(merged));
+            // A read must not become a new write that overwrites a newer edit.
+            this.memoryState = merged;
+            resolve(merged);
           } else {
-            // Seed IndexedDB stores with current state
-            this.saveProgress(syncState).then(() => resolve(syncState)).catch(() => resolve(syncState));
+            resolve(this.memoryState || syncState);
           }
         };
-        req.onerror = () => resolve(syncState);
+        req.onerror = () => resolve(this.memoryState || syncState);
       } catch {
-        resolve(syncState);
+        db.close();
+        resolve(this.memoryState || syncState);
       }
     });
   }
@@ -464,8 +477,10 @@ class LocalLearningRepository implements ILearningRepository {
     if (typeof window === 'undefined') return;
     const normalized = normalizeAndValidateState({
       ...data,
-      lastActiveTimestamp: Date.now(),
+      lastActiveTimestamp: Math.max(Date.now(), (this.memoryState?.lastActiveTimestamp || 0) + 1),
     });
+    this.revision += 1;
+    this.memoryState = normalized;
 
     let snapshotSaved = false;
     try {
@@ -483,6 +498,13 @@ class LocalLearningRepository implements ILearningRepository {
       // Ignore localStorage quota errors
     }
 
+    // Keep the local snapshot immediate, and serialize asynchronous database writes.
+    const write = this.writeQueue.then(() => this.persistIndexedDB(normalized, snapshotSaved));
+    this.writeQueue = write.catch(() => {});
+    return write;
+  }
+
+  private async persistIndexedDB(normalized: UserProgressData, snapshotSaved: boolean): Promise<void> {
     const db = await openIndexedDB();
     if (!db) {
       if (!snapshotSaved) throw new Error('Progress storage is unavailable');
@@ -669,6 +691,7 @@ class LocalLearningRepository implements ILearningRepository {
   }
 
   async resetProgress(): Promise<UserProgressData> {
+    await this.writeQueue;
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.removeItem(SNAPSHOT_STORAGE_KEY);

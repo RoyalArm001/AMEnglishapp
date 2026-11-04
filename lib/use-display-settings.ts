@@ -7,9 +7,10 @@ export function useDisplaySettings(settings: UserSettingsRecord) {
     const root = document.documentElement;
     root.dataset.displayMode = settings.displayMode;
     const query = window.matchMedia('(min-width: 1024px)');
+    const wideEnough = window.matchMedia('(min-width: 768px)');
     const apply = () => {
       if (settings.displayMode === 'desktop') {
-        root.dataset.layout = 'desktop';
+        root.dataset.layout = wideEnough.matches ? 'desktop' : 'mobile';
       } else if (settings.displayMode === 'mobile') {
         root.dataset.layout = 'mobile';
       } else {
@@ -18,7 +19,8 @@ export function useDisplaySettings(settings: UserSettingsRecord) {
     };
     apply();
     query.addEventListener('change', apply);
-    return () => query.removeEventListener('change', apply);
+    wideEnough.addEventListener('change', apply);
+    return () => { query.removeEventListener('change', apply); wideEnough.removeEventListener('change', apply); };
   }, [settings.displayMode]);
   useEffect(() => {
     const root = document.documentElement;

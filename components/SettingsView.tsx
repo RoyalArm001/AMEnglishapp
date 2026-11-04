@@ -1,9 +1,12 @@
 'use client';
 
 import DisplaySettings from './DisplaySettings';
+import styles from './SettingsView.module.css';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Bell,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle2,
   Clock,
   Database,
@@ -13,11 +16,9 @@ import {
   Moon,
   RefreshCw,
   Share2,
-  ShieldAlert,
   Sliders,
   Smartphone,
   Sun,
-  Trash2,
   Upload,
   Volume2,
 } from 'lucide-react';
@@ -33,7 +34,6 @@ import {
   getDateStringInTimezone,
   getTimeStringInTimezone,
   SUPPORTED_TIMEZONES,
-  UI_TEXT,
 } from '../lib/i18n';
 import { CEFR_LEVELS } from '../lib/storage';
 import {
@@ -65,6 +65,25 @@ interface SettingsViewProps {
   onSpeak: (text: string, speed?: 'slow' | 'normal') => void;
 }
 
+type SettingsSection = 'appearance' | 'display' | 'timezone' | 'audio' | 'reminders' | 'learning' | 'data' | 'app';
+
+const SETTINGS_GROUPS: { title: string; items: { id: SettingsSection; title: string; description: string; icon: typeof Sun; tone: string }[] }[] = [
+  { title: 'Քո հավելվածը', items: [
+    { id: 'appearance', title: 'Արտաքին տեսք', description: 'Լուսավոր, մուգ և ավտոմատ ռեժիմ', icon: Sun, tone: 'amber' },
+    { id: 'display', title: 'Էկրան և տառաչափ', description: 'Ընթերցման չափերն ու ցուցադրման ռեժիմը', icon: Smartphone, tone: 'blue' },
+    { id: 'audio', title: 'Ձայն և արտասանություն', description: 'Ձայնի արագություն, խոսափող և հնչեցում', icon: Volume2, tone: 'violet' },
+  ] },
+  { title: 'Քո ուսուցումը', items: [
+    { id: 'learning', title: 'Ուսուցման կարգավորումներ', description: 'Մակարդակ, բարդություն և հուշումներ', icon: Sliders, tone: 'green' },
+    { id: 'reminders', title: 'Հիշեցումներ', description: 'Օրական պարապմունքի ժամն ու թեման', icon: Bell, tone: 'rose' },
+    { id: 'timezone', title: 'Ժամ և օրական նպատակ', description: 'Ժամային գոտի և ուսուցման տևողություն', icon: Clock, tone: 'blue' },
+  ] },
+  { title: 'Տվյալներ և հավելված', items: [
+    { id: 'data', title: 'Տվյալներ և պահուստավորում', description: 'Պահպանել կամ վերականգնել առաջընթացը', icon: Database, tone: 'violet' },
+    { id: 'app', title: 'Հավելվածի մասին', description: 'Տարբերակ, անցանց աշխատանք և կիսում', icon: Smartphone, tone: 'green' },
+  ] },
+];
+
 export default function SettingsView({
   progress,
   onUpdateSettings,
@@ -72,23 +91,36 @@ export default function SettingsView({
   onChangeLevel,
   onExportJson,
   onImportJson,
-  onExportSqlite,
   onImportSqlite,
-  onWipeAllData,
   onSpeak,
 }: SettingsViewProps) {
   const { settings } = progress;
+  const [activeSection, setActiveSection] = useState<SettingsSection | null>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const openSection = (section: SettingsSection | null) => {
+    setActiveSection(section);
+    requestAnimationFrame(() => {
+      titleRef.current?.focus({ preventScroll: true });
+      titleRef.current?.scrollIntoView({ block: 'start' });
+    });
+  };
+  const selectedSection = SETTINGS_GROUPS.flatMap(group => group.items).find(item => item.id === activeSection);
+  const sectionValues: Record<SettingsSection, string> = {
+    appearance: settings.themeMode === 'auto' ? 'Ավտոմատ' : settings.themeMode === 'dark' ? 'Մուգ' : 'Լուսավոր',
+    display: `${settings.fontSizes.interface}px`,
+    audio: `${settings.voiceSpeedNumeric.toFixed(2)}×`,
+    learning: progress.level,
+    reminders: progress.morningReminder?.isEnabled ? progress.morningReminder.reminderTime : 'Անջատված',
+    timezone: `${settings.dailyGoalMinutes} րոպե / օր`,
+    data: 'Այս սարքում',
+    app: APP_VERSION,
+  };
   const [voices, setVoices] = useState<BrowserVoiceOption[]>([]);
   const [micStatusAm, setMicStatusAm] = useState<string>('');
   const [importFeedback, setImportFeedback] = useState<{
     ok: boolean;
     messageAm: string;
   } | null>(null);
-  const [sqliteFeedback, setSqliteFeedback] = useState<{
-    ok: boolean;
-    messageAm: string;
-  } | null>(null);
-  const [confirmWipe, setConfirmWipe] = useState<boolean>(false);
   const [isStandalone, setIsStandalone] = useState<boolean>(false);
   const [notifPerm, setNotifPerm] = useState<string>('default');
   const [cacheStats, setCacheStats] = useState<{ cacheCount: number; cachedEntries: number }>({
@@ -97,7 +129,6 @@ export default function SettingsView({
   });
   const [pwaFeedback, setPwaFeedback] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const fileInputSqliteRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -137,72 +168,68 @@ export default function SettingsView({
     });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
     if (!file) return;
+    setImportFeedback(null);
     try {
-      const text = await file.text();
-      const res = await onImportJson(text);
-      if (res.ok) {
-        setImportFeedback({
-          ok: true,
-          messageAm: 'Տվյալները և ամբողջ ուսուցման առաջընթացը հաջողությամբ վերականգնվեցին JSON ֆայլից։',
-        });
-      } else {
-        setImportFeedback({
-          ok: false,
-          messageAm: res.errorAm || 'Չհաջողվեց ներմուծել տվյալները։',
-        });
-      }
-    } catch {
+      const header = new TextDecoder().decode(await file.slice(0, 16).arrayBuffer());
+      const result = header === 'SQLite format 3\0'
+        ? onImportSqlite ? await onImportSqlite(file) : { ok: false }
+        : await onImportJson(await file.text());
       setImportFeedback({
-        ok: false,
-        messageAm: 'Սխալ ֆայլը կարդալիս։',
+        ok: result.ok,
+        messageAm: result.ok
+          ? 'Տվյալները հաջողությամբ ներմուծվեցին։'
+          : 'Չհաջողվեց ներմուծել։ Ընտրեք հավելվածից արտահանված պահուստը։',
       });
+    } catch {
+      setImportFeedback({ ok: false, messageAm: 'Չհաջողվեց կարդալ պահուստը։ Փորձեք կրկին։' });
+    } finally {
+      input.value = '';
     }
-    e.target.value = '';
-  };
-
-  const handleSqliteFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !onImportSqlite) return;
-    try {
-      const res = await onImportSqlite(file);
-      setSqliteFeedback({
-        ok: res.ok,
-        messageAm: res.ok
-          ? 'SQLite (.db) բազան հաջողությամբ վերականգնվեց։'
-          : res.errorAm || 'SQLite վերականգնումը ձախողվեց։',
-      });
-    } catch (err) {
-      setSqliteFeedback({
-        ok: false,
-        messageAm: `SQLite ֆայլի սխալ: ${err instanceof Error ? err.message : String(err)}`,
-      });
-    }
-    e.target.value = '';
   };
 
   return (
-    <div className="space-y-8 max-w-4xl">
-      {/* Header */}
-      <div>
-        <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-          ԿԱՐԳԱՎՈՐՈՒՄՆԵՐ · ԱՐՏԱՔԻՆ ՏԵՍՔ, ԺԱՄԱՅԻՆ ԳՈՏԻ, ՁԱՅՆ ԵՎ ՏՎՅԱԼՆԵՐԻ ԲԱԶԱ
-        </span>
-        <h1 className="text-2xl md:text-3xl font-bold mt-1">
-          Համակարգի և ուսուցման կարգավորումներ
-        </h1>
+    <div className={styles.root}>
+      <header className={styles.header}>
+        {activeSection && <button type="button" className={styles.back} onClick={() => openSection(null)}><ChevronLeft size={20} aria-hidden="true" /> Կարգավորումներ</button>}
+        <h1 ref={titleRef} tabIndex={-1}>{selectedSection?.title || 'Կարգավորումներ'}</h1>
+        <p>{selectedSection?.description || 'Քո սովորելու ձևը՝ քո հարմարությամբ։'}</p>
+      </header>
+
+      {!activeSection && <>
+        <div className={styles.profile}>
+          <div className={styles.avatar} aria-hidden="true">{(progress.userName?.trim() || 'H').slice(0, 1).toUpperCase()}</div>
+          <div className={styles.profileText}><strong>{progress.userName || 'Սովորող'}</strong><span>Քո անձնական ուսումնական տարածքը</span></div>
+          <span className={styles.level}>{progress.level}</span>
+        </div>
+        <div className={styles.groups}>
+          {SETTINGS_GROUPS.map(group => <section key={group.title} className={styles.group} aria-label={group.title}>
+            <h2>{group.title}</h2>
+            <div className={styles.list}>
+              {group.items.map(item => <button key={item.id} type="button" className={styles.row} onClick={() => openSection(item.id)}>
+                <span className={styles.icon} data-tone={item.tone}><item.icon size={21} aria-hidden="true" /></span>
+                <span className={styles.rowText}><strong>{item.title}</strong><span>{item.description}</span><small>{sectionValues[item.id]}</small></span>
+                <ChevronRight size={18} className={styles.chevron} aria-hidden="true" />
+              </button>)}
+            </div>
+          </section>)}
+        </div>
+        <footer className={styles.footer}>HayLingo <span>·</span> {APP_VERSION}</footer>
+      </>}
+
+      <div hidden={activeSection !== 'display'} className={styles.detail}>
+        <DisplaySettings settings={settings} onChange={onUpdateSettings} />
       </div>
 
-      <DisplaySettings settings={settings} onChange={onUpdateSettings} />
-
       {/* A. Արտաքին տեսք (Appearance: Light / Dark / Auto) */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'appearance'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold flex items-center gap-2">
-              <Sun size={20} className="text-amber-500" /> Ա. Արտաքին տեսք (Ցերեկային / Գիշերային / Ավտոմատ)
+              <Sun size={20} className="text-amber-500" /> Ընտրիր արտաքին տեսքը
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Ավտոմատ ռեժիմն օգտագործում է Ձեր ընտրված ժամային գոտին ({settings.timezone}) և տեղական ժամանակը ({currentLocalTime})։
@@ -216,15 +243,16 @@ export default function SettingsView({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {(
             [
-              { id: 'light', label: '☀️ Ցերեկային — Light Mode', icon: Sun },
-              { id: 'dark', label: '🌙 Գիշերային — Dark Mode', icon: Moon },
-              { id: 'auto', label: '🕒 Ավտոմատ — Auto Mode', icon: Clock },
+              { id: 'light', label: 'Լուսավոր', icon: Sun },
+              { id: 'dark', label: 'Մուգ', icon: Moon },
+              { id: 'auto', label: 'Ավտոմատ', icon: Clock },
             ] as { id: ThemeMode; label: string; icon: any }[]
           ).map((mode) => {
             const active = settings.themeMode === mode.id;
             return (
               <button
                 key={mode.id}
+                aria-pressed={active}
                 onClick={() => onUpdateSettings({ themeMode: mode.id })}
                 className={`p-4 rounded-2xl border text-left font-bold text-xs md:text-sm transition flex items-center justify-between ${
                   active
@@ -232,7 +260,7 @@ export default function SettingsView({
                     : 'bg-slate-50 dark:bg-slate-800/70 border-slate-200 dark:border-slate-700'
                 }`}
               >
-                <span>{mode.label}</span>
+                <span className="flex items-center gap-2"><mode.icon size={18} aria-hidden="true" />{mode.label}</span>
                 {active && <CheckCircle2 size={16} />}
               </button>
             );
@@ -268,10 +296,10 @@ export default function SettingsView({
       </section>
 
       {/* B. Ժամային գոտի և Օրական նպատակ (Timezone & Streak Accuracy) */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'timezone'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div>
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <Globe size={20} className="text-emerald-500" /> Բ. Ժամային գոտի և օրական հաշվարկ
+            <Globe size={20} className="text-emerald-500" /> Ժամային գոտի և օրական նպատակ
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Օրական շարունակականության (Streak) և ուսումնական րոպեների ճշգրիտ հաշվարկ ըստ Ձեր բնակության վայրի։
@@ -284,6 +312,7 @@ export default function SettingsView({
               Ժամային գոտի (Timezone)
             </label>
             <select
+              aria-label="Ժամային գոտի"
               value={settings.timezone}
               onChange={(e) => onUpdateSettings({ timezone: e.target.value, autoDetectTimezone: false })}
               className="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold"
@@ -301,6 +330,7 @@ export default function SettingsView({
               Օրական ուսումնական նպատակ
             </label>
             <select
+              aria-label="Օրական ուսումնական նպատակ"
               value={settings.dailyGoalMinutes}
               onChange={(e) => onUpdateSettings({ dailyGoalMinutes: Number(e.target.value) })}
               className="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold"
@@ -331,10 +361,10 @@ export default function SettingsView({
       </section>
 
       {/* C. Ձայն և Արտասանություն (Speech & Audio Engine) */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'audio'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div>
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <Volume2 size={20} className="text-sky-500" /> Գ. Ձայն և արտասանություն (TTS & STT)
+            <Volume2 size={20} className="text-sky-500" /> Ձայնի կարգավորումներ
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Անգլերեն խոսքի արագության կարգավորում (0.7x – 1.2x), ձայնի ընտրություն և միկրոֆոնի թեստավորում։
@@ -376,6 +406,7 @@ export default function SettingsView({
               Անգլերեն ձայն (Բրաուզերի հասանելի TTS ձայներ)
             </label>
             <select
+              aria-label="Անգլերեն ձայն"
               value={settings.selectedVoiceURI}
               onChange={(e) => onUpdateSettings({ selectedVoiceURI: e.target.value })}
               className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold"
@@ -432,7 +463,7 @@ export default function SettingsView({
       </section>
 
       {/* D. Առավոտյան հիշեցումներ (Morning Reminder System) */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'reminders'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
@@ -440,7 +471,7 @@ export default function SettingsView({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                Դ. Առավոտյան հիշեցումներ
+                Պարապմունքի հիշեցում
               </h2>
               <p className="text-xs text-slate-500">
                 Կարգավորիր ամենօրյա հիշեցման ժամը, առաջադրանքների քանակը և թեման։
@@ -451,6 +482,7 @@ export default function SettingsView({
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
+              aria-label="Պարապմունքի հիշեցում"
               checked={Boolean(progress.morningReminder?.isEnabled)}
               onChange={(e) =>
                 onUpdateMorningReminder?.({ isEnabled: e.target.checked })
@@ -555,14 +587,16 @@ export default function SettingsView({
         </div>
       </section>
 
+      {activeSection === 'reminders' && pwaFeedback && <p role="status" className={styles.feedback}>{pwaFeedback}</p>}
+
       {/* E. Ուսումնական Մակարդակ (CEFR Level & Adaptive Engine) */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'learning'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div>
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <Sliders size={20} className="text-indigo-500" /> Ե. Ուսումնական մակարդակ և ադապտիվություն
+            <Sliders size={20} className="text-indigo-500" /> Սովորիր քո մակարդակով
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Փոխեք Ձեր CEFR մակարդակը կամ ադապտիվ դժվարության կանոնները։
+            Մակարդակը փոխվում է միայն ընթացիկ դասապլանն ամբողջությամբ ավարտելուց հետո։
           </p>
         </div>
 
@@ -572,11 +606,11 @@ export default function SettingsView({
               Ընթացիկ CEFR մակարդակ
             </label>
             <select
-              value={progress.level}
+              aria-label="Ուսումնական մակարդակ" value={progress.level} disabled
               onChange={(e) => onChangeLevel(e.target.value as CEFRLevel)}
               className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold"
             >
-              {CEFR_LEVELS.map((lvl) => (
+              {CEFR_LEVELS.filter(lvl => lvl.level === progress.level).map((lvl) => (
                 <option key={lvl.level} value={lvl.level}>
                   {lvl.labelAm}
                 </option>
@@ -589,6 +623,7 @@ export default function SettingsView({
               Վարժությունների բարդություն
             </label>
             <select
+              aria-label="Վարժությունների բարդություն"
               value={settings.exerciseDifficulty}
               onChange={(e) =>
                 onUpdateSettings({
@@ -639,14 +674,14 @@ export default function SettingsView({
       </section>
 
       {/* F. Լոկալ տվյալների բազա (IndexedDB & SQLite .db) */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'data'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div>
           <h2 className="text-lg font-bold flex items-center gap-2">
             <Database className="w-5 h-5 text-indigo-500" />
-            <span>Զ. Լոկալ տվյալների բազա (IndexedDB & SQLite .db)</span>
+            <span>Քո տվյալները</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Ձեր պրոֆիլը, դասերի առաջընթացը, բառապաշարը և պատմությունը պահպանվում են բրաուզերի IndexedDB-ում (24 առանձին աղյուսակներով)։ Կարող եք արտահանել իրական SQLite (.db) կամ JSON ֆայլով։
+            Պահպանեք առաջընթացի պատճենը կամ վերականգնեք այն պահուստային ֆայլից։
           </p>
         </div>
 
@@ -662,122 +697,43 @@ export default function SettingsView({
           </div>
         )}
 
-        {sqliteFeedback && (
-          <div
-            className={`p-4 rounded-2xl text-xs md:text-sm font-bold ${
-              sqliteFeedback.ok
-                ? 'bg-indigo-500/15 text-indigo-800 dark:text-indigo-200 border border-indigo-500/30'
-                : 'bg-rose-500/15 text-rose-800 dark:text-rose-200 border border-rose-500/30'
-            }`}
-          >
-            {sqliteFeedback.messageAm}
-          </div>
-        )}
-
-        <div className="flex flex-wrap items-center gap-3">
-          {/* SQLite Export */}
-          <button
-            type="button"
-            onClick={onExportSqlite}
-            className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs md:text-sm flex items-center gap-2 transition shadow-sm"
-          >
-            <Download size={16} /> Արտահանել SQLite (.db)
-          </button>
-
-          {/* SQLite Import */}
-          <input
-            ref={fileInputSqliteRef}
-            type="file"
-            accept=".db,application/x-sqlite3"
-            onChange={handleSqliteFileChange}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => fileInputSqliteRef.current?.click()}
-            className="px-5 py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs md:text-sm flex items-center gap-2 transition shadow-sm"
-          >
-            <Upload size={16} /> Վերականգնել SQLite (.db)
-          </button>
-
-          {/* JSON Export */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
             onClick={onExportJson}
-            className="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs md:text-sm flex items-center gap-2 transition"
+            className="min-h-12 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition"
           >
-            <Download size={16} /> {UI_TEXT.buttons.exportJson}
+            <Download size={18} aria-hidden="true" /> Արտահանել
           </button>
-
-          {/* JSON Import */}
           <input
             ref={fileInputRef}
             type="file"
-            accept=".json,application/json"
+            accept=".json,.db,application/json,application/x-sqlite3"
             onChange={handleFileChange}
             className="hidden"
+            aria-label="Ընտրել պահուստը"
           />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs md:text-sm flex items-center gap-2 transition"
+            className="min-h-12 px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-sm flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 transition"
           >
-            <Upload size={16} /> {UI_TEXT.buttons.importJson}
+            <Upload size={18} aria-hidden="true" /> Ներմուծել
           </button>
-
-          {!confirmWipe ? (
-            <button
-              type="button"
-              onClick={() => setConfirmWipe(true)}
-              className="px-5 py-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold text-xs md:text-sm flex items-center gap-2 transition"
-            >
-              <Trash2 size={16} /> {UI_TEXT.buttons.deleteAllData}
-            </button>
-          ) : (
-            <div className="flex items-center gap-2 p-2 rounded-xl bg-rose-500/15 border border-rose-500/40">
-              <span className="text-xs font-bold text-rose-700 dark:text-rose-300">
-                Հաստատո՞ւմ եք ամբողջական ջնջումը․
-              </span>
-              <button
-                type="button"
-                onClick={async () => {
-                  setConfirmWipe(false);
-                  await onWipeAllData();
-                }}
-                className="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold"
-              >
-                Այո, ջնջել
-              </button>
-              <button
-                type="button"
-                onClick={() => setConfirmWipe(false)}
-                className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-xs font-bold"
-              >
-                Չեղարկել
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-start gap-2.5 text-xs text-slate-500 dark:text-slate-400">
-          <ShieldAlert size={16} className="text-emerald-600 shrink-0 mt-0.5" />
-          <span>
-            <strong>Գաղտնիության երաշխիք․</strong> Ձեր անձնական տվյալները պահվում են բացառապես Ձեր սարքի մեջ և չեն փոխանցվում արտաքին ծառայությունների առանց Ձեր տեղեկացված համաձայնության։
-          </span>
         </div>
       </section>
 
       {/* G. PWA Հավելված, Offline Քեշ և Ծանուցումներ */}
-      <section className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <section hidden={activeSection !== 'app'} className={`${styles.detail} rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5`}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <Smartphone size={20} className="text-indigo-600" />
             <div>
               <h2 className="text-lg font-bold">
-                Է. PWA Հավելված, Offline Քեշ և Ծանուցումներ ({APP_VERSION})
+                HayLingo {APP_VERSION}
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Progressive Web App ֆունկցիոնալություն՝ անցանց աշխատանք, ծանուցումներ և արագ կիսվելու հնարավորություն
+                Տեղեկություններ հավելվածի, անցանց բովանդակության և ծանուցումների մասին։
               </p>
             </div>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Download,
   WifiOff,
@@ -13,7 +14,6 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import {
-  APP_VERSION,
   BeforeInstallPromptEvent,
   activateWaitingServiceWorker,
   isIOSDevice,
@@ -24,6 +24,7 @@ import {
 import { getDateStringInTimezone, getTimeStringInTimezone } from '../lib/i18n';
 
 interface PWAManagerProps {
+  installTargetId: string;
   morningPracticeTime: string;
   timezone: string;
   morningReminderEnabled?: boolean;
@@ -54,6 +55,7 @@ export const TAB_QUERY_MAP: Record<string, string> = {
 };
 
 export default function PWAManager({
+  installTargetId,
   morningPracticeTime,
   timezone,
   morningReminderEnabled,
@@ -69,6 +71,11 @@ export default function PWAManager({
   const [isOnline, setIsOnline] = useState(true);
   const [showBackOnlineToast, setShowBackOnlineToast] = useState(false);
   const [waitingSW, setWaitingSW] = useState<ServiceWorkerRegistration | null>(null);
+  const [installTarget, setInstallTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setInstallTarget(document.getElementById(installTargetId));
+  }, [installTargetId]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -185,7 +192,7 @@ export default function PWAManager({
         <div className="bg-amber-500/95 text-slate-950 px-4 py-2 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-md z-50">
           <WifiOff className="w-4 h-4 shrink-0" />
           <span>
-            Անցանց ռեժիմ (Offline PWA)․ բոլոր դասերը, վարժությունները և լոկալ բազան աշխատում են առանց ինտերնետի։
+            Անցանց եք․ հասանելի է նախկինում բեռնված բովանդակությունը։
           </span>
         </div>
       )}
@@ -201,52 +208,41 @@ export default function PWAManager({
       {waitingSW && (
         <div className="bg-indigo-600 text-white px-4 py-2 text-xs sm:text-sm flex items-center justify-between gap-3 z-50">
           <div className="flex items-center gap-2 font-medium">
-            <RefreshCw className="w-4 h-4 animate-spin shrink-0" />
-            <span>Հասանելի է HayLingo-ի նոր տարբերակ ({APP_VERSION})։</span>
+            <RefreshCw className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <span>Թարմացում կա</span>
           </div>
           <button
             onClick={() => activateWaitingServiceWorker(waitingSW)}
             className="px-3 py-1 rounded-lg bg-white text-indigo-700 font-bold text-xs hover:bg-indigo-50 transition"
           >
-            Թարմացնել հիմա
+            Թարմացնել
           </button>
         </div>
       )}
 
-      {/* Install PWA Smart Banner */}
-      {canShowInstallBanner && (
-        <div className="bg-gradient-to-r from-indigo-950/90 via-slate-900 to-emerald-950/80 border-b border-indigo-500/30 px-4 py-2.5 text-white flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0">
-              <Smartphone className="w-4 h-4 text-indigo-300" />
-            </div>
-            <div>
-              <p className="text-xs sm:text-sm font-bold">
-                Տեղադրեք HayLingo ({APP_VERSION}) որպես հավելված (PWA)
-              </p>
-              <p className="text-[11px] text-slate-300">
-                Արագ մուտք գլխավոր էկրանից և 100% աշխատանք առանց ինտերնետի (Offline)
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleInstallClick}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-sm transition"
-            >
-              <Download className="w-3.5 h-3.5" />
-              Տեղադրել PWA
-            </button>
-            <button
-              onClick={dismissBanner}
-              aria-label="Փակել"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+      {/* Render the installation controls in the shared top bar. */}
+      {canShowInstallBanner && installTarget && createPortal(
+        <div className="navigation-install-actions" role="group" aria-label="Հավելվածի տեղադրում">
+          <button
+            type="button"
+            onClick={handleInstallClick}
+            aria-label="Տեղադրել HayLingo հավելվածը"
+            title="Տեղադրել HayLingo հավելվածը"
+            className="navigation-install-button"
+          >
+            <Download size={18} aria-hidden="true" />
+            <span className="navigation-install-label">Տեղադրել</span>
+          </button>
+          <button
+            type="button"
+            onClick={dismissBanner}
+            aria-label="Թաքցնել տեղադրման առաջարկը"
+            className="navigation-button"
+          >
+            <X size={17} aria-hidden="true" />
+          </button>
+        </div>,
+        installTarget
       )}
 
       {/* iOS Safari Add to Home Screen Modal */}
@@ -259,6 +255,8 @@ export default function PWAManager({
                 <h3 className="font-bold text-base">Տեղադրել iPhone / iPad-ում</h3>
               </div>
               <button
+                type="button"
+                aria-label="Փակել տեղադրման ուղեցույցը"
                 onClick={() => setShowIOSGuide(false)}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-white"
               >
@@ -267,7 +265,7 @@ export default function PWAManager({
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              HayLingo-ն որպես լիարժեք հավելված (PWA) տեղադրելու համար կատարեք այս 2 պարզ քայլը Safari բրաուզերում․
+              Safari-ում՝ Share → Add to Home Screen → Add։
             </p>
 
             <div className="space-y-3 text-xs bg-slate-950/70 border border-slate-800 rounded-xl p-4">

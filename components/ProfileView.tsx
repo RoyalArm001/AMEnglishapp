@@ -26,12 +26,15 @@ import {
   ProfessionId,
   ProficiencyTier,
   UserProgressData,
+  ProfileDraft,
 } from '../lib/types';
 import {
   getRecommendedLessonIdsForProfession,
   PROFESSIONS_LIST,
 } from '../data/professions';
 import { LESSONS_DATA } from '../data/lessons';
+import { canOpenCourseLesson } from '../lib/learning-path';
+import { getProfileDraft } from '../lib/profile-draft';
 import {
   formatArmenianDateTime,
   LEARNING_GOALS,
@@ -41,6 +44,8 @@ import {
 
 interface ProfileViewProps {
   progress: UserProgressData;
+  onUpdateDraft: (patch: Partial<ProfileDraft>) => void;
+  onDiscardDraft: () => void;
   onUpdateProfile: (params: {
     firstName: string;
     lastName: string;
@@ -61,28 +66,21 @@ export default function ProfileView({
   onUpdateProfile,
   onOpenLesson,
   onSpeak,
+  onUpdateDraft,
+  onDiscardDraft,
 }: ProfileViewProps) {
   const { profile, settings } = progress;
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  const [firstName, setFirstName] = useState<string>(profile.firstName || progress.userName);
-  const [lastName, setLastName] = useState<string>(profile.lastName || '');
-  const [age, setAge] = useState<string>(String(profile.age || 25));
-  const [profession, setProfession] = useState<ProfessionId>(
-    profile.profession || 'IT Specialist'
-  );
-  const [customProfession, setCustomProfession] = useState<string>(
-    profile.customProfession || ''
-  );
+  const [isEditing, setIsEditing] = useState(Boolean(progress.profileDraft));
+  const {firstName, lastName, age, profession, customProfession, learningGoal, customGoal} = getProfileDraft(progress);
+  const setFirstName = (value: string) => onUpdateDraft({firstName: value});
+  const setLastName = (value: string) => onUpdateDraft({lastName: value});
+  const setAge = (value: string) => onUpdateDraft({age: value});
+  const setProfession = (value: ProfessionId) => onUpdateDraft({profession: value});
+  const setCustomProfession = (value: string) => onUpdateDraft({customProfession: value});
+  const setLearningGoal = (value: LearningGoalId) => onUpdateDraft({learningGoal: value});
   const [profSearch, setProfSearch] = useState<string>('');
-  const [proficiencyTier, setProficiencyTier] = useState<ProficiencyTier>(
-    profile.proficiencyTier || 'Elementary'
-  );
-  const [level, setLevel] = useState<CEFRLevel>(progress.level || 'A2');
-  const [learningGoal, setLearningGoal] = useState<LearningGoalId>(
-    profile.learningGoal || 'work'
-  );
-  const [customGoal, setCustomGoal] = useState<string>(profile.customGoal || '');
+  const proficiencyTier = profile.proficiencyTier;
+  const level = progress.level;
   const [savedNotice, setSavedNotice] = useState<string>('');
 
   const currentProfessionMeta =
@@ -95,7 +93,7 @@ export default function ProfileView({
 
   const recommendedLessonIds = getRecommendedLessonIdsForProfession(profile.profession);
   const recommendedLessons = LESSONS_DATA.filter((l) =>
-    recommendedLessonIds.includes(l.id)
+    recommendedLessonIds.includes(l.id) && canOpenCourseLesson(progress, l.id)
   );
 
   const filteredProfessions = useMemo(() => {
@@ -127,8 +125,7 @@ export default function ProfileView({
       customGoal: customGoal.trim(),
     });
     setIsEditing(false);
-    setSavedNotice('Պրոֆիլի տվյալները հաջողությամբ թարմացվեցին՝ առանց ուսուցման առաջընթացը կորցնելու։');
-    setTimeout(() => setSavedNotice(''), 4000);
+    setSavedNotice('Պրոֆիլի փոփոխությունները կիրառված են։ Ուսուցման առաջընթացը պահպանված է։');
   };
 
   return (
@@ -145,11 +142,11 @@ export default function ProfileView({
         </div>
 
         <button
-          onClick={() => setIsEditing(!isEditing)}
+          onClick={() => {setSavedNotice(''); setIsEditing(!isEditing);}}
           className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center gap-2 transition shadow-sm w-fit"
         >
           {isEditing ? <X size={16} /> : <Edit3 size={16} />}
-          <span>{isEditing ? UI_TEXT.buttons.cancel : UI_TEXT.buttons.editProfile}</span>
+          <span>{isEditing ? 'Փակել խմբագրումը' : UI_TEXT.buttons.editProfile}</span>
         </button>
       </div>
 
@@ -227,6 +224,7 @@ export default function ProfileView({
           <h3 className="text-xl font-bold flex items-center gap-2">
             <User size={20} className="text-emerald-600" /> Խմբագրել անձնական տվյալները
           </h3>
+          <p className="text-sm text-slate-500" role="status">Գրածդ պահվում է որպես սևագիր։ Կարող ես այլ էջ գնալ ու հետո շարունակել։ Պրոֆիլում կիրառելու համար սեղմիր «Պահպանել»։</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -305,7 +303,8 @@ export default function ProfileView({
                 type="text"
                 value={customProfession}
                 onChange={(e) => setCustomProfession(e.target.value)}
-                placeholder="Գրեք Ձեր մասնագիտությունը..."
+                placeholder="Մասնագիտություն կամ ոլորտ (ոչ պարտադիր)"
+                aria-label="Մասնագիտություն կամ ոլորտ (ոչ պարտադիր)"
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-emerald-500 text-sm"
               />
             )}
@@ -319,20 +318,16 @@ export default function ProfileView({
               </label>
               <select
                 value={proficiencyTier}
-                onChange={(e) => {
-                  const tier = e.target.value as ProficiencyTier;
-                  setProficiencyTier(tier);
-                  const found = PROFICIENCY_TIERS.find((t) => t.tier === tier);
-                  if (found) setLevel(found.cefr);
-                }}
+                disabled
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm font-semibold"
               >
-                {PROFICIENCY_TIERS.map((t) => (
+                {PROFICIENCY_TIERS.filter(t => t.tier === proficiencyTier).map((t) => (
                   <option key={t.tier} value={t.tier}>
                     {t.labelAm}
                   </option>
                 ))}
               </select>
+              <p className="mt-2 text-xs text-slate-500">Ընթացիկ մակարդակը՝ {progress.level}։ Հաջորդ մակարդակը բացվում է դասապլանն ավարտելուց հետո։</p>
             </div>
 
             <div>
@@ -353,13 +348,17 @@ export default function ProfileView({
             </div>
           </div>
 
+          {learningGoal === 'other' && <label className="block space-y-2 text-sm">
+            <span>Քո նպատակը</span>
+            <input value={customGoal} onChange={event => onUpdateDraft({customGoal: event.target.value})} className="w-full rounded-xl border bg-transparent px-4 py-3" />
+          </label>}
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => setIsEditing(false)}
+              onClick={() => {onDiscardDraft(); setIsEditing(false);}}
               className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold"
             >
-              {UI_TEXT.buttons.cancel}
+              Ջնջել սևագիրը
             </button>
             <button
               type="submit"

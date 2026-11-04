@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: '%s | HayLingo',
   },
   description:
-    'Սովորեք անգլերեն արագ և արդյունավետ հայերեն բացատրություններով ու տառադարձմամբ։ 16 բաժին, 28 դաս, 210+ բառ (Spaced Repetition), 116 ինտերակտիվ վարժություն, 15 մասնագիտական ուղի (IT Specialist, Doctor, Driver և այլն), ձայնային պարապմունք և ուսումնական օգնական։ Աշխատում է նաև Offline (PWA)։',
+    'Սովորեք անգլերեն հայերեն բացատրություններով ու տառադարձմամբ։ Դասեր, բառապաշար, ինտերակտիվ վարժություններ, բժշկության, կրթության, բիզնեսի, տրանսպորտի և այլ ոլորտների անգլերեն, ձայնային պարապմունք և ուսումնական օգնական։',
   applicationName: 'HayLingo',
   authors: [{ name: 'RoyalArm', url: SITE_URL }],
   creator: 'RoyalArm',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     'HayLingo',
     'Learn English for Armenian speakers',
     'Armenian English learning app',
-    'IT Specialist English',
+    'English for different professions',
     'English speaking practice',
   ],
   alternates: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     siteName: 'HayLingo',
     title: 'HayLingo — Անգլերենի Ինտերակտիվ Ուսուցում Հայախոսների Համար',
     description:
-      '26 ինտերակտիվ դասեր հայերեն արտասանությամբ, 210+ բառեր, 116 վարժություններ, IT և մասնագիտական անգլերեն, ձայնային ճանաչում և ուսումնական օգնական (v1.1.0 PWA)։',
+      'Անգլերեն հայախոսների համար՝ դասեր, բառապաշար, վարժություններ, տարբեր ոլորտների աշխատանքային շփում, ձայնային պարապմունք և ուսումնական օգնական։',
     images: [
       {
         url: '/opengraph-image',
@@ -141,7 +141,7 @@ const structuredData = {
       },
       featureList: [
         '16 ուսուցման բաժին և 26 ինտերակտիվ դասեր հայերեն տառադարձմամբ',
-        '15 մասնագիտական ուղիներ (IT Specialist, Doctor, Driver, Student և այլն)',
+        'Մասնագիտական ուղիներ՝ բժշկություն, կրթություն, բիզնես, տրանսպորտ, տեխնոլոգիաներ և այլ ոլորտներ',
         '116 ինտերակտիվ վարժություններ (Fill in the blank, Translation, Error Correction, Speaking, Listening)',
         '210+ անգլերեն բառեր՝ Flashcards և Spaced Repetition համակարգով',
         'Ձայնային արտասանություն (TTS) և խոսքի ճանաչում (STT)',
@@ -174,6 +174,36 @@ export default function RootLayout({
   return (
     <html lang="hy" suppressHydrationWarning>
       <head>
+        {process.env.NODE_ENV === 'development' && (
+          <script
+            id="haylingo-development-cache-reset"
+            dangerouslySetInnerHTML={{ __html: `
+              (async function () {
+                if (!('serviceWorker' in navigator)) return;
+                try {
+                  var registrations = await navigator.serviceWorker.getRegistrations();
+                  var own = registrations.filter(function (registration) {
+                    return [registration.active, registration.waiting, registration.installing].some(function (worker) {
+                      return worker && new URL(worker.scriptURL).pathname === '/sw.js';
+                    });
+                  });
+                  if (!own.length) return;
+                  var controller = navigator.serviceWorker.controller;
+                  var controlled = controller && new URL(controller.scriptURL).pathname === '/sw.js';
+                  await Promise.all(own.map(function (registration) { return registration.unregister(); }));
+                  if ('caches' in window) {
+                    var keys = await caches.keys();
+                    await Promise.all(keys.filter(function (key) { return key.startsWith('haylingo-pwa-'); }).map(function (key) { return caches.delete(key); }));
+                  }
+                  if (controlled && !sessionStorage.getItem('haylingo-dev-cache-reset')) {
+                    sessionStorage.setItem('haylingo-dev-cache-reset', '1');
+                    window.location.reload();
+                  }
+                } catch (_) { /* Development stays usable if browser storage is restricted. */ }
+              })();
+            ` }}
+          />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

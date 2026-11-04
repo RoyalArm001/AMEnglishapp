@@ -2,9 +2,17 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.2.2**
+**English learning for Armenian speakers · v1.6.0**
 
 [Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Իրականացման հաշվետվություն](CODEX_IMPLEMENTATION_REPORT.md)
+
+Հերթական դասապլան․ A1-ը սկսվում է մեծատառից ու փոքրատառից, «տղա», «աղջիկ» և այլ պարզ բառերից, ապա անցնում թվերին, առաջին նախադասություններին, տարեթվերին ու կարճ զրույցներին։ Սովորիր, լսիր և ինքդ գրիր պատասխանը։ Հաջորդ քայլը բացվում է ճիշտ գրելուց հետո, իսկ մյուս բաժինները՝ ընթացիկ մակարդակի ամբողջ դասապլանն ավարտելուց հետո։ [Դասապլանի փոփոխությունները](LEARNING_PATH_REPORT.md)։
+
+The guided A1 path starts with uppercase and lowercase letters, simple words, numbers, first sentences, years and short conversations. Study and listen, then type the answer yourself. Each step requires correct writing before you can continue.
+
+A1-ի դասերին կցված են HayLingo-ի երեք ուսումնական դասագրքեր՝ 21 գլուխ և 42 ընթերցանության հարց։ Բոլոր դասերից հետո պարտադիր է 25 առաջադրանքով ամփոփիչ աշխատանքը․ միայն դրա ավարտն է բացում A2-ն ու մյուս ուսումնական էջերը։ Գլուխները հասանելի են հենց դասապլանում՝ առանց ընդհանուր գրադարանի բացմանը սպասելու։ Պրոֆիլի չավարտված խմբագրումները պահվում են որպես սևագիր՝ էջից դուրս գալուց և refresh-ից հետո շարունակելու համար։
+
+Three original HayLingo A1 coursebooks provide 21 lesson-linked chapters and 42 reading checks. A required 25-task final review covers writing, listening and reading before A2 and the other study pages unlock. Profile drafts survive navigation and refresh; saving applies them to the profile, while discarding a draft is a separate action.
 
 Նոր՝ էկրանը միացված պահել, Համակարգչային/Բջջային/Ավտոմատ ռեժիմ և չորս անկախ տառաչափեր (14–30px)։ [Ստուգման հաշվետվություն](DISPLAY_SETTINGS_REPORT.md)։
 
@@ -30,8 +38,10 @@ HayLingo-ն օգնում է անգլերեն սովորել հասկանալի �
 
 | Բովանդակություն | Ներկա ծավալը |
 | --- | ---: |
-| Դասերի բաժիններ / դասեր | 16 / 28 |
-| Դասերի նախադասություններ | 139 |
+| Դասերի բաժիններ / դասեր | 16 / 42 |
+| Ուսումնական քայլեր՝ տառեր, բառեր և նախադասություններ | 240 |
+| A1 դասագրքեր / դասերին կցված գլուխներ | 3 / 21 |
+| Ընթերցանության հարցեր / ամփոփիչ առաջադրանքներ | 42 / 25 |
 | Բառաքարտերի բառեր | 210 |
 | Վարժություններ | 116 |
 | ՏՏ թեմաներ / պատրաստի երկխոսություններ | 13 / 21 |
@@ -75,7 +85,7 @@ Use it for conversations at work, travel, study, or daily life. Choose your leve
 
 ### The learning collection
 
-The collection includes **28 lessons across 16 sections**, **139 lesson sentences**, **210 flashcard words**, **116 exercises**, **13 IT topics**, and **21 scripted dialogues**. Learners can select from **15 professions**, each with **10 four-turn workplace dialogues**, translation, listening, and spoken or typed practice. The 150 dialogues use shared, progressively harder conversational patterns with profession-specific activities.
+The collection includes **33 lessons across 16 sections**, **177 learning items including letters, words and sentences**, **210 flashcard words**, **116 exercises**, **13 IT topics**, and **21 scripted dialogues**. The guided A1 path starts with the alphabet and opens lessons in order after successful checks. Additional study pages unlock after the current level's course, and their content is limited to the learner's level or earlier levels. Learners can select from **15 professional/general tracks**, with workplace dialogues available according to their level. C1/C2 guided courses are not yet available; empty courses never count as completed.
 
 The dictionary contains **1057 unique bilingual pairs**, combining existing learning material with **152 added everyday words and phrases**. These are translation pairs, not 1057 separate flashcards. Growing the collection with checked examples and exercises is the next priority.
 

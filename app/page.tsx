@@ -13,6 +13,7 @@ import {
   HelpCircle,
   History,
   LayoutDashboard,
+  Lock,
   Languages,
   Menu,
   MessageCircle,
@@ -22,11 +23,10 @@ import {
   Settings,
   Sparkles,
   Sun,
-  Terminal,
+  Briefcase,
   User,
   X,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import {
   calculateNextSRS,
   DEFAULT_USER_PROGRESS,
@@ -58,10 +58,12 @@ import { useStudyTimer } from '../lib/use-study-timer';
 import { LESSONS_DATA, LESSON_CATEGORIES } from '../data/lessons';
 import { speakEnglish, compareSpokenToTarget } from '../lib/speech';
 import { computeEffectiveDarkMode, getTimeStringInTimezone, UI_TEXT } from '../lib/i18n';
-import { getRecommendedLessonIdsForProfession } from '../data/professions';
 import OnboardingView from '../components/OnboardingView';
 import DashboardView from '../components/DashboardView';
-import LessonsView from '../components/LessonsView';
+import LearningPlanView from '../components/LearningPlanView';
+import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getFirstUnverifiedIndex, getNextCourseLevel, isCorrectWrittenAnswer, isCoursePageUnlocked, isCourseReadingComplete, isCourseStepComplete } from '../lib/learning-path';
+import { A1_CHAPTERS, A1_FINAL_QUESTIONS } from '../data/a1-course';
+import { getProfileDraft } from '../lib/profile-draft';
 import ExercisesView from '../components/ExercisesView';
 import VocabularyView from '../components/VocabularyView';
 import ProfileView from '../components/ProfileView';
@@ -101,7 +103,7 @@ import {
   setPageMemory,
 } from '../lib/page-memory';
 import PWAManager, { TAB_QUERY_MAP } from '../components/PWAManager';
-import Logo, { LogoIcon } from '../components/Logo';
+import { LogoIcon } from '../components/Logo';
 import { APP_VERSION } from '../lib/pwa';
 
 const TranslationView = dynamic(() => import('../components/TranslationView'), {
@@ -128,7 +130,7 @@ type NavTabId =
   | 'Settings';
 
 const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] = [
-  { id: 'Dashboard', labelAm: UI_TEXT.nav.dashboard, subAm: 'Օրվա ամփոփում', icon: LayoutDashboard },
+  { id: 'Dashboard', labelAm: 'Գլխավոր', subAm: 'Բացահայտիր HayLingo-ն', icon: LayoutDashboard },
   { id: 'Daily Words', labelAm: 'Օրվա 3 բառերը', subAm: 'Օրական մարտահրավեր', icon: Sparkles },
   { id: 'Daily Questions', labelAm: 'Օրվա հարցերը', subAm: '10 ամենօրյա հարց', icon: HelpCircle },
   { id: 'Daily Conversations', labelAm: 'Առօրյա զրույցներ', subAm: '12 կենդանի թեմա', icon: MessageSquare },
@@ -139,7 +141,7 @@ const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] =
   { id: 'Exercises', labelAm: UI_TEXT.nav.exercises, subAm: 'Վարժություններ Ա–Զ', icon: Brain },
   { id: 'Study Assistant', labelAm: UI_TEXT.nav.teacher, subAm: 'Հարց ու պատասխան', icon: MessageCircle },
   { id: 'Voice Practice', labelAm: UI_TEXT.nav.voice, subAm: 'Խոսք և Առավոտյան ռեժիմ', icon: Mic },
-  { id: 'IT English', labelAm: UI_TEXT.nav.itEnglish, subAm: '15 մասնագիտություն · երկխոսություն', icon: Terminal },
+  { id: 'IT English', labelAm: UI_TEXT.nav.itEnglish, subAm: 'Աշխատանքային շփում տարբեր ոլորտներում', icon: Briefcase },
   { id: 'Vocabulary', labelAm: UI_TEXT.nav.vocabulary, subAm: '210 բառ և Քարտեր', icon: BookMarked },
   { id: 'Translation', labelAm: UI_TEXT.nav.translation, subAm: 'Հայերեն ↔ Անգլերեն', icon: Languages },
   { id: 'My Progress', labelAm: UI_TEXT.nav.history, subAm: 'Գրաֆիկներ և Սխալներ', icon: History },
@@ -196,9 +198,21 @@ export default function HomePage() {
       setActiveTab(tab as NavTabId, subId, step),
     [setActiveTab]
   );
-  const consumeStudyMinutes = useStudyTimer(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  useEffect(() => {
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && document.documentElement.dataset.layout === "desktop") {
+        setSidebarOpen(false);
+        document.querySelector<HTMLButtonElement>(".sidebar-toggle")?.focus();
+      }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, []);
   const [progress, setProgress] = useState<UserProgressData>(DEFAULT_USER_PROGRESS);
+  const coursePageUnlocked = isCoursePageUnlocked(progress, activeTab);
+  const consumeStudyMinutes = useStudyTimer(coursePageUnlocked ? activeTab : 'Dashboard');
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [storageError, setStorageError] = useState(false);
   const [startInPlacement, setStartInPlacement] = useState<boolean>(false);
@@ -217,7 +231,7 @@ export default function HomePage() {
       'Book Library',
       'Grammar Academy',
       'Accent Academy',
-    ].includes(activeTab) || (activeTab === 'My Progress' && startInPlacement);
+    ].includes(activeTab) && coursePageUnlocked || (activeTab === 'My Progress' && startInPlacement);
   useDisplaySettings(progress.settings);
   const wake = useWakeLock(
     hydrated && progress.onboardingCompleted && isLearning && sessionRunning && progress.settings.keepScreenAwake,
@@ -275,24 +289,44 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-        document.querySelector<HTMLButtonElement>('[aria-label="Մենյու"]')?.focus();
+    if (!mobileMenuOpen) return;
+    const trigger = Array.from(document.querySelectorAll<HTMLButtonElement>('[aria-label="Մենյու"]')).find(button => button.getClientRects().length > 0);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focusTimer = window.setTimeout(() => document.querySelector<HTMLButtonElement>('#mobile-navigation button')?.focus(), 0);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); setMobileMenuOpen(false); }
+      if (event.key === 'Tab') {
+        const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('#mobile-navigation button'));
+        const first = buttons[0], last = buttons[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }
     };
-    window.addEventListener('keydown', escape);
-    return () => window.removeEventListener('keydown', escape);
+    const onResize = () => { if (document.documentElement.dataset.layout === 'desktop') setMobileMenuOpen(false); };
+    const layoutObserver = new MutationObserver(onResize);
+    layoutObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-layout'] });
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', onResize);
+      layoutObserver.disconnect();
+      trigger?.focus();
+    };
   }, [mobileMenuOpen]);
 
-  const [lessonSentenceResumeIdx, setLessonSentenceResumeIdx] = useState<number>(0);
 
   // Load persisted state from LocalStorage + IndexedDB on mount
   useEffect(() => {
+    let cancelled = false;
     const syncData = learningRepository.loadProgressSync();
     setProgress(syncData);
 
     learningRepository.loadProgressAsync().then((asyncData) => {
+      if (cancelled) return;
       setProgress(asyncData);
       const mem = resolveInitialPageMemory('Dashboard');
       let tab = TAB_QUERY_MAP[mem.tab?.toLowerCase() || ''] || mem.tab || 'Dashboard';
@@ -326,9 +360,9 @@ export default function HomePage() {
       }
       restoreActiveTab(tab as NavTabId);
       setSessionState(state);
-      setLessonSentenceResumeIdx(asyncData.currentSentenceIndex || 0);
       setHydrated(true);
     });
+    return () => {cancelled = true;};
   }, []);
 
   // Sync Dark Mode class on <html> and re-check Auto Mode every 60s
@@ -397,8 +431,7 @@ export default function HomePage() {
     learningGoal: LearningGoalId;
     customGoal: string;
   }) => {
-    const recommendedIds = getRecommendedLessonIdsForProfession(params.profession);
-    const initialLessonId = recommendedIds[0] || 'lesson-1-days';
+    const initialLessonId = getCourseLessons(params.cefrLevel)[0]?.id || '';
     const tz = progress.settings?.timezone || 'Asia/Yerevan';
 
     updateAndPersist((prev): UserProgressData => ({
@@ -406,6 +439,7 @@ export default function HomePage() {
       onboardingCompleted: true,
       userName: `${params.firstName} ${params.lastName}`.trim(),
       level: params.cefrLevel,
+      learningPath: {userId: prev.profile.id, entryLevel: params.cefrLevel, verifiedSentenceIds: [], writtenSentenceIds: []},
       currentLessonId: initialLessonId,
       profile: {
         ...prev.profile,
@@ -438,7 +472,8 @@ export default function HomePage() {
     updateAndPersist((prev): UserProgressData => ({
       ...prev,
       userName: `${params.firstName} ${params.lastName}`.trim(),
-      level: params.level,
+      level: prev.level,
+      profileDraft: undefined,
       profile: {
         ...prev.profile,
         firstName: params.firstName,
@@ -471,16 +506,22 @@ export default function HomePage() {
   };
 
   const handleChangeLevel = (level: CEFRLevel) => {
-    updateAndPersist((prev): UserProgressData => ({
-      ...prev,
-      level,
-    }));
+    setSessionState('idle');
+    updateAndPersist(prev => getNextCourseLevel(prev) === level ? {
+      ...prev, level, currentLessonId: getCourseLessons(level)[0].id, currentSentenceIndex: 0,
+    } : prev);
   };
 
   const handleOpenLesson = (lessonId: string, sentenceIdx: number = 0, startSession = true) => {
+    if (!canOpenCourseLesson(progress, lessonId)) {
+      setActiveTab('Lessons');
+      return;
+    }
+    const lesson = getCourseLessons(progress.level).find(item => item.id === lessonId)!;
+    sentenceIdx = Math.max(0, Math.min(sentenceIdx, getFirstUnverifiedIndex(progress, lesson)));
     setSessionState(startSession ? 'active' : 'idle');
-    setLessonSentenceResumeIdx(sentenceIdx);
     updateAndPersist((prev): UserProgressData => {
+      if (!canOpenCourseLesson(prev, lessonId)) return prev;
       const existingLp = prev.lessonProgressMap?.[lessonId];
       const updatedLp: LessonProgressRecord = {
         id: lessonId,
@@ -507,6 +548,8 @@ export default function HomePage() {
   const handleUpdateSentencePosition = (lessonId: string, sentenceIdx: number) => {
     if (sessionState === 'idle') setSessionState('active');
     updateAndPersist((prev): UserProgressData => {
+      const lesson = getCourseLessons(prev.level).find(item => item.id === lessonId);
+      if (!lesson || !canOpenCourseLesson(prev, lessonId) || sentenceIdx < 0 || sentenceIdx > getFirstUnverifiedIndex(prev, lesson)) return prev;
       const existingLp = prev.lessonProgressMap?.[lessonId];
       const completedIndices = Array.from(
         new Set([...(existingLp?.completedSentenceIndices || []), sentenceIdx])
@@ -546,6 +589,8 @@ export default function HomePage() {
     setSessionState('idle');
     const minutes = consumeStudyMinutes();
     updateAndPersist((prev): UserProgressData => {
+      const lesson = getCourseLessons(prev.level).find(item => item.id === lessonId);
+      if (!lesson || !canOpenCourseLesson(prev, lessonId) || !lesson.sentences.every(sentence => isCourseStepComplete(prev, sentence.id)) || !isCourseReadingComplete(prev, lesson)) return prev;
       if (prev.completedLessonIds.includes(lessonId)) return prev;
       const completedLessonIds = Array.from(new Set([...prev.completedLessonIds, lessonId]));
       const readingBoost = Math.min(100, prev.skills.reading + 3);
@@ -555,7 +600,7 @@ export default function HomePage() {
         id: lessonId,
         lessonId,
         status: 'completed',
-        lastSentenceIndex: 0,
+        lastSentenceIndex: lesson.sentences.length - 1,
         completedSentenceIndices: (LESSONS_DATA.find(l => l.id === lessonId)?.sentences || []).map((_, i) => i),
         timeSpentMinutes: (existingLp?.timeSpentMinutes || 0) + minutes,
         completedAt: Date.now(),
@@ -767,7 +812,7 @@ export default function HomePage() {
       };
       return {
         ...prev,
-        level: calculatedLevel,
+        level: prev.level,
         placementCompleted: true,
         totalStudyMinutes: (prev.totalStudyMinutes || 0) + minutes,
         dailyStudyMinutes: prev.dailyStudyMinutes + minutes,
@@ -855,167 +900,66 @@ export default function HomePage() {
     );
   }
 
-  const themeBadgeLabel =
-    progress.settings?.themeMode === 'auto'
-      ? '🕒 Ավտոմատ տեսք'
-      : progress.darkMode
-      ? '🌙 Գիշերային տեսք'
-      : '☀️ Ցերեկային տեսք';
-
   return (
-    <div className="app-shell min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div data-sidebar-open={sidebarOpen} data-menu-open={mobileMenuOpen} className="app-shell min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {storageError && <div role="alert" className="fixed top-0 inset-x-0 z-50 bg-amber-100 text-amber-950 p-3 text-center">Առաջընթացը չի պահպանվել բրաուզերում։ Էջը փակելուց առաջ Կարգավորումներից արտահանեք JSON պահուստը։</div>}
       <a href="#learning-main" className="skip-link">Անցնել պարապմունքին</a>
-      {/* Desktop Sidebar */}
-      <aside aria-label="Ձախ ընտրացանկ" className="app-sidebar bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 justify-between z-30 overflow-y-auto">
-        <div className="space-y-4">
-          {/* Brand Logo */}
-          <div className="px-2 pt-1">
-            <Logo size="md" badgeText={APP_VERSION} />
-          </div>
-
-          {/* Navigation Menu */}
-          <nav aria-label="Բաժինների ընտրություն" onKeyDown={navigateByKey} className="space-y-1">
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const active = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setStartInPlacement(false);
-                    setActiveTab(item.id);
-                  }}
-                  className={`w-full px-3.5 py-2.5 rounded-2xl text-left transition flex items-center gap-3 ${
-                    active
-                      ? 'bg-emerald-600 text-white shadow-sm font-bold'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 font-medium'
-                  }`}
-                >
-                  <Icon size={18} className="shrink-0" />
-                  <div className="min-w-0">
-                    <div className="text-sm leading-tight truncate">{item.labelAm}</div>
-                    <div
-                      className={`text-[10px] truncate ${
-                        active ? 'text-emerald-100' : 'text-slate-400'
-                      }`}
-                    >
-                      {item.subAm}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Sidebar Footer: Streak + Theme Mode Switcher */}
-        <div className="space-y-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
-          <div className="px-3 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-between text-xs font-bold">
-            <span className="flex items-center gap-1.5">
-              <Flame size={15} className="text-amber-500" /> {progress.streakDays} օր անընդմեջ
-            </span>
-            <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
-              {progress.level}
-            </span>
-          </div>
-
-          <button
-            onClick={handleCycleThemeMode}
-            className="w-full px-3 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold flex items-center justify-between transition"
-            title="Սեղմեք՝ Ցերեկային / Գիշերային / Ավտոմատ ռեժիմը փոխելու համար"
-          >
-            <span className="flex items-center gap-2">
-              {progress.settings?.themeMode === 'auto' ? (
-                <Clock size={15} className="text-sky-500" />
-              ) : progress.darkMode ? (
-                <Moon size={15} className="text-indigo-400" />
-              ) : (
-                <Sun size={15} className="text-amber-500" />
-              )}
-              <span>{themeBadgeLabel}</span>
-            </span>
-            <span className="text-[10px] text-slate-400">Փոխել</span>
+      <header className="navigation-header">
+        <div className="navigation-brand">
+          <button type="button" className="navigation-button nav-desktop-only sidebar-toggle" aria-label="Մենյու" aria-expanded={sidebarOpen} aria-controls="mobile-navigation" onClick={() => setSidebarOpen(open => !open)}>
+            {sidebarOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
-        </div>
-      </aside>
-
-      {/* Mobile Header */}
-      <header className="app-header sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-2.5 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+          <button type="button" className="navigation-button nav-mobile-only" aria-label="Մենյու" aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>
+            {mobileMenuOpen ? <X size={21} /> : <Menu size={21} />}
+          </button>
           <LogoIcon size={34} />
-          <div>
-            <div className="font-extrabold text-base leading-none">
-              Hay<span className="text-emerald-600 dark:text-emerald-400">Lingo</span>
-            </div>
-            <div className="text-[10px] text-slate-400">
-              {progress.userName} · Մակարդակ {progress.level} · {progress.streakDays} օր
-            </div>
-          </div>
+          <span className="navigation-wordmark">Hay<span>Lingo</span></span>
         </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCycleThemeMode}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
-            aria-label="Փոխել թեման"
-          >
-            {progress.darkMode ? <Moon size={18} className="text-indigo-400" /> : <Sun size={18} className="text-amber-500" />}
-          </button>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
-            aria-label="Մենյու"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        <span className="navigation-page-title">{NAV_ITEMS.find(item => item.id === activeTab)?.labelAm}</span>
+        <div className="navigation-header-actions">
+          <div id="header-install-actions" />
+          <button type="button" className="navigation-button" onClick={handleCycleThemeMode} aria-label="Փոխել թեման">
+            {progress.darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </button>
         </div>
       </header>
-
-      {/* Mobile Drawer Navigation */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            role="navigation" aria-label="Բջջային ընտրացանկ" onKeyDown={navigateByKey}
-            className="app-drawer fixed inset-x-0 top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 shadow-xl space-y-1 max-h-[80vh] overflow-y-auto"
-          >
-            <button type="button" onClick={() => setMobileMenuOpen(false)} className="p-3 underline">Փակել ընտրացանկը</button>
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const active = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setStartInPlacement(false);
-                    setActiveTab(item.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full px-4 py-2.5 rounded-xl text-left flex items-center justify-between ${
-                    active
-                      ? 'bg-emerald-600 text-white font-bold'
-                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-3 text-sm">
-                    <Icon size={18} />
-                    {item.labelAm}
-                  </span>
-                  <span className="text-xs opacity-75">{item.subAm}</span>
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {mobileMenuOpen && <button type="button" className="navigation-backdrop" aria-label="Փակել մենյուն դրսից" onClick={() => setMobileMenuOpen(false)} />}
+      <aside id="mobile-navigation" aria-label="Բաժինների ընտրացանկ" className="app-sidebar">
+        <div className="navigation-sidebar-heading">
+          <span>Բաժիններ</span>
+          <button type="button" className="navigation-button nav-mobile-only" aria-label="Փակել մենյուն" onClick={() => setMobileMenuOpen(false)}><X size={20} /></button>
+        </div>
+        <nav className="navigation-list" aria-label="Բաժինների ընտրություն" onKeyDown={navigateByKey}>
+          {[
+            {title:'Գլխավոր', ids:['Dashboard']},
+            {title:'Սովորել', ids:['Lessons','Daily Words','Daily Questions','Exercises','Daily Conversations','Book Library','Grammar Academy','Accent Academy','Voice Practice','IT English']},
+            {title:'Գործիքներ', ids:['Study Assistant','Vocabulary','Translation']},
+            {title:'Անձնական', ids:['My Progress','Profile','Settings']},
+          ].map(group => {
+            const items = group.ids
+              .map(id => NAV_ITEMS.find(item => item.id === id))
+              .filter((item): item is typeof NAV_ITEMS[number] => Boolean(item))
+              .filter(item => isCoursePageUnlocked(progress, item.id));
+            if (!items.length) return null;
+            return <div key={group.title} className="navigation-group">
+              <p className="navigation-group-title">{group.title}</p>
+              {items.map(item => {
+                const Icon = item.icon;
+                return <button type="button" key={item.id} aria-current={activeTab === item.id ? 'page' : undefined} className="navigation-item" onClick={() => {setStartInPlacement(false);setActiveTab(item.id);setMobileMenuOpen(false);}}>
+                  <Icon size={19} aria-hidden="true" /><span>{item.labelAm}</span>
+                </button>;
+              })}
+            </div>;
+          })}
+        </nav>
+        <div className="navigation-footer"><span><Flame size={16} aria-hidden="true" />{progress.streakDays} օր</span><span>{progress.level}</span><small>{APP_VERSION}</small></div>
+      </aside>
 
       {/* Main Content Area */}
       <StudyActivityContext.Provider value={{start: () => setSessionState(value => value === 'idle' ? 'active' : value), finish: () => setSessionState('idle')}}>
       <main id="learning-main" tabIndex={-1} className="app-main">
         <PWAManager
+          installTargetId="header-install-actions"
           morningPracticeTime={progress.morningReminder?.reminderTime || progress.settings?.preferredMorningTime || '08:00'}
           timezone={progress.settings?.timezone || 'Asia/Yerevan'}
           morningReminderEnabled={progress.morningReminder?.isEnabled}
@@ -1025,6 +969,7 @@ export default function HomePage() {
         />
         <div className="app-content mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
           {/* Top Status Bar */}
+          {activeTab !== 'Dashboard' && (
           <div className="app-top-status hidden md:flex flex-wrap gap-3 items-center justify-between mb-6 pb-4 border-b border-slate-200/80 dark:border-slate-800/80">
             <div>
               <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -1062,6 +1007,7 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+          )}
 
           {isLearning && <section aria-label="Պարապմունքի էկրանը" className="study-session-bar mb-5 p-3 rounded-xl border border-emerald-300 flex flex-wrap gap-3 items-center justify-between">
             <div><p>{sessionRunning ? 'Պարապմունքն ընթացքի մեջ է' : sessionState === 'paused' ? 'Պարապմունքն ընդմիջված է' : 'Պարապմունքն ավարտված է կամ դեռ չի սկսվել'}</p><p aria-live="polite" data-wake-status={wake.status} className="text-sm">{WAKE_STATUS_AM[wake.status]}</p></div>
@@ -1072,35 +1018,60 @@ export default function HomePage() {
             <label className="flex gap-2 items-start text-sm"><input type="checkbox" checked={progress.settings.keepScreenAwake} onChange={event => handleUpdateSettings({keepScreenAwake:event.target.checked})} /><span>Դասի ընթացքում էկրանը միացված պահել</span></label>
             {['released','denied'].includes(wake.status) && <button type="button" className="underline" onClick={wake.retry}>Կրկին միացնել էկրանի պահումը</button>}
           </section>}
-          {activeTab === 'Dashboard' && (
-            <DashboardView
-              progress={progress}
-              onNavigate={(tab) => setActiveTab(tab as NavTabId)}
-              onOpenLesson={handleOpenLesson}
-              onChangeLevel={handleChangeLevel}
-              onStartPlacementTest={() => {
-                setStartInPlacement(true);
-                setActiveTab('My Progress');
-                setSessionState('active');
-              }}
-              onSpeak={handleSpeak}
-            />
-          )}
+          {activeTab === 'Dashboard' && <DashboardView progress={progress} onOpenLesson={handleOpenLesson} onNavigate={navigateTab} canNavigate={tab => isCoursePageUnlocked(progress, tab)} />}
 
           {activeTab === 'Lessons' && (
-            <LessonsView
+            <LearningPlanView
               progress={progress}
-              selectedLessonId={progress.currentLessonId}
-              initialSentenceIdx={lessonSentenceResumeIdx}
               onSelectLesson={handleOpenLesson}
               onUpdateSentencePosition={handleUpdateSentencePosition}
-              onToggleSaveSentence={handleToggleSaveSentence}
               onCompleteLesson={handleCompleteLesson}
+              onToggleSaveSentence={handleToggleSaveSentence}
               onSpeak={handleSpeak}
-              onRecordSpeakingAttempt={handleRecordVoiceSession}
+              onVerify={(lessonId, sentenceId, answer) => updateAndPersist(prev => {
+                const lesson = getCourseLessons(prev.level).find(item => item.id === lessonId);
+                if (!lesson || !canOpenCourseLesson(prev, lessonId)) return prev;
+                const sentence = lesson.sentences[getFirstUnverifiedIndex(prev, lesson)];
+                if (!sentence || sentence.id !== sentenceId || isCourseStepComplete(prev, sentenceId) || !answer.trim()) return prev;
+                const correct = isCorrectWrittenAnswer(sentence, answer);
+                const path = prev.learningPath!;
+                return {...prev,
+                  learningPath: {...path,
+                    verifiedSentenceIds: correct ? Array.from(new Set([...path.verifiedSentenceIds, sentenceId])) : path.verifiedSentenceIds,
+                    writtenSentenceIds: correct ? [...(path.writtenSentenceIds || []), sentenceId] : (path.writtenSentenceIds || []),
+                  },
+                  correctAnswersCount: prev.correctAnswersCount + (correct ? 1 : 0),
+                  wrongAnswersCount: prev.wrongAnswersCount + (correct ? 0 : 1),
+                };
+              })}
+              onVerifyCourseQuestion={(kind, questionId, answer) => updateAndPersist(prev => {
+                if (prev.level !== 'A1' || !answer.trim() || !prev.learningPath) return prev;
+                const question = (kind === 'reading' ? A1_CHAPTERS.flatMap(chapter => chapter.questions) : A1_FINAL_QUESTIONS).find(item => item.id === questionId);
+                if (!question) return prev;
+                const lesson = getCourseLessons('A1').find(item => item.id === question.lessonId);
+                if (kind === 'reading' && (!lesson || !canOpenCourseLesson(prev, lesson.id) || !lesson.sentences.every(sentence => isCourseStepComplete(prev, sentence.id)))) return prev;
+                if (kind === 'assessment' && !areCourseLessonsComplete(prev, 'A1')) return prev;
+                const field = kind === 'reading' ? 'readingAnswerIds' : 'assessmentAnswerIds';
+                const completed = prev.learningPath[field] || [];
+                if (completed.includes(question.id)) return prev;
+                const correct = isCorrectWrittenAnswer(question, answer);
+                return {...prev,
+                  learningPath: {...prev.learningPath, [field]: correct ? [...completed, question.id] : completed},
+                  correctAnswersCount: prev.correctAnswersCount + (correct ? 1 : 0),
+                  wrongAnswersCount: prev.wrongAnswersCount + (correct ? 0 : 1),
+                };
+              })}
+              onAdvance={() => {const next = getNextCourseLevel(progress); if (next) handleChangeLevel(next);}}
             />
           )}
 
+          {!coursePageUnlocked && <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900 space-y-4">
+            <Lock size={28} className="text-amber-500" aria-hidden="true" />
+            <h1 className="text-xl font-bold">Նախ ավարտիր {progress.level} դասապլանը</h1>
+            <p className="text-sm leading-relaxed text-slate-500">Այս բաժինը դեռ փակ է։ Շարունակիր ընթացիկ դասը և անցիր բոլոր ստուգումները։</p>
+            <button type="button" onClick={() => setActiveTab('Lessons')} className="rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white">Բացել իմ դասապլանը</button>
+          </section>}
+          {coursePageUnlocked && <>
           {activeTab === 'Exercises' && (
             <ExercisesView
               progress={progress}
@@ -1244,6 +1215,8 @@ export default function HomePage() {
             <ProfileView
               progress={progress}
               onUpdateProfile={handleUpdateProfile}
+              onUpdateDraft={patch => updateAndPersist(prev => ({...prev, profileDraft: {...getProfileDraft(prev), ...patch, userId: prev.profile.id}}))}
+              onDiscardDraft={() => updateAndPersist(prev => ({...prev, profileDraft: undefined}))}
               onOpenLesson={(lessonId) => handleOpenLesson(lessonId, 0)}
               onSpeak={handleSpeak}
             />
@@ -1263,6 +1236,7 @@ export default function HomePage() {
               onSpeak={handleSpeak}
             />
           )}
+          </>}
         </div>
       </main>
       </StudyActivityContext.Provider>
@@ -1285,7 +1259,7 @@ export default function HomePage() {
           }`}
         >
           <LayoutDashboard size={20} />
-          <span className="text-[10px] mt-0.5">Վահանակ</span>
+          <span className="text-[10px] mt-0.5">Գլխավոր</span>
         </button>
 
         <button
@@ -1301,10 +1275,10 @@ export default function HomePage() {
           }`}
         >
           <BookOpen size={20} />
-          <span className="text-[10px] mt-0.5">Դասեր</span>
+          <span className="text-[10px] mt-0.5">Դասապլան</span>
         </button>
 
-        <button
+        {isCoursePageUnlocked(progress, 'Exercises') && <button
           onClick={() => {
             setStartInPlacement(false);
             setActiveTab('Exercises');
@@ -1318,9 +1292,9 @@ export default function HomePage() {
         >
           <Brain size={20} />
           <span className="text-[10px] mt-0.5">Վարժանք</span>
-        </button>
+        </button>}
 
-        <button
+        {isCoursePageUnlocked(progress, 'Voice Practice') && <button
           onClick={() => {
             setStartInPlacement(false);
             setActiveTab('Voice Practice');
@@ -1334,7 +1308,7 @@ export default function HomePage() {
         >
           <Mic size={20} />
           <span className="text-[10px] mt-0.5">Ձայնային</span>
-        </button>
+        </button>}
 
         <button
           onClick={() => {

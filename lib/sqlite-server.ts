@@ -430,7 +430,7 @@ export function parseSqliteBackupBuffer(
           firstName: String(pRow.first_name || ''),
           lastName: String(pRow.last_name || ''),
           age: Number(pRow.age || 25),
-          profession: String(pRow.profession || 'IT Specialist') as ProfessionId,
+          profession: String(pRow.profession || 'Other') as ProfessionId,
           customProfession: String(pRow.custom_profession || ''),
           proficiencyTier: (pRow.proficiency_tier || 'Elementary') as any,
           learningGoal: (pRow.learning_goal || 'work') as any,

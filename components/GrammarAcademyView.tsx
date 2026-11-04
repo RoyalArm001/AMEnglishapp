@@ -21,7 +21,8 @@ import {
   GrammarExerciseItem,
   GrammarAttemptRecord,
 } from '@/lib/types';
-import { GRAMMAR_TOPICS_DATA } from '@/data/grammar-academy';
+import { GRAMMAR_TOPICS_DATA as ALL_GRAMMAR_TOPICS } from '@/data/grammar-academy';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { speakEnglishText } from '@/lib/speech';
 import { setPageMemory } from '@/lib/page-memory';
 import { recordLearningAttempt } from '@/lib/storage';
@@ -41,6 +42,7 @@ export default function GrammarAcademyView({
   initialTopicId,
   initialStep,
 }: GrammarAcademyViewProps) {
+  const GRAMMAR_TOPICS_DATA = ALL_GRAMMAR_TOPICS.filter(item => isAtOrBelowLevel(item.level, userProgress.level));
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(() => {
     if (initialTopicId && GRAMMAR_TOPICS_DATA.some((t) => t.id === initialTopicId)) {
       return initialTopicId;

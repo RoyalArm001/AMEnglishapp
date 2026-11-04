@@ -37,14 +37,14 @@ export default function OnboardingView({
   const [lastName, setLastName] = useState<string>(initialProfile.lastName || '');
   const [age, setAge] = useState<string>(String(initialProfile.age || 25));
   const [profession, setProfession] = useState<ProfessionId>(
-    initialProfile.profession || 'IT Specialist'
+    initialProfile.profession || 'Other'
   );
   const [customProfession, setCustomProfession] = useState<string>(
     initialProfile.customProfession || ''
   );
   const [professionSearch, setProfessionSearch] = useState<string>('');
   const [proficiencyTier, setProficiencyTier] = useState<ProficiencyTier>(
-    initialProfile.proficiencyTier || 'Elementary'
+    initialProfile.proficiencyTier || 'Beginner'
   );
   const [learningGoal, setLearningGoal] = useState<LearningGoalId>(
     initialProfile.learningGoal || 'work'
@@ -79,10 +79,6 @@ export default function OnboardingView({
     const parsedAge = Number(age);
     if (!parsedAge || parsedAge < 5 || parsedAge > 110) {
       setErrorAm('Խնդրում ենք նշել վավեր տարիք (5–110)։');
-      return;
-    }
-    if (profession === 'Other' && !customProfession.trim()) {
-      setErrorAm('Խնդրում ենք գրել Ձեր մասնագիտությունը լրացուցիչ դաշտում։');
       return;
     }
 
@@ -259,11 +255,10 @@ export default function OnboardingView({
                 className="pt-2"
               >
                 <label className="block text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-1">
-                  {UI_TEXT.onboarding.customProfessionLabel} *
+                  {UI_TEXT.onboarding.customProfessionLabel}
                 </label>
                 <input
                   type="text"
-                  required
                   value={customProfession}
                   onChange={(e) => setCustomProfession(e.target.value)}
                   placeholder="Գրեք Ձեր մասնագիտությունը (օր.՝ Ճարտարապետ, Իրավաբան, Ֆոտոգրաֆ)..."

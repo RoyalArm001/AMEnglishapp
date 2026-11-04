@@ -6,7 +6,9 @@ import {
   VocabularyItem,
 } from '../lib/types';
 
-export const PROFESSIONS_LIST: ProfessionTrackMeta[] = [
+export const DEFAULT_PROFESSION: ProfessionId = 'Other';
+
+const PROFESSION_TRACKS: ProfessionTrackMeta[] = [
   {
     id: 'IT Specialist',
     titleEn: 'IT Specialist',
@@ -296,10 +298,10 @@ export const PROFESSIONS_LIST: ProfessionTrackMeta[] = [
   },
   {
     id: 'Other',
-    titleEn: 'Other — Այլ մասնագիտություն',
-    titleAm: 'Այլ մասնագիտություն (Other)',
+    titleEn: 'General / Other field',
+    titleAm: 'Ընդհանուր / այլ ոլորտ',
     icon: '✨',
-    descriptionAm: 'Ընդհանուր գործնական, աշխատանքային և առօրյա անգլերեն՝ հարմարեցված Ձեր նշած մասնագիտությանը։',
+    descriptionAm: 'Առօրյա և աշխատանքային շփում՝ առանց կոնկրետ մասնագիտություն ընտրելու։ Ձեր ոլորտը կարող եք նշել ցանկության դեպքում։',
     topics: [
       { titleEn: 'Workplace Communication', titleAm: 'Աշխատանքային հաղորդակցում' },
       { titleEn: 'Everyday Conversations', titleAm: 'Առօրյա խոսակցություններ' },
@@ -314,6 +316,18 @@ export const PROFESSIONS_LIST: ProfessionTrackMeta[] = [
     ],
   },
 ];
+
+// Present the general track first, then professions alphabetically. Stored IDs stay unchanged.
+export const PROFESSIONS_LIST = [...PROFESSION_TRACKS].sort((a, b) => {
+  if (a.id === b.id) return 0;
+  if (a.id === DEFAULT_PROFESSION) return -1;
+  if (b.id === DEFAULT_PROFESSION) return 1;
+  return a.titleAm.localeCompare(b.titleAm, 'hy');
+});
+
+export function resolveProfession(value: unknown): ProfessionId {
+  return PROFESSIONS_LIST.find(track => track.id === value)?.id || DEFAULT_PROFESSION;
+}
 
 /**
  * Additional Profession-Focused Lessons integrated into the main lessons catalog

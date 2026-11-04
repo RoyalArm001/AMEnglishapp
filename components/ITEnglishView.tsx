@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import ProfessionalPracticeView from './ProfessionalPracticeView';
 import {
   CheckCircle2,
+  Briefcase,
   HelpCircle,
   Mic,
   MicOff,
@@ -15,7 +16,9 @@ import {
   Volume2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { IT_DIALOGUES, IT_TOPICS } from '../data/it-english';
+import { IT_DIALOGUES as ALL_IT_DIALOGUES, IT_TOPICS as ALL_IT_TOPICS } from '../data/it-english';
+import { isAtOrBelowLevel } from '../lib/learning-path';
+import { PROFESSIONS_LIST, resolveProfession } from '../data/professions';
 import { ITTopicId, UserProgressData, SkillType } from '../lib/types';
 import { normalizeEnglishText, startSpeechRecognition } from '../lib/speech';
 
@@ -32,11 +35,48 @@ interface ITEnglishViewProps {
   ) => void;
 }
 
-export default function ITEnglishView({
+export default function ProfessionalEnglishView(props: ITEnglishViewProps) {
+  const [profession, setProfession] = useState(() => resolveProfession(props.progress.profile?.profession));
+  const [showITPractice, setShowITPractice] = useState(false);
+
+  useEffect(() => {
+    setProfession(resolveProfession(props.progress.profile?.profession));
+    setShowITPractice(false);
+  }, [props.progress.profile?.profession]);
+
+  const isTechnicalProfession = ['IT Specialist', 'Software Developer', 'Network Administrator', 'System Administrator'].includes(profession) && ALL_IT_DIALOGUES.some(item => isAtOrBelowLevel(item.level, props.progress.level));
+
+  return (
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="flex items-center gap-3 text-2xl font-bold"><Briefcase size={26} className="shrink-0 text-emerald-600" aria-hidden="true" />Մասնագիտական անգլերեն</h1>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">Անգլերեն՝ բժշկության, կրթության, բիզնեսի, տրանսպորտի, տեխնոլոգիաների և այլ ոլորտների համար։ Ընտրիր քեզ հետաքրքրող ուղղությունը կամ սկսիր ընդհանուր շփումից։</p>
+      </header>
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+        <label htmlFor="professional-field" className="mb-2 block text-sm font-semibold">Ընտրիր մասնագիտությունը կամ ոլորտը</label>
+        <select id="professional-field" value={profession} onChange={event => { setProfession(resolveProfession(event.target.value)); setShowITPractice(false); }} className="min-h-11 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-800">
+          {PROFESSIONS_LIST.map(track => <option key={track.id} value={track.id}>{track.titleAm}</option>)}
+        </select>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Այստեղ կարող ես փորձել ցանկացած ոլորտ՝ առանց պրոֆիլիդ մասնագիտությունը փոխելու։</p>
+      </div>
+      <ProfessionalPracticeView key={`${profession}-${props.progress.level}`} profession={profession} level={props.progress.level} onSpeak={props.onSpeak} onComplete={props.onCompleteRoleplay} />
+      {isTechnicalProfession && (
+        <button type="button" aria-expanded={showITPractice} aria-controls="technical-practice" onClick={() => setShowITPractice(value => !value)} className="min-h-11 rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold dark:border-slate-700">
+          {showITPractice ? 'Փակել ՏՏ լրացուցիչ թեմաները' : 'Բացել ՏՏ լրացուցիչ թեմաները'}
+        </button>
+      )}
+      {isTechnicalProfession && showITPractice && <div id="technical-practice"><ITPracticeView {...props} /></div>}
+    </div>
+  );
+}
+
+function ITPracticeView({
   progress,
   onSpeak: speakAudio,
   onCompleteRoleplay,
 }: ITEnglishViewProps) {
+  const IT_DIALOGUES = ALL_IT_DIALOGUES.filter(item => isAtOrBelowLevel(item.level, progress.level));
+  const IT_TOPICS = ALL_IT_TOPICS.filter(topic => IT_DIALOGUES.some(dialogue => dialogue.topicId === topic.id));
   const studyActivity = useStudyActivity();
   const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const [selectedTopicId, setSelectedTopicId] = useState<ITTopicId>(IT_DIALOGUES[0].topicId);
@@ -161,25 +201,24 @@ export default function ITEnglishView({
 
   return (
     <div className="space-y-8">
-      <ProfessionalPracticeView profession={progress.profile.profession} onSpeak={onSpeak} onComplete={onCompleteRoleplay} />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-            ՄԱՍՆԱԳԻՏԱԿԱՆ ԵՎ ՏՏ ԱՆԳԼԵՐԵՆ · ԱՇԽԱՏԱՆՔԱՅԻՆ ԻՐԱՎԻՃԱԿՆԵՐ
+            ՏՏ ՈԼՈՐՏ · ԼՐԱՑՈՒՑԻՉ ԱՇԽԱՏԱՆՔԱՅԻՆ ԻՐԱՎԻՃԱԿՆԵՐ
           </span>
-          <h1 className="text-2xl md:text-3xl font-bold mt-1">
-            ՏՏ Անգլերեն՝ 13 Թեմաներ և {IT_DIALOGUES.length} Աշխատանքային Երկխոսություններ
-          </h1>
+          <h2 className="text-2xl md:text-3xl font-bold mt-1">
+            ՏՏ անգլերեն՝ {IT_TOPICS.length} թեմա և {IT_DIALOGUES.length} աշխատանքային երկխոսություն
+          </h2>
         </div>
         <span className="px-3.5 py-1.5 rounded-full bg-sky-500/10 text-sky-700 dark:text-sky-300 text-xs font-bold">
-          Ավարտած երկխոսություն՝ {progress.completedRoleplayIds.length} / {IT_DIALOGUES.length}
+          Ավարտած երկխոսություն՝ {IT_DIALOGUES.filter(dialogue => progress.completedRoleplayIds.includes(dialogue.id)).length} / {IT_DIALOGUES.length}
         </span>
       </div>
 
       {/* 13 IT Topics Selector */}
       <div className="space-y-3">
-        <h2 className="text-base font-bold">Ընտրեք ՏՏ մասնագիտական թեման (13 բաժին)․</h2>
+        <h2 className="text-base font-bold">Ընտրեք ձեր մակարդակին հասանելի ՏՏ թեման․</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
           {IT_TOPICS.map((topic) => {
             const active = topic.id === selectedTopicId;

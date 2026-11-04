@@ -1,4 +1,4 @@
-export const APP_VERSION = 'v1.2.2';
+export const APP_VERSION = 'v1.6.0';
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -29,6 +29,10 @@ export async function registerServiceWorker(
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
     return null;
   }
+
+  // Next dev reuses asset URLs. A cache-first worker mixes old components with new CSS.
+  // Production retains the PWA; local development always loads from the dev server.
+  if (process.env.NODE_ENV === 'development') return null;
 
   try {
     const registration = await navigator.serviceWorker.register('/sw.js', {

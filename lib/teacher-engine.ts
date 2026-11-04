@@ -1,8 +1,10 @@
-import type { ProfessionId } from './types';
+import type { ProfessionId, CEFRLevel } from './types';
+import { isAtOrBelowLevel } from './learning-path';
 import { TEACHER_CURRICULUM, TeacherCurriculumQuestion } from '../data/placement-and-teacher';
 import { normalizeEnglishText } from './speech';
 
 export interface TeacherEvaluationRequest {
+  level?: CEFRLevel;
   profession?: ProfessionId;
   currentQuestionId: string;
   userAnswer: string;
@@ -69,9 +71,10 @@ export function selectNextCurriculumQuestion(
   masteredIds: string[],
   weakTopics: string[],
   targetDifficulty: number,
-  profession?: ProfessionId
+  profession?: ProfessionId,
+  level: CEFRLevel = 'A1'
 ): TeacherCurriculumQuestion {
-  const curriculum = profession ? TEACHER_CURRICULUM.filter(q => q.profession === profession || !q.profession) : TEACHER_CURRICULUM;
+  const curriculum = TEACHER_CURRICULUM.filter(q => (!q.profession || q.profession === profession) && isAtOrBelowLevel(q.level, level));
   const preferred = profession ? curriculum.filter(q => q.profession === profession) : [];
   const source = preferred.length ? preferred : curriculum;
   const unmastered = source.filter(
@@ -90,7 +93,7 @@ export function selectNextCurriculumQuestion(
   return (
     pool.sort(
       (a, b) => Math.abs(a.difficulty - targetDifficulty) - Math.abs(b.difficulty - targetDifficulty)
-    )[0] || TEACHER_CURRICULUM[0]
+    )[0] || source[0]
   );
 }
 
@@ -98,7 +101,8 @@ export function evaluateWithRuleBasedTeacher(
   req: TeacherEvaluationRequest
 ): TeacherEvaluationResponse {
   const currentQ =
-    TEACHER_CURRICULUM.find((q) => q.id === req.currentQuestionId) || TEACHER_CURRICULUM[0];
+    TEACHER_CURRICULUM.find((q) => q.id === req.currentQuestionId && isAtOrBelowLevel(q.level, req.level || 'A1') && (!q.profession || q.profession === req.profession)) ||
+    selectNextCurriculumQuestion('', [], [], req.difficultyScore, req.profession, req.level);
   const raw = req.userAnswer.trim();
   const normUser = normalizeEnglishText(raw);
 
@@ -115,7 +119,7 @@ export function evaluateWithRuleBasedTeacher(
       updatedMastered,
       req.weakTopics,
       nextDiff,
-      req.profession
+      req.profession, req.level
     );
 
     return {
@@ -149,7 +153,7 @@ export function evaluateWithRuleBasedTeacher(
         updatedMastered,
         req.weakTopics,
         nextDiff,
-        req.profession
+        req.profession, req.level
       );
 
       return {
@@ -184,7 +188,7 @@ export function evaluateWithRuleBasedTeacher(
         req.masteredQuestionIds,
         Array.from(new Set([...req.weakTopics, currentQ.topic])),
         nextDiff,
-        req.profession
+        req.profession, req.level
       );
 
       return {
@@ -217,7 +221,7 @@ export function evaluateWithRuleBasedTeacher(
     req.masteredQuestionIds,
     updatedWeak,
     nextDiff,
-    req.profession
+    req.profession, req.level
   );
 
   return {

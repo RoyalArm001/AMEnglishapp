@@ -13,7 +13,8 @@ import {
   Volume2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { VOCABULARY_CATEGORIES, VOCABULARY_ITEMS } from '../data/vocabulary';
+import { VOCABULARY_CATEGORIES, VOCABULARY_ITEMS as ALL_VOCABULARY_ITEMS } from '../data/vocabulary';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { CEFRLevel, UserProgressData, VocabularyItem } from '../lib/types';
 
 interface VocabularyViewProps {
@@ -29,6 +30,7 @@ export default function VocabularyView({
   onToggleFavoriteWord,
   onGradeSRSWord,
 }: VocabularyViewProps) {
+  const VOCABULARY_ITEMS = useMemo(() => ALL_VOCABULARY_ITEMS.filter(item => isAtOrBelowLevel(item.level, progress.level)), [progress.level]);
   const [subTab, setSubTab] = useState<'list' | 'flashcards' | 'srs' | 'favorites'>('list');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -58,7 +60,7 @@ export default function VocabularyView({
       }
       return true;
     });
-  }, [subTab, selectedCategory, selectedLevel, searchQuery, progress.favoriteWordIds]);
+  }, [subTab, selectedCategory, selectedLevel, searchQuery, progress.favoriteWordIds, VOCABULARY_ITEMS]);
 
   // Words due for Spaced Repetition review (or unlearned words)
   const srsQueue = useMemo(() => {
@@ -69,7 +71,7 @@ export default function VocabularyView({
       return srs.nextReviewAt <= now;
     });
     return due.length > 0 ? due : VOCABULARY_ITEMS;
-  }, [progress.srsWords]);
+  }, [progress.srsWords, VOCABULARY_ITEMS]);
 
   const activeDeck: VocabularyItem[] =
     subTab === 'srs'
@@ -342,7 +344,7 @@ export default function VocabularyView({
               className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs md:text-sm font-semibold"
             >
               <option value="all">Բոլոր մակարդակները (A1–C2)</option>
-              {(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const).map((lvl) => (
+              {(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const).filter(lvl => isAtOrBelowLevel(lvl, progress.level)).map((lvl) => (
                 <option key={lvl} value={lvl}>
                   Մակարդակ {lvl}
                 </option>

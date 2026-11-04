@@ -15,8 +15,9 @@ import {
 import { motion } from 'framer-motion';
 import { TEACHER_CURRICULUM } from '../data/placement-and-teacher';
 import { TeacherMessage, UserProgressData } from '../lib/types';
-import { evaluateWithRuleBasedTeacher } from '../lib/teacher-engine';
+import { evaluateWithRuleBasedTeacher, selectNextCurriculumQuestion } from '../lib/teacher-engine';
 import { startSpeechRecognition } from '../lib/speech';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 
 interface TeacherViewProps {
   progress: UserProgressData;
@@ -44,10 +45,12 @@ export default function TeacherView({
   const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const session = progress.teacherSession;
   const storedQuestion = TEACHER_CURRICULUM[session.currentQuestionIndex % TEACHER_CURRICULUM.length];
-  const preferredQuestion = (!session.messages.length || (storedQuestion?.profession && storedQuestion.profession !== progress.profile.profession)) ? TEACHER_CURRICULUM.find(q => q.profession === progress.profile.profession) : undefined;
-  const activeQuestion = preferredQuestion ||
-    TEACHER_CURRICULUM[session.currentQuestionIndex % TEACHER_CURRICULUM.length] ||
-    TEACHER_CURRICULUM[0];
+  const needsMatchingQuestion = !session.messages.length || !storedQuestion ||
+    !isAtOrBelowLevel(storedQuestion.level, progress.level) ||
+    (storedQuestion.profession && storedQuestion.profession !== progress.profile.profession);
+  const activeQuestion = needsMatchingQuestion
+    ? selectNextCurriculumQuestion('', session.masteredQuestionIds, session.weakTopics, session.difficultyScore, progress.profile.profession, progress.level)
+    : storedQuestion;
 
   const [inputText, setInputText] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -67,6 +70,7 @@ export default function TeacherView({
     setInputText('');
 
     const payload = {
+      level: progress.level,
       profession: progress.profile.profession,
       currentQuestionId: activeQuestion.id,
       userAnswer: trimmed,

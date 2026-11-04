@@ -152,16 +152,16 @@ export const VOICE_PRACTICE_ITEMS: VoicePracticeItem[] = [
     id: 'vp-2',
     mode: 'morning',
     level: 'A1',
-    categoryAm: 'Առավոտյան մարզում · Ինքնաներկայացում',
-    questionEn: 'What is your job and which days do you work?',
-    questionPronunciation: 'Ուաթ իզ յուր ջոբ ընդ ուիչ դեյզ դու յու ուըրք։',
-    questionAm: 'Ի՞նչ է Ձեր մասնագիտությունը և շաբաթվա ո՞ր օրերին եք աշխատում։',
-    targetAnswerEn: 'I work as an IT specialist from Monday to Friday.',
-    targetPronunciation: 'Այ ուըրք էզ էն այ թի սփեշըլիսթ ֆրոմ Մանդեյ թու Ֆրայդեյ։',
-    targetAnswerAm: 'Ես աշխատում եմ որպես ՏՏ մասնագետ՝ երկուշաբթիից ուրբաթ։',
+    categoryAm: 'Առավոտյան մարզում · Սովորելու օրերը',
+    questionEn: 'Which days do you study English?',
+    questionPronunciation: 'Ուիչ դեյզ դու յու սթադի Ինգլիշ՞',
+    questionAm: 'Ո՞ր օրերին եք անգլերեն սովորում։',
+    targetAnswerEn: 'I study English from Monday to Friday.',
+    targetPronunciation: 'Այ սթադի Ինգլիշ ֆրոմ Մանդեյ թու Ֆրայդեյ։',
+    targetAnswerAm: 'Ես անգլերեն եմ սովորում երկուշաբթիից ուրբաթ։',
     alternativesEn: [
-      'I am an IT specialist from Monday to Friday.',
-      'I work in IT from Monday to Friday.',
+      'I study English on weekdays.',
+      'I learn English from Monday to Friday.',
     ],
   },
   {
@@ -318,6 +318,7 @@ export interface TeacherCurriculumQuestion {
 export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
   {
     id: 'tq-1',
+    profession: 'IT Specialist',
     difficulty: 1,
     level: 'A1',
     topic: 'IT Troubleshooting',
@@ -409,6 +410,7 @@ export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
   },
   {
     id: 'tq-4',
+    profession: 'IT Specialist',
     difficulty: 4,
     level: 'A2',
     topic: 'Helpdesk Conversation',
@@ -437,6 +439,7 @@ export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
   },
   {
     id: 'tq-5',
+    profession: 'IT Specialist',
     difficulty: 5,
     level: 'B1',
     topic: 'Active Directory & Accounts',
@@ -464,6 +467,7 @@ export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
   },
   {
     id: 'tq-6',
+    profession: 'IT Specialist',
     difficulty: 6,
     level: 'B1',
     topic: 'Network & DNS Troubleshooting',
@@ -490,6 +494,7 @@ export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
   },
   {
     id: 'tq-7',
+    profession: 'IT Specialist',
     difficulty: 7,
     level: 'B2',
     topic: 'Professional Experience & Interviews',
@@ -515,6 +520,7 @@ export const TEACHER_CURRICULUM: TeacherCurriculumQuestion[] = [
   },
   {
     id: 'tq-8',
+    profession: 'IT Specialist',
     difficulty: 8,
     level: 'C1',
     topic: 'Incident Reporting & Complex Sentences',

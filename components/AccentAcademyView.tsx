@@ -24,7 +24,8 @@ import {
   PronunciationPracticeItem,
   PronunciationProgressRecord,
 } from '@/lib/types';
-import { PRONUNCIATION_MODULES_DATA } from '@/data/accent-academy';
+import { PRONUNCIATION_MODULES_DATA as ALL_PRONUNCIATION_MODULES } from '@/data/accent-academy';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import {
   speakEnglishText,
   startSpeechRecognition,
@@ -49,6 +50,7 @@ export default function AccentAcademyView({
   initialModuleId,
   initialStep,
 }: AccentAcademyViewProps) {
+  const PRONUNCIATION_MODULES_DATA = ALL_PRONUNCIATION_MODULES.filter(item => isAtOrBelowLevel(item.level, userProgress.level));
   // Current accent preference (US or UK)
   const [accent, setAccent] = useState<AccentVariant>(() => {
     return userProgress.accentPreference?.accent || 'us';

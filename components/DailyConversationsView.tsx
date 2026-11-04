@@ -22,7 +22,8 @@ import {
   DailyConversationSessionState,
   DailyConversationTopic,
 } from '@/lib/types';
-import { DAILY_CONVERSATION_TOPICS } from '@/data/daily-conversations';
+import { DAILY_CONVERSATION_TOPICS as ALL_CONVERSATION_TOPICS } from '@/data/daily-conversations';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { speakEnglishText, startSpeechRecognition } from '@/lib/speech';
 import { setPageMemory } from '@/lib/page-memory';
 import { recordLearningAttempt } from '@/lib/storage';
@@ -42,6 +43,7 @@ export default function DailyConversationsView({
   initialTopicId,
   initialStep,
 }: DailyConversationsViewProps) {
+  const DAILY_CONVERSATION_TOPICS = ALL_CONVERSATION_TOPICS.filter(item => isAtOrBelowLevel(item.level, userProgress.level));
   // Select active topic
   const [selectedTopicId, setSelectedTopicId] = useState<string>(() => {
     if (initialTopicId && DAILY_CONVERSATION_TOPICS.some((t) => t.id === initialTopicId)) {

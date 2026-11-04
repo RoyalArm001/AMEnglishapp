@@ -1,4 +1,5 @@
 import { ADDITIONAL_LESSONS } from './additional-lessons';
+import { FOUNDATION_LESSONS } from './foundation-lessons';
 import { LessonCategoryMeta, LessonItem, LessonSentence } from '../lib/types';
 import { PROFESSION_LESSONS } from './professions';
 
@@ -134,6 +135,7 @@ export const LESSON_CATEGORIES: LessonCategoryMeta[] = [
 ];
 
 export const LESSONS_DATA: LessonItem[] = [
+  ...FOUNDATION_LESSONS,
   // 1. Days of the Week (2 lessons)
   {
     id: 'lesson-1-days',
@@ -148,9 +150,9 @@ export const LESSONS_DATA: LessonItem[] = [
     sentences: [
       {
         id: 's-1',
-        english: 'I work as an IT specialist from Monday to Friday.',
-        pronunciation: 'Այ ուըրք էզ էն այ թի սփեշըլիսթ ֆրոմ Մանդեյ թու Ֆրայդեյ։',
-        armenian: 'Ես աշխատում եմ որպես ՏՏ մասնագետ՝ երկուշաբթիից ուրբաթ։',
+        english: 'I study from Monday to Friday.',
+        pronunciation: 'Այ սթադի ֆրոմ Մանդեյ թու Ֆրայդեյ։',
+        armenian: 'Ես սովորում եմ երկուշաբթիից ուրբաթ։',
         grammarNoteAm: 'from ... to ... = ...-ից մինչև ...',
       },
       {

@@ -1,669 +1,198 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import {
-  ArrowRight,
-  Award,
-  BookMarked,
-  BookOpen,
-  Brain,
-  Briefcase,
-  CheckCircle2,
-  Clock,
-  Compass,
-  Flame,
-  GraduationCap,
-  Mic,
-  Sparkles,
-  Star,
-  Target,
-  User,
-  Volume2,
-  XCircle,
+  ArrowDown, ArrowRight, ArrowUpRight, BookOpen, ChevronRight,
+  Headphones, Layers, Lightbulb, MessageCircle, Mic, Sparkles, PenLine,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { CEFRLevel, UserProgressData } from '../lib/types';
-import { LESSONS_DATA, ALL_LESSON_SENTENCES } from '../data/lessons';
-import {
-  getRecommendedLessonIdsForProfession,
-  PROFESSIONS_LIST,
-} from '../data/professions';
-import { CEFR_LEVELS } from '../lib/storage';
-import { UI_TEXT } from '../lib/i18n';
+import { SITE_UPDATES } from '../data/site-updates';
+import { APP_VERSION } from '../lib/pwa';
+import { A1_CHAPTERS, A1_TEXTBOOKS } from '../data/a1-course';
+import { areCourseLessonsComplete, canOpenCourseLesson, getCurrentCourseLesson, isLevelCourseComplete } from '../lib/learning-path';
+import type { UserProgressData } from '../lib/types';
+import styles from './DashboardView.module.css';
 
-interface DashboardViewProps {
+type HomeDestination = 'Lessons' | 'Daily Words' | 'Book Library' | 'Grammar Academy' | 'Voice Practice' | 'Vocabulary';
+
+const DISCOVER_SECTIONS = [
+  {
+    tab: 'Book Library', title: 'Պատմություններ, որոնք բացում են նոր աշխարհներ',
+    category: 'Գրադարան', description: 'Բացահայտիր անգլերենը գրքերի, պատմությունների և պոեզիայի միջոցով։',
+    icon: BookOpen, tone: 'apricot', action: 'Բացել գրադարանը',
+  },
+  {
+    tab: 'Grammar Academy', title: 'Բարդ կանոնները՝ պարզ բացատրությամբ',
+    category: 'Քերականություն', description: 'Հասկացիր՝ ինչպես են բառերը դառնում իմաստ ունեցող նախադասություններ։',
+    icon: Layers, tone: 'lavender', action: 'Դիտել թեմաները',
+  },
+  {
+    tab: 'Voice Practice', title: 'Լսելուց՝ դեպի ինքնուրույն խոսք',
+    category: 'Խոսք և լսողություն', description: 'Լսիր արտասանությունը և փորձիր արտահայտել մտքերդ անգլերենով։',
+    icon: Mic, tone: 'mint', action: 'Բացել պարապմունքը',
+  },
+  {
+    tab: 'Vocabulary', title: 'Բառեր՝ իրական կյանքում օգտագործելու համար',
+    category: 'Բառապաշար', description: 'Գտիր նոր բառեր, պահպանիր ընտրյալները և վերադարձիր բառաքարտերին։',
+    icon: BookOpen, tone: 'sky', action: 'Բացել բառարանը',
+  },
+] as const;
+
+const TIPS = [
+  {
+    title: 'Բառը կապիր քո կյանքի հետ։',
+    text: 'Նոր բառ սովորելիս կազմիր քեզ վերաբերող մեկ նախադասություն։ Այդպես բառը կդառնա քո մտքերն արտահայտելու միջոց։',
+  },
+  {
+    title: 'Լսիր, կանգ առ, կրկնիր։',
+    text: 'Ընտրիր կարճ արտահայտություն։ Լսիր այն, մի պահ կանգ առ և կրկնիր բարձրաձայն՝ ուշադրություն դարձնելով շեշտադրությանը։',
+  },
+  {
+    title: 'Վերադարձիր արդեն սովորածին։',
+    text: 'Մինչև նոր նյութին անցնելը հիշիր երեկվա մի քանի բառերը։ Փորձիր դրանցով պատմել քո օրվա մասին։',
+  },
+];
+
+export default function DashboardView({ onNavigate, canNavigate, progress, onOpenLesson }: {
+  onNavigate: (tab: HomeDestination) => void;
+  canNavigate: (tab: HomeDestination) => boolean;
   progress: UserProgressData;
-  onNavigate: (tab: string) => void;
-  onOpenLesson: (lessonId: string, sentenceIdx?: number) => void;
-  onChangeLevel: (level: CEFRLevel) => void;
-  onStartPlacementTest: () => void;
-  onSpeak: (text: string) => void;
-}
-
-export default function DashboardView({
-  progress,
-  onNavigate,
-  onOpenLesson,
-  onChangeLevel,
-  onStartPlacementTest,
-  onSpeak,
-}: DashboardViewProps) {
-  const currentLesson =
-    LESSONS_DATA.find((l) => l.id === progress.currentLessonId) || LESSONS_DATA[0];
-
-  const profRecommendedIds = getRecommendedLessonIdsForProfession(
-    progress.profile?.profession || 'IT Specialist'
-  );
-  const recommendedByProfession =
-    LESSONS_DATA.find(
-      (l) =>
-        profRecommendedIds.includes(l.id) &&
-        !progress.completedLessonIds.includes(l.id)
-    ) ||
-    LESSONS_DATA.find(
-      (l) => l.level === progress.level && !progress.completedLessonIds.includes(l.id)
-    ) ||
-    currentLesson;
-
-  const professionMeta =
-    PROFESSIONS_LIST.find((p) => p.id === progress.profile?.profession) ||
-    PROFESSIONS_LIST[0];
-
-  const displayProfessionAm =
-    progress.profile?.profession === 'Other' && progress.profile?.customProfession
-      ? progress.profile.customProfession
-      : professionMeta.titleAm;
-
-  const totalAnswers = progress.correctAnswersCount + progress.wrongAnswersCount;
-  const accuracyPercent =
-    totalAnswers > 0 ? Math.round((progress.correctAnswersCount / totalAnswers) * 100) : 0;
-
-  const dailyGoalMinutes = progress.settings?.dailyGoalMinutes || 15;
-  const dailyGoalPercent = Math.min(
-    100,
-    Math.round((progress.dailyStudyMinutes / dailyGoalMinutes) * 100)
-  );
-
-  const savedSentences = ALL_LESSON_SENTENCES.filter((s) =>
-    progress.savedSentenceIds.includes(s.id)
-  ).slice(0, 4);
-
-  const unresolvedMistakesCount = progress.mistakes.filter((m) => !m.resolved).length;
-  const currentLp = progress.lessonProgressMap?.[currentLesson.id];
-  const resumeSentenceIdx =
-    currentLp?.lastSentenceIndex ?? progress.currentSentenceIndex ?? 0;
+  onOpenLesson: (id: string) => void;
+}) {
+  const [tipIndex, setTipIndex] = useState(0);
+  const tip = TIPS[tipIndex];
+  const visibleSections = DISCOVER_SECTIONS.filter(section => canNavigate(section.tab));
+  const beginner = progress.level === 'A1';
+  const currentLesson = getCurrentCourseLesson(progress);
+  const assessmentPending = beginner && areCourseLessonsComplete(progress) && !isLevelCourseComplete(progress);
+  const books = A1_TEXTBOOKS.map(book => ({...book,
+    chapters: A1_CHAPTERS.filter(chapter => chapter.bookId === book.id && canOpenCourseLesson(progress, chapter.lessonId)),
+  })).filter(book => book.chapters.length > 0);
 
   return (
-    <div className="space-y-8">
-      {/* Placement Test Banner if not completed */}
-      {!progress.placementCompleted && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-cyan-500/15 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
-        >
-          <div className="flex items-start gap-3.5">
-            <div className="p-3 rounded-xl bg-emerald-600 text-white shrink-0">
-              <GraduationCap size={24} />
-            </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                Անհատական ուսուցման համակարգ
-              </span>
-              <h3 className="text-lg font-bold mt-0.5">
-                Պարզի՛ր քո անգլերենի ճշգրիտ մակարդակը (A1–C2) 2 րոպեում
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-                Անցիր կարճ մակարդակի ստուգումը, որպեսզի դասերն ու վարժությունները հարմարվեն քո գիտելիքներին։
-              </p>
-            </div>
+    <div className={styles.page}>
+      <section className={styles.hero} aria-labelledby="home-heading">
+        <div className={styles.heroCopy}>
+          <span className={styles.eyebrow}><span className={styles.dot} /> {progress.level} · Քայլ առ քայլ՝ քո տեմպով</span>
+          <h1 id="home-heading">{beginner ? <>Առաջին տառից՝<br /><em>քո առաջին</em><br />զրույցին։</> : <>Անգլերենը՝<br /><em>քո առօրյայի</em><br />մի մասը։</>}</h1>
+          <p className={styles.intro}>
+            {beginner ? 'Սկսիր զրոյից։ Սովորիր տառերն ու բառերը, գրիր ինքդ, կարդա քո դասի պատմությունը։ Ամեն ավարտված քայլ քեզ մոտեցնում է ինքնուրույն անգլերենին։' : 'Շարունակիր քո մակարդակի դասապլանը՝ հայերեն բացատրություններով, լսելով ու գրելով։'}
+          </p>
+          <div className={styles.heroActions}>
+            <button type="button" className={styles.primaryAction} onClick={() => onNavigate('Lessons')}>
+              {assessmentPending ? 'Սկսել ամփոփիչ աշխատանքը' : 'Շարունակել իմ դասապլանը'} <ArrowRight size={18} aria-hidden="true" />
+            </button>
+            {visibleSections.length > 0 && <a className={styles.secondaryAction} href="#discover-haylingo">
+              Բացահայտել <ArrowDown size={16} aria-hidden="true" />
+            </a>}
           </div>
-          <button
-            onClick={onStartPlacementTest}
-            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center gap-2 shrink-0 transition shadow-sm"
-          >
-            Սկսել մակարդակի թեստը <ArrowRight size={16} />
-          </button>
-        </motion.div>
-      )}
+          {currentLesson && !assessmentPending && !isLevelCourseComplete(progress) && <p className={styles.currentLesson}>Քո հաջորդ կանգառը՝ {currentLesson.titleAm}</p>}
+        </div>
 
-      {/* Hero Row: Today's Profession-Tailored Lesson + Level & Quick Voice Practice */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <motion.section
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-7 rounded-3xl p-6 md:p-8 bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 text-white relative overflow-hidden shadow-lg"
-        >
-          <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-xs font-semibold mb-3">
-                <Sparkles size={14} /> ԱՅՍՕՐՎԱ ԴԱՍԸ · ՄԱԿԱՐԴԱԿ {recommendedByProfession.level} ·{' '}
-                {displayProfessionAm}
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold leading-tight">
-                {recommendedByProfession.titleAm}
-              </h1>
-              <p className="text-emerald-100/90 text-sm md:text-base mt-2 max-w-xl">
-                {recommendedByProfession.descriptionAm}
-              </p>
-
-              {/* Sample sentence preview from today's lesson with mandatory 3-field format */}
-              {recommendedByProfession.sentences[0] && (
-                <div className="mt-5 p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 space-y-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-semibold text-base md:text-lg text-white">
-                      <span className="text-xs text-emerald-200 mr-1.5">
-                        {UI_TEXT.mandatoryFields.english}
-                      </span>
-                      <span data-learning-text="english">{recommendedByProfession.sentences[0].english}</span>
-                    </p>
-                    <button
-                      onClick={() => onSpeak(recommendedByProfession.sentences[0].english)}
-                      className="p-2 rounded-lg bg-emerald-500/30 hover:bg-emerald-500/50 text-white transition shrink-0"
-                      title="Լսել արտասանությունը"
-                    >
-                      <Volume2 size={18} />
-                    </button>
-                  </div>
-                  <p className="text-xs md:text-sm text-emerald-200">
-                    <strong>{UI_TEXT.mandatoryFields.pronunciation}</strong>{' '}
-                    <span data-learning-text="pronunciation">{recommendedByProfession.sentences[0].pronunciation}</span>
-                  </p>
-                  <p className="text-xs md:text-sm text-slate-200">
-                    <strong>{UI_TEXT.mandatoryFields.armenian}</strong>{' '}
-                    <span data-learning-text="armenian">{recommendedByProfession.sentences[0].armenian}</span>
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <button
-                onClick={() => onOpenLesson(recommendedByProfession.id, 0)}
-                className="px-5 py-3 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-sm flex items-center gap-2 transition shadow"
-              >
-                Սկսել այսօրվա դասը <ArrowRight size={16} />
-              </button>
-              <button
-                onClick={() => onOpenLesson(currentLesson.id, resumeSentenceIdx)}
-                className="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-sm flex items-center gap-2 transition"
-              >
-                <BookOpen size={16} /> Շարունակել նախորդ դասը (Նախադասություն {resumeSentenceIdx + 1})
-              </button>
-            </div>
+        <div className={styles.artwork} aria-hidden="true">
+          <div className={styles.orbit} />
+          <span className={styles.artLabel}>Հայերենից՝ նոր հնարավորություններ</span>
+          <div className={styles.wordCard}>
+            <div className={styles.cardTop}><Sparkles size={22} /><span>HayLingo</span></div>
+            <p className={styles.englishPhrase} lang="en">A little<br />every day.</p>
+            <p className={styles.armenianPhrase}>Ամեն օր՝ մի փոքր։</p>
+            <div className={styles.cardBottom}><span /><span /><span /></div>
           </div>
-        </motion.section>
+          <div className={styles.speechBubble}><MessageCircle size={20} /><span lang="en">Hello!</span><span>Բարև՜</span></div>
+          <div className={styles.artSteps}>
+            <span><Headphones size={17} />Լսիր</span>
+            <span><BookOpen size={17} />Կարդա</span>
+            <span><PenLine size={17} />Գրիր</span>
+          </div>
+        </div>
+      </section>
 
-        {/* Right Card: Level Control + Quick Voice Practice */}
-        <motion.section
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-5"
-        >
+      {beginner && <section className={styles.discover} aria-labelledby="learning-route-heading">
+        <div className={styles.sectionHeading}><div><span className={styles.kicker}>Պարզ և հասկանալի ճանապարհ</span><h2 id="learning-route-heading">Ինչպես ես առաջ գնալու</h2></div></div>
+        <ol className={styles.learningSteps}>
+          {[
+            ['Սովորիր', 'Տառեր ու պարզ բառեր՝ ձայնով և հայերեն բացատրությամբ։'],
+            ['Գրիր', 'Ճիշտ գրած պատասխանը բացում է հաջորդ քայլը։'],
+            ['Կարդա', 'Քո դասի գլուխը դասագրքում՝ հասկանալու հարցերով։'],
+            ['Ամփոփիր', 'Բոլոր դասերից հետո՝ պարտադիր աշխատանք, ապա A2։'],
+          ].map(([title, description], index) => <li key={title}><span className={styles.stepNumber}>{index + 1}</span><h3>{title}</h3><p>{description}</p></li>)}
+        </ol>
+      </section>}
+
+      {beginner && books.length > 0 && <section className={styles.discover} aria-labelledby="course-books-heading">
+        <div className={styles.sectionHeading}><div><span className={styles.kicker}>HayLingo · A1</span><h2 id="course-books-heading">Քո դասագրքերը</h2></div><p>Նոր գլուխները բացվում են համապատասխան դասի հետ։</p></div>
+        <div className={styles.bookGrid}>{books.map(book => {
+          const chapter = book.chapters.find(item => item.lessonId === currentLesson?.id) || book.chapters[book.chapters.length - 1];
+          return <article key={book.id} className={styles.feature} data-tone="mint">
+            <span className={styles.featureIcon}><BookOpen size={23} /></span>
+            <h3>{book.titleAm}</h3><p>{book.subtitleAm}</p>
+            <span className={styles.category}>{book.chapters.length} հասանելի գլուխ</span>
+            <button type="button" className={styles.featureAction} onClick={() => onOpenLesson(chapter.lessonId)}>Բացել համապատասխան դասը <ArrowRight size={16} /></button>
+          </article>;
+        })}</div>
+      </section>}
+
+      {visibleSections.length > 0 && <section id="discover-haylingo" className={styles.discover} aria-labelledby="discover-heading">
+        <div className={styles.sectionHeading}>
           <div>
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  ԻՄ ՄԱԿԱՐԴԱԿԸ ԵՎ ՄԱՍՆԱԳԻՏՈՒԹՅՈՒՆԸ
-                </span>
-                <h2 className="text-xl font-bold mt-0.5">
-                  Մակարդակ՝ <span className="text-emerald-600 dark:text-emerald-400">{progress.level}</span>
-                </h2>
-              </div>
-              <button
-                onClick={() => onNavigate('Profile')}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold flex items-center gap-1.5 hover:bg-emerald-500/15 transition"
-              >
-                <User size={14} /> Իմ պրոֆիլը
-              </button>
-            </div>
-
-            {/* Level Pills A1-C2 */}
-            <div className="grid grid-cols-6 gap-1.5 mt-3">
-              {CEFR_LEVELS.map((item) => {
-                const active = progress.level === item.level;
-                return (
-                  <button
-                    key={item.level}
-                    onClick={() => onChangeLevel(item.level)}
-                    className={`py-2 rounded-xl text-xs font-bold transition ${
-                      active
-                        ? 'bg-emerald-600 text-white shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700'
-                    }`}
-                    title={item.labelAm}
-                  >
-                    {item.level}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              {CEFR_LEVELS.find((c) => c.level === progress.level)?.descAm}
-            </p>
+            <span className={styles.kicker}>Բացահայտիր HayLingo-ն</span>
+            <h2 id="discover-heading">Ի՞նչն է քեզ հետաքրքրում</h2>
           </div>
+          <p>Ընտրիր քո ճանապարհը դեպի անգլերեն։</p>
+        </div>
+        <div className={styles.features}>
+          {visibleSections.map(({ tab, title, category, description, icon: Icon, tone, action }) => (
+            <article key={tab} className={styles.feature} data-tone={tone}>
+              <span className={styles.featureTop}>
+                <span className={styles.featureIcon}><Icon size={23} aria-hidden="true" /></span>
+                <ArrowUpRight size={19} className={styles.cornerArrow} aria-hidden="true" />
+              </span>
+              <span className={styles.category}>{category}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+              <button type="button" className={styles.featureAction} onClick={() => onNavigate(tab)}>{action}<ArrowRight size={16} aria-hidden="true" /></button>
+            </article>
+          ))}
+        </div>
+      </section>}
 
-          {/* Daily Study Time Progress */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
-            <div className="flex items-center justify-between text-sm font-semibold mb-1.5">
-              <span className="flex items-center gap-1.5">
-                <Target size={16} className="text-emerald-600" /> Օրական ուսուցման ժամանակ
-              </span>
-              <span className="text-emerald-600 dark:text-emerald-400">
-                {Math.round(progress.dailyStudyMinutes * 10) / 10} / {dailyGoalMinutes} րոպե ({dailyGoalPercent}%)
-              </span>
-            </div>
-            <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                style={{ width: `${dailyGoalPercent}%` }}
-              />
-            </div>
+      <div className={styles.bottomGrid}>
+        <section className={styles.tip} aria-labelledby="tip-heading">
+          <div className={styles.tipHeading}><Lightbulb size={20} aria-hidden="true" /><h2 id="tip-heading">Փոքր քայլ, մեծ օգուտ</h2></div>
+          <div className={styles.tipContent} aria-live="polite" aria-atomic="true">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
           </div>
-
-          {/* Quick Start Voice Practice */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-sky-500/10 to-emerald-500/10 border border-indigo-500/20 flex items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase">
-                Ձայնային պարապմունք · {progress.preferredMorningTime}
-              </div>
-              <div className="font-bold text-sm mt-0.5">
-                Արագ սկսել ձայնային պարապմունք
-              </div>
-            </div>
-            <button
-              onClick={() => onNavigate('Voice Practice')}
-              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs md:text-sm flex items-center gap-2 shrink-0 transition"
-            >
-              <Mic size={16} /> Սկսել
+          <div className={styles.tipFooter}>
+            <span aria-label={`Խորհուրդ ${tipIndex + 1}՝ ${TIPS.length}-ից`}>0{tipIndex + 1} / 0{TIPS.length}</span>
+            <button type="button" onClick={() => setTipIndex(index => (index + 1) % TIPS.length)}>
+              Հաջորդ խորհուրդը <ArrowRight size={16} aria-hidden="true" />
             </button>
           </div>
-        </motion.section>
-      </div>
+        </section>
 
-      {/* Profession-Based Recommended Topics Bar */}
-      <div className="rounded-3xl p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-            <Briefcase size={14} /> Ձեր մասնագիտության առաջարկվող ուղղությունները ({displayProfessionAm})
+        <section className={styles.updates} aria-labelledby="updates-heading">
+          <div className={styles.updatesHeading}>
+            <h2 id="updates-heading">Ի՞նչ է փոխվել</h2>
+            <span>{APP_VERSION}</span>
           </div>
-          <div className="flex flex-wrap gap-2 pt-1">
-            {professionMeta.topics.map((t, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-xs font-bold"
-              >
-                {t.titleAm} · {t.titleEn}
-              </span>
+          <p className={styles.updatesIntro}>Փոքր բարելավումներ՝ ավելի հարմար սովորելու համար։</p>
+          <div className={styles.updateList}>
+            {SITE_UPDATES.slice(0, 3).map(update => (
+              <details key={update.id} className={styles.update}>
+                <summary>
+                  <span><span className={styles.updateSection}>{update.section}</span><span className={styles.updateTitle}>{update.title}</span></span>
+                  <ChevronRight size={18} aria-hidden="true" />
+                </summary>
+                <div className={styles.updateBody}>
+                  <p>{update.description}</p>
+                  <time dateTime={update.date}>{update.dateLabel}</time>
+                </div>
+              </details>
             ))}
           </div>
-        </div>
-        <button
-          onClick={() => onNavigate('Lessons')}
-          className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white text-xs font-bold shrink-0 transition"
-        >
-          Տեսնել բոլոր մասնագիտությունների դասերը →
-        </button>
+        </section>
       </div>
-
-      {/* 6 Mandatory KPI Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-        <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Շարունակական օրեր</span>
-            <Flame size={18} className="text-amber-500" />
-          </div>
-          <div className="text-2xl font-extrabold">{progress.streakDays} օր</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Անընդմեջ պարապմունք</div>
-        </div>
-
-        <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Օրական ժամանակ</span>
-            <Clock size={18} className="text-sky-500" />
-          </div>
-          <div className="text-2xl font-extrabold">{Math.round(progress.dailyStudyMinutes * 10) / 10} ր</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Այսօրվա ուսուցումը</div>
-        </div>
-
-        <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Ավարտած դասեր</span>
-            <BookOpen size={18} className="text-emerald-500" />
-          </div>
-          <div className="text-2xl font-extrabold">
-            {progress.completedLessonIds.length} / {LESSONS_DATA.length}
-          </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">16 թեմատիկ բաժին</div>
-        </div>
-
-        <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Սովորած բառեր</span>
-            <BookMarked size={18} className="text-purple-500" />
-          </div>
-          <div className="text-2xl font-extrabold">{progress.learnedWordIds.length}</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Ընտրյալ՝ {progress.favoriteWordIds.length} բառ
-          </div>
-        </div>
-
-        <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Ճիշտ պատասխաններ</span>
-            <CheckCircle2 size={18} className="text-emerald-500" />
-          </div>
-          <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-            {progress.correctAnswersCount}
-          </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Ճշգրտություն՝ {accuracyPercent}%
-          </div>
-        </div>
-
-        <div className="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Սխալ պատասխաններ</span>
-            <XCircle size={18} className="text-rose-500" />
-          </div>
-          <div className="text-2xl font-extrabold text-rose-500">
-            {progress.wrongAnswersCount}
-          </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Կրկնության ենթակա՝ {unresolvedMistakesCount}
-          </div>
-        </div>
-      </div>
-
-      {/* Skills Breakdown & Quick Modules */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-6 rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-bold">Հմտությունների զարգացում</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Ընթերցանություն, Լսողական, Խոսակցական և Գրավոր հմտություններ
-              </p>
-            </div>
-            <button
-              onClick={() => onNavigate('My Progress')}
-              className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-            >
-              Ուսուցման պատմություն →
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              { key: 'reading', label: '📖 Ընթերցանություն (Reading)', val: progress.skills.reading, color: 'bg-emerald-500' },
-              { key: 'listening', label: '🎧 Լսողական ընկալում (Listening)', val: progress.skills.listening, color: 'bg-sky-500' },
-              { key: 'speaking', label: '🎙️ Խոսակցական հմտություն (Speaking)', val: progress.skills.speaking, color: 'bg-indigo-500' },
-              { key: 'writing', label: '✍️ Գրավոր և Քերականություն (Writing)', val: progress.skills.writing, color: 'bg-amber-500' },
-            ].map((sk) => (
-              <div key={sk.key}>
-                <div className="flex justify-between text-xs font-semibold mb-1">
-                  <span>{sk.label}</span>
-                  <span>{sk.val}%</span>
-                </div>
-                <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${sk.color} rounded-full transition-all duration-500`}
-                    style={{ width: `${sk.val}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Navigation Action Cards */}
-        <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            onClick={() => onNavigate('Exercises')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
-              <Brain size={22} />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Ինտերակտիվ Առաջադրանքներ (A–F)</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                116 վարժություն՝ լրացում, թարգմանություն, սխալի ուղղում, լսողական և ձայնային։
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onNavigate('IT English')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 w-fit">
-              <Compass size={22} />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Մասնագիտական և ՏՏ Անգլերեն</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                13 ՏՏ թեմաներ և 21 աշխատանքային դերային խաղեր (Helpdesk, Network, AD, M365)։
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onNavigate('Study Assistant')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 w-fit">
-              <Sparkles size={22} />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Ուսումնական օգնական</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Հարց ու պատասխան, քերականական սխալների ուղղում և հայերեն բացատրություն։
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onNavigate('Vocabulary')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit">
-              <BookMarked size={22} />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Բառապաշար և Քարտեր (210 բառ)</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Հայերեն արտասանությամբ բառարան, ընտրյալներ և ինտերվալային կրկնություն։
-              </p>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      {/* Daily & Academy Features Grid */}
-      <div className="space-y-4">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-            ԱՄԵՆՕՐՅԱ ՊԱՐԱՊՄՈՒՆՔՆԵՐ ԵՎ ԱԿԱԴԵՄԻԱ
-          </span>
-          <h2 className="text-lg md:text-xl font-bold mt-0.5">
-            Օրվա մարտահրավերներ, Գրադարան և Քերականություն
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* 1. Daily 3 Words */}
-          <button
-            onClick={() => onNavigate('Daily Words')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <Sparkles size={20} />
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600">
-                {progress.dailyWordsChallenge?.isCompleted ? '✓ Ավարտված է' : `${progress.dailyWordsChallenge?.completedCount || 0} / 3 բառ`}
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Օրվա 3 բառերը</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Հայերենից անգլերեն ինտերակտիվ գրավոր մարտահրավեր՝ հուշումներով և անսահմանափակ փորձերով։
-              </p>
-            </div>
-          </button>
-
-          {/* 2. Daily Questions */}
-          <button
-            onClick={() => onNavigate('Daily Questions')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-                <Brain size={20} />
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-600">
-                {progress.dailyQuestionsState?.isCompleted ? '✓ Ավարտված է' : `${progress.dailyQuestionsState?.currentIndex || 0} / 10 հարց`}
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Օրվա հարցերը</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                10 ամենօրյա հարցաշար՝ մակարդակին և մասնագիտությանը համապատասխան, հայերեն բացատրություններով։
-              </p>
-            </div>
-          </button>
-
-          {/* 3. Daily Conversations */}
-          <button
-            onClick={() => onNavigate('Daily Conversations')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
-                <Mic size={20} />
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-600">
-                12 թեմա • 8 քայլ
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Առօրյա զրույցներ</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Կենդանի երկխոսություններ՝ առավոտ, աշխատանք, սրճարան, հեռախոսազանգ և IT Support։
-              </p>
-            </div>
-          </button>
-
-          {/* 4. Book Library & Poetry */}
-          <button
-            onClick={() => onNavigate('Book Library')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                <BookOpen size={20} />
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-600">
-                15 գիրք • 10 պոեմ
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Գրադարան և Պոեզիա</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Բառի սեղմումով թարգմանություն, ձայնային արտասանություն, էկրանի ակտիվություն (Wake Lock)։
-              </p>
-            </div>
-          </button>
-
-          {/* 5. Grammar Academy */}
-          <button
-            onClick={() => onNavigate('Grammar Academy')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <GraduationCap size={20} />
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600">
-                18 թեմա • 72 վարժություն
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Քերականության Ակադեմիա</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                A1-ից մինչև C2 ամբողջական քերականություն՝ կանոններով, բանաձևերով և վարժություններով։
-              </p>
-            </div>
-          </button>
-
-          {/* 6. Accent Academy */}
-          <button
-            onClick={() => onNavigate('Accent Academy')}
-            className="text-left p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 transition shadow-sm flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                <Volume2 size={20} />
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600">
-                🇺🇸 US vs 🇬🇧 UK
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold text-base">Արտասանություն և ակցենտ</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                10 արտասանական մոդուլներ՝ TH, R, W vs V, շեշտադրություն, ինտոնացիա և խոսքի ստուգում։
-              </p>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      {/* Saved Sentences Section */}
-      {savedSentences.length > 0 && (
-        <div className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold flex items-center gap-2">
-              <Star size={18} className="text-amber-500 fill-amber-500" /> Պահպանված նախադասություններ ({progress.savedSentenceIds.length})
-            </h2>
-            <button
-              onClick={() => onNavigate('Lessons')}
-              className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-            >
-              Դիտել բոլոր դասերը →
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {savedSentences.map((s) => (
-              <div
-                key={s.id}
-                className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 flex items-start justify-between gap-3"
-              >
-                <div className="space-y-0.5">
-                  <p className="font-semibold text-sm">
-                    <strong>{UI_TEXT.mandatoryFields.english}</strong> <span data-learning-text="english">{s.english}</span>
-                  </p>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                    <strong>{UI_TEXT.mandatoryFields.pronunciation}</strong> <span data-learning-text="pronunciation">{s.pronunciation}</span>
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    <strong>{UI_TEXT.mandatoryFields.armenian}</strong> <span data-learning-text="armenian">{s.armenian}</span>
-                  </p>
-                </div>
-                <button
-                  onClick={() => onSpeak(s.english)}
-                  className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-emerald-50 transition shrink-0"
-                  title="Լսել"
-                >
-                  <Volume2 size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <footer className={styles.footer}>HayLingo · Քո լեզվով՝ դեպի նոր աշխարհ։</footer>
     </div>
   );
 }

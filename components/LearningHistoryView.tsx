@@ -16,7 +16,8 @@ import {
 import { motion } from 'framer-motion';
 import { LESSON_CATEGORIES, LESSONS_DATA } from '../data/lessons';
 import { VOCABULARY_ITEMS } from '../data/vocabulary';
-import { PLACEMENT_QUESTIONS } from '../data/placement-and-teacher';
+import { PLACEMENT_QUESTIONS as ALL_PLACEMENT_QUESTIONS } from '../data/placement-and-teacher';
+import { isAtOrBelowLevel, canOpenCourseLesson } from '../lib/learning-path';
 import { CEFRLevel, UserProgressData } from '../lib/types';
 import { buildStudyChart } from '../lib/study-statistics';
 import { getDateStringInTimezone } from '../lib/i18n';
@@ -40,6 +41,7 @@ export default function LearningHistoryView({
   onNavigate,
   onSpeak,
 }: LearningHistoryViewProps) {
+  const PLACEMENT_QUESTIONS = ALL_PLACEMENT_QUESTIONS.filter(item => isAtOrBelowLevel(item.level, progress.level));
   const [chartRange, setChartRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [testingMode, setTestingMode] = useState<boolean>(startInPlacementMode);
   const [questionIdx, setQuestionIdx] = useState<number>(0);
@@ -58,7 +60,7 @@ export default function LearningHistoryView({
 
   const inProgressLessons = useMemo(() => {
     return LESSONS_DATA.filter((l) => {
-      if (progress.completedLessonIds.includes(l.id)) return false;
+      if (progress.completedLessonIds.includes(l.id) || !canOpenCourseLesson(progress, l.id)) return false;
       const lp = progress.lessonProgressMap?.[l.id];
       return Boolean(
         l.id === progress.currentLessonId ||
@@ -127,11 +129,7 @@ export default function LearningHistoryView({
         if (nextAnswers[q.id] === q.correctOptionIndex) correct++;
       }
       const ratio = correct / PLACEMENT_QUESTIONS.length;
-      let level: CEFRLevel = 'A1';
-      if (ratio >= 0.9) level = 'C1';
-      else if (ratio >= 0.75) level = 'B2';
-      else if (ratio >= 0.55) level = 'B1';
-      else if (ratio >= 0.35) level = 'A2';
+      const level = progress.level;
       setPlacementResult({ level, correctCount: correct });
       onCompletePlacement(level, Math.round(ratio * 100));
     }
@@ -158,7 +156,7 @@ export default function LearningHistoryView({
           }}
           className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs md:text-sm flex items-center gap-2 shrink-0"
         >
-          <Sparkles size={16} /> Անցնել մակարդակի ստուգումը (Placement Test)
+          <Sparkles size={16} /> Ստուգել ընթացիկ մակարդակի գիտելիքները
         </button>
       </div>
 

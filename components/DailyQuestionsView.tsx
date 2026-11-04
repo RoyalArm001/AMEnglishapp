@@ -20,6 +20,7 @@ import {
   DailyQuestionAnswerRecord,
 } from '@/lib/types';
 import { getDailyQuestionsDayState } from '@/data/daily-questions-and-words';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { speakEnglishText, startSpeechRecognition } from '@/lib/speech';
 import { setPageMemory } from '@/lib/page-memory';
 import { getTodayDateString, recordLearningAttempt } from '@/lib/storage';
@@ -41,11 +42,13 @@ export default function DailyQuestionsView({
 
   // Restore or generate day state
   const [dayState, setDayState] = useState<DailyQuestionDayState>(() => {
+    const saved = userProgress.dailyQuestionsState;
     if (
-      userProgress.dailyQuestionsState &&
-      userProgress.dailyQuestionsState.date === todayStr
+      saved && saved.date === todayStr && Array.isArray(saved.questions) &&
+      (saved.level === userProgress.level || (!saved.level && saved.questions.every(question => question.level === userProgress.level))) &&
+      saved.questions.every(question => isAtOrBelowLevel(question.level, userProgress.level))
     ) {
-      return userProgress.dailyQuestionsState;
+      return saved;
     }
     return getDailyQuestionsDayState(
       todayStr,
@@ -228,7 +231,7 @@ export default function DailyQuestionsView({
             Օրվա հարցերը
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
-            Ամեն օր 10 նոր հարց՝ քո մակարդակին ({userProgress.level}) և մասնագիտությանը համապատասխան։
+            {dayState.questions.length} հարց՝ քո մակարդակին ({userProgress.level}) հասանելի նյութերից և մասնագիտությանը համապատասխան։
           </p>
         </div>
 

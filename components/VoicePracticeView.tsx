@@ -13,7 +13,8 @@ import {
   Volume2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { VOICE_PRACTICE_ITEMS } from '../data/placement-and-teacher';
+import { VOICE_PRACTICE_ITEMS as ALL_VOICE_ITEMS } from '../data/placement-and-teacher';
+import { isAtOrBelowLevel } from '../lib/learning-path';
 import { UserProgressData } from '../lib/types';
 import {
   checkSpeechSupport,
@@ -41,6 +42,7 @@ export default function VoicePracticeView({
   onUpdateSpeechRate,
   onRecordVoiceSession,
 }: VoicePracticeViewProps) {
+  const VOICE_PRACTICE_ITEMS = ALL_VOICE_ITEMS.filter(item => isAtOrBelowLevel(item.level, progress.level));
   const studyActivity = useStudyActivity();
   const [practiceMode, setPracticeMode] = useState<'conversation' | 'morning'>('morning');
   const [currentIdx, setCurrentIdx] = useState<number>(0);
