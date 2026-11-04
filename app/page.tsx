@@ -941,15 +941,15 @@ export default function HomePage() {
           <div id="header-install-actions" />
           <button
             type="button"
-            className="navigation-button flex items-center gap-1.5 px-2.5 text-xs font-semibold"
+            className="navigation-button relative"
             onClick={() => setCloudModalOpen(true)}
             title="Առցանց բազա (MongoDB Atlas)"
             aria-label="Առցանց բազա"
           >
-            <Cloud size={18} className={cloudSession ? 'text-emerald-500' : 'text-slate-500'} />
-            <span className="nav-desktop-only">Առցանց բազա</span>
+            <Cloud size={20} className={cloudSession ? 'text-emerald-500' : undefined} />
+
             {cloudSession && (
-              <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
             )}
           </button>
           <button type="button" className="navigation-button" onClick={handleCycleThemeMode} aria-label="Փոխել թեման">

@@ -239,39 +239,35 @@ export default function CloudAuthModal({
 
             {/* Email Field */}
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                Էլ. փոստ (Email)
+              <label className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <Mail className="text-slate-400 w-3.5 h-3.5 shrink-0" />
+                <span>Էլ. փոստ (Email)</span>
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="orinak@gmail.com"
-                  required
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="orinak@gmail.com"
+                required
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
             </div>
 
             {/* Password Field */}
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                Գաղտնաբառ (Password)
+              <label className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <Lock className="text-slate-400 w-3.5 h-3.5 shrink-0" />
+                <span>Գաղտնաբառ (Password)</span>
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Առնվազն 6 նիշ"
-                  minLength={6}
-                  required
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Առնվազն 6 նիշ"
+                minLength={6}
+                required
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
             </div>
 
             {/* Submit Button */}

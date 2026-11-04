@@ -881,30 +881,25 @@ export default function SettingsView({
             </div>
           ) : (
             <div className="space-y-3 pt-1">
-              <p className="text-xs text-slate-600 dark:text-slate-300">
-                Մուտքագրեք ձեր էլ. հասցեն և գաղտնաբառը՝ արագ գրանցվելու կամ գործող հաշվով մուտք գործելու համար։
-              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div className="relative">
-                  <Mail size={15} className="absolute left-3 top-3 text-slate-400" />
+                <div>
                   <input
                     type="email"
                     value={cloudEmail}
                     onChange={(e) => setCloudEmail(e.target.value)}
-                    placeholder="name@example.com"
+                    placeholder="Էլ. փոստ (name@example.com)"
                     aria-label="Էլ. փոստի հասցե"
-                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
-                <div className="relative">
-                  <Lock size={15} className="absolute left-3 top-3 text-slate-400" />
+                <div>
                   <input
                     type="password"
                     value={cloudPassword}
                     onChange={(e) => setCloudPassword(e.target.value)}
                     placeholder="Գաղտնաբառ (առնվազն 6 նիշ)"
                     aria-label="Գաղտնաբառ"
-                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
