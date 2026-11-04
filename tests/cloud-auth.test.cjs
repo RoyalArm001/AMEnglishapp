@@ -27,6 +27,8 @@ const {
 
 const { DEFAULT_USER_PROGRESS } = require('../lib/storage.ts');
 const { LESSONS_DATA } = require('../data/lessons.ts');
+const { A1_CHAPTERS, A1_FINAL_QUESTIONS } = require('../data/a1-course.ts');
+const { mergeProgressData, getProgressSignature } = require('../lib/cloud-sync.ts');
 
 test('hashPassword creates a non-empty salt and 128-char hex hash', () => {
   const result = hashPassword('mySecurePassword123');
@@ -103,4 +105,65 @@ test('getPassedLessonsForSpeedCheck and getPassedCourseSentences return only pas
     getPassedCourseSentences(progressWithCompletedLesson, firstLesson.id).length,
     firstLesson.sentences.length
   );
+});
+
+test('mergeProgressData losslessly combines phone and computer progress across devices', () => {
+  const base = structuredClone(DEFAULT_USER_PROGRESS);
+  const s1 = LESSONS_DATA[0].sentences[0].id;
+  const s2 = LESSONS_DATA[0].sentences[1].id;
+  const s3 = LESSONS_DATA[0].sentences[2].id;
+  const r1 = A1_CHAPTERS[0].questions[0].id;
+  const r2 = A1_CHAPTERS[0].questions[1].id;
+  const a1 = A1_FINAL_QUESTIONS[0].id;
+
+  const phoneProgress = {
+    ...base,
+    onboardingCompleted: true,
+    userName: 'Arman Phone',
+    lastActiveTimestamp: 1000,
+    completedLessonIds: ['lesson-a1-1'],
+    learnedWordIds: ['w-1', 'w-2'],
+    correctAnswersCount: 12,
+    totalStudyMinutes: 25,
+    learningPath: {
+      userId: base.profile.id,
+      entryLevel: 'A1',
+      verifiedSentenceIds: [s1, s2],
+      writtenSentenceIds: [s1, s2],
+      readingAnswerIds: [r1],
+      assessmentAnswerIds: [],
+    },
+  };
+
+  const computerProgress = {
+    ...base,
+    onboardingCompleted: true,
+    userName: 'Arman PC',
+    lastActiveTimestamp: 2000,
+    completedLessonIds: ['lesson-a1-2'],
+    learnedWordIds: ['w-2', 'w-3'],
+    correctAnswersCount: 18,
+    totalStudyMinutes: 40,
+    learningPath: {
+      userId: base.profile.id,
+      entryLevel: 'A1',
+      verifiedSentenceIds: [s2, s3],
+      writtenSentenceIds: [s2, s3],
+      readingAnswerIds: [r2],
+      assessmentAnswerIds: [a1],
+    },
+  };
+
+  const merged = mergeProgressData(phoneProgress, computerProgress);
+  assert.equal(merged.onboardingCompleted, true);
+  assert.equal(merged.userName, 'Arman PC');
+  assert.deepEqual(merged.completedLessonIds.sort(), ['lesson-a1-1', 'lesson-a1-2']);
+  assert.deepEqual(merged.learnedWordIds.sort(), ['w-1', 'w-2', 'w-3']);
+  assert.deepEqual(merged.learningPath.verifiedSentenceIds.sort(), [s1, s2, s3].sort());
+  assert.deepEqual(merged.learningPath.writtenSentenceIds.sort(), [s1, s2, s3].sort());
+  assert.deepEqual(merged.learningPath.readingAnswerIds.sort(), [r1, r2].sort());
+  assert.deepEqual(merged.learningPath.assessmentAnswerIds, [a1]);
+  assert.equal(merged.correctAnswersCount, 18);
+  assert.equal(merged.totalStudyMinutes, 40);
+  assert.notEqual(getProgressSignature(phoneProgress), getProgressSignature(merged));
 });

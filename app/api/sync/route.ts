@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDatabase, parseSessionToken, isMongoConfigured } from '@/lib/mongodb';
+import { mergeProgressData } from '@/lib/cloud-sync';
 import { ObjectId } from 'mongodb';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-// POST: Save/update user progress to MongoDB
+// POST: Save/update user progress to MongoDB with lossless cross-device merge
 export async function POST(request: Request) {
   try {
     if (!isMongoConfigured()) {
@@ -28,8 +30,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const progressData = body.progressData;
-    if (!progressData || typeof progressData !== 'object') {
+    const incomingProgress = body.progressData;
+    if (!incomingProgress || typeof incomingProgress !== 'object') {
       return NextResponse.json(
         { ok: false, errorAm: 'Բացակայում են պահպանվող տվյալները։' },
         { status: 400 }
@@ -56,24 +58,40 @@ export async function POST(request: Request) {
     const now = Date.now();
     const progressCol = db.collection('progress');
 
+    let finalProgress = incomingProgress;
+    if (body.forceOverwrite !== true) {
+      const existing = await progressCol.findOne({ userId: session.userId });
+      if (existing && existing.progressData) {
+        finalProgress = mergeProgressData(incomingProgress, existing.progressData);
+      }
+    }
+
     await progressCol.updateOne(
       { userId: session.userId },
       {
         $set: {
           userId: session.userId,
           email: user.email,
-          progressData,
+          progressData: finalProgress,
           updatedAt: now,
         },
       },
       { upsert: true }
     );
 
-    return NextResponse.json({
-      ok: true,
-      lastSyncedAt: now,
-      messageAm: 'Տվյալները հաջողությամբ պահպանվեցին առցանց բազայում (MongoDB Atlas)։',
-    });
+    return NextResponse.json(
+      {
+        ok: true,
+        lastSyncedAt: now,
+        progressData: finalProgress,
+        messageAm: 'Տվյալները հաջողությամբ պահպանվեցին առցանց բազայում (MongoDB Atlas)։',
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
+    );
   } catch (error) {
     console.error('Cloud sync push error:', error);
     return NextResponse.json(
@@ -112,18 +130,32 @@ export async function GET(request: Request) {
     const record = await progressCol.findOne({ userId: session.userId });
 
     if (!record || !record.progressData) {
-      return NextResponse.json({
-        ok: true,
-        progressData: null,
-        lastSyncedAt: null,
-      });
+      return NextResponse.json(
+        {
+          ok: true,
+          progressData: null,
+          lastSyncedAt: null,
+        },
+        {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+          },
+        }
+      );
     }
 
-    return NextResponse.json({
-      ok: true,
-      progressData: record.progressData,
-      lastSyncedAt: record.updatedAt || null,
-    });
+    return NextResponse.json(
+      {
+        ok: true,
+        progressData: record.progressData,
+        lastSyncedAt: record.updatedAt || Date.now(),
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
+    );
   } catch (error) {
     console.error('Cloud sync pull error:', error);
     return NextResponse.json(
@@ -135,4 +167,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

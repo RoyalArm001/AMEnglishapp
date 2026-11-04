@@ -2,7 +2,7 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.9.2**
+**English learning for Armenian speakers · v1.9.3**
 
 [Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Իրականացման հաշվետվություն](CODEX_IMPLEMENTATION_REPORT.md)
 

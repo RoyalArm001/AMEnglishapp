@@ -10,6 +10,7 @@ import {
   cloudLogout,
   cloudSyncPush,
   cloudSyncPull,
+  mergeProgressData,
 } from '../lib/cloud-sync';
 import type { UserProgressData } from '../lib/types';
 
@@ -62,7 +63,7 @@ export default function CloudAuthModal({
         setErrorMessage(res.errorAm || 'Գրանցման սխալ։');
       }
     } else {
-      const res = await cloudLogin(email, password);
+      const res = await cloudLogin(email, password, currentProgress);
       setIsLoading(false);
       if (res.ok && res.session) {
         setSession(res.session);
@@ -85,6 +86,9 @@ export default function CloudAuthModal({
     const res = await cloudSyncPush(currentProgress);
     setIsLoading(false);
     if (res.ok) {
+      if (res.progressData) {
+        onProgressLoadedFromCloud(res.progressData);
+      }
       setSuccessMessage('✓ Ձեր բոլոր տվյալները հաջողությամբ համաժամեցվեցին MongoDB Atlas-ում։');
       setSession(getStoredCloudSession());
     } else {
@@ -99,7 +103,8 @@ export default function CloudAuthModal({
     const res = await cloudSyncPull();
     setIsLoading(false);
     if (res.ok && res.progressData) {
-      onProgressLoadedFromCloud(res.progressData);
+      const merged = mergeProgressData(currentProgress, res.progressData);
+      onProgressLoadedFromCloud(merged);
       setSuccessMessage('✓ Տվյալները հաջողությամբ վերականգնվեցին առցանց բազայից։');
       setSession(getStoredCloudSession());
     } else {

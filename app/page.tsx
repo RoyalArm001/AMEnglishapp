@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Award,
@@ -70,7 +70,14 @@ import VocabularyView from '../components/VocabularyView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
 import CloudAuthModal from '../components/CloudAuthModal';
-import { CloudSession, getStoredCloudSession } from '../lib/cloud-sync';
+import {
+  CloudSession,
+  cloudSyncPull,
+  cloudSyncPush,
+  getProgressSignature,
+  getStoredCloudSession,
+  mergeProgressData,
+} from '../lib/cloud-sync';
 import DailyWordsView from '../components/DailyWordsView';
 import SpeedCheckView from '../components/SpeedCheckView';
 
@@ -215,8 +222,11 @@ export default function HomePage() {
   }, []);
 
   const handleProgressLoadedFromCloud = (merged: UserProgressData) => {
-    setProgress(merged);
-    learningRepository.saveProgress(merged);
+    setProgress((prev) => {
+      const next = mergeProgressData(prev, merged);
+      learningRepository.saveProgress(next).catch(() => {});
+      return next;
+    });
     setCloudSession(getStoredCloudSession());
   };
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -418,10 +428,136 @@ export default function HomePage() {
     progress.darkMode,
   ]);
 
+  const latestProgressRef = useRef<UserProgressData>(progress);
+  const cloudPushTimerRef = useRef<number | null>(null);
+  const hasPendingCloudPushRef = useRef<boolean>(false);
+  const isCloudSyncingRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    latestProgressRef.current = progress;
+  }, [progress]);
+
+  const flushLiveCloudPush = useCallback(async (keepalive = false) => {
+    if (cloudPushTimerRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(cloudPushTimerRef.current);
+      cloudPushTimerRef.current = null;
+    }
+    if (!getStoredCloudSession()) {
+      hasPendingCloudPushRef.current = false;
+      return;
+    }
+    const snapshot = latestProgressRef.current;
+    hasPendingCloudPushRef.current = false;
+    const res = await cloudSyncPush(snapshot, { keepalive });
+    if (res.ok) {
+      setCloudSession(getStoredCloudSession());
+      if (
+        res.progressData &&
+        getProgressSignature(res.progressData) !== getProgressSignature(latestProgressRef.current)
+      ) {
+        const merged = mergeProgressData(latestProgressRef.current, res.progressData);
+        latestProgressRef.current = merged;
+        setProgress(merged);
+        learningRepository.saveProgress(merged).catch(() => {});
+      }
+    } else {
+      hasPendingCloudPushRef.current = true;
+    }
+  }, []);
+
+  const scheduleLiveCloudPush = useCallback(
+    (nextProgress: UserProgressData) => {
+      latestProgressRef.current = nextProgress;
+      if (!getStoredCloudSession() || typeof window === 'undefined') return;
+      hasPendingCloudPushRef.current = true;
+      if (cloudPushTimerRef.current !== null) {
+        window.clearTimeout(cloudPushTimerRef.current);
+      }
+      cloudPushTimerRef.current = window.setTimeout(() => {
+        cloudPushTimerRef.current = null;
+        void flushLiveCloudPush(false);
+      }, 600);
+    },
+    [flushLiveCloudPush]
+  );
+
+  // Live Cross-Device Sync (Phone <-> Computer via MongoDB Atlas)
+  useEffect(() => {
+    if (!hydrated || typeof window === 'undefined') return;
+
+    const syncWithCloudLive = async () => {
+      const session = getStoredCloudSession();
+      if (!session || isCloudSyncingRef.current) return;
+      if (hasPendingCloudPushRef.current) {
+        await flushLiveCloudPush(false);
+        return;
+      }
+      isCloudSyncingRef.current = true;
+      try {
+        const res = await cloudSyncPull();
+        if (res.ok && res.progressData) {
+          const current = latestProgressRef.current;
+          const merged = mergeProgressData(current, res.progressData);
+          setCloudSession(getStoredCloudSession());
+          if (getProgressSignature(merged) !== getProgressSignature(current)) {
+            latestProgressRef.current = merged;
+            setProgress(merged);
+            learningRepository.saveProgress(merged).catch(() => {});
+          }
+          if (getProgressSignature(merged) !== getProgressSignature(res.progressData)) {
+            await cloudSyncPush(merged);
+            setCloudSession(getStoredCloudSession());
+          }
+        }
+      } finally {
+        isCloudSyncingRef.current = false;
+      }
+    };
+
+    void syncWithCloudLive();
+
+    const intervalId = window.setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
+      void syncWithCloudLive();
+    }, 8000);
+
+    const handleFocusOrOnline = () => {
+      void syncWithCloudLive();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        void syncWithCloudLive();
+      } else if (hasPendingCloudPushRef.current) {
+        void flushLiveCloudPush(true);
+      }
+    };
+
+    const handlePageHide = () => {
+      if (hasPendingCloudPushRef.current) {
+        void flushLiveCloudPush(true);
+      }
+    };
+
+    window.addEventListener('focus', handleFocusOrOnline);
+    window.addEventListener('online', handleFocusOrOnline);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', handleFocusOrOnline);
+      window.removeEventListener('online', handleFocusOrOnline);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [hydrated, cloudSession?.email, flushLiveCloudPush]);
+
   const updateAndPersist = (updater: (prev: UserProgressData) => UserProgressData) => {
     setProgress((prev) => {
       const updated = normalizeAndValidateState(updater(normalizeAndValidateState(prev)));
       learningRepository.saveProgress(updated).then(() => setStorageError(false)).catch(() => setStorageError(true));
+      scheduleLiveCloudPush(updated);
       return updated;
     });
   };

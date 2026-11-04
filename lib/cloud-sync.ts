@@ -1,6 +1,5 @@
-'use client';
-
 import type { UserProgressData } from './types';
+import { normalizeAndValidateState } from './storage';
 
 export interface CloudSession {
   userId: string;
@@ -10,6 +9,173 @@ export interface CloudSession {
 }
 
 const CLOUD_SESSION_KEY = 'haylingo_cloud_session_v1';
+
+function uniqueStrings(a: string[] = [], b: string[] = []): string[] {
+  return Array.from(new Set([...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]));
+}
+
+function mergeById<T extends { id: string }>(a: T[] = [], b: T[] = []): T[] {
+  const map = new Map<string, T>();
+  for (const item of Array.isArray(a) ? a : []) {
+    if (item && typeof item.id === 'string') map.set(item.id, item);
+  }
+  for (const item of Array.isArray(b) ? b : []) {
+    if (item && typeof item.id === 'string') map.set(item.id, item);
+  }
+  return Array.from(map.values());
+}
+
+/**
+ * Losslessly merges local and remote progress data across Phone and Computer
+ * so that neither device ever overwrites or loses lessons, words, or steps completed on the other.
+ */
+export function mergeProgressData(
+  localRaw: UserProgressData,
+  remoteRaw?: UserProgressData | null
+): UserProgressData {
+  if (!remoteRaw || typeof remoteRaw !== 'object') {
+    return normalizeAndValidateState(localRaw);
+  }
+
+  const local = normalizeAndValidateState(localRaw);
+  const remote = normalizeAndValidateState(remoteRaw);
+
+  const localTime = Number(local.lastActiveTimestamp || 0);
+  const remoteTime = Number(remote.lastActiveTimestamp || 0);
+  const primary = remoteTime > localTime ? remote : local;
+  const secondary = remoteTime > localTime ? local : remote;
+
+  const profilePrimary =
+    Number(remote.profile?.updatedAt || 0) > Number(local.profile?.updatedAt || 0)
+      ? remote.profile
+      : local.profile;
+
+  const settingsPrimary =
+    Number(remote.settings?.updatedAt || 0) > Number(local.settings?.updatedAt || 0)
+      ? remote.settings
+      : local.settings;
+
+  const merged: UserProgressData = {
+    ...secondary,
+    ...primary,
+    onboardingCompleted: Boolean(local.onboardingCompleted || remote.onboardingCompleted),
+    profile: {
+      ...secondary.profile,
+      ...profilePrimary,
+    },
+    settings: {
+      ...secondary.settings,
+      ...settingsPrimary,
+    },
+    completedLessonIds: uniqueStrings(local.completedLessonIds, remote.completedLessonIds),
+    learnedWordIds: uniqueStrings(local.learnedWordIds, remote.learnedWordIds),
+    favoriteWordIds: uniqueStrings(local.favoriteWordIds, remote.favoriteWordIds),
+    completedExerciseIds: uniqueStrings(local.completedExerciseIds, remote.completedExerciseIds),
+    savedSentenceIds: uniqueStrings(local.savedSentenceIds, remote.savedSentenceIds),
+    completedRoleplayIds: uniqueStrings(local.completedRoleplayIds, remote.completedRoleplayIds),
+    correctAnswersCount: Math.max(
+      Number(local.correctAnswersCount || 0),
+      Number(remote.correctAnswersCount || 0)
+    ),
+    wrongAnswersCount: Math.max(
+      Number(local.wrongAnswersCount || 0),
+      Number(remote.wrongAnswersCount || 0)
+    ),
+    totalStudyMinutes: Math.max(
+      Number(local.totalStudyMinutes || 0),
+      Number(remote.totalStudyMinutes || 0)
+    ),
+    dailyStudyMinutes: Math.max(
+      Number(local.dailyStudyMinutes || 0),
+      Number(remote.dailyStudyMinutes || 0)
+    ),
+    streakDays: Math.max(Number(local.streakDays || 0), Number(remote.streakDays || 0)),
+    lastActiveTimestamp: Math.max(localTime, remoteTime, Date.now()),
+    skills: {
+      reading: Math.max(local.skills?.reading || 0, remote.skills?.reading || 0),
+      listening: Math.max(local.skills?.listening || 0, remote.skills?.listening || 0),
+      speaking: Math.max(local.skills?.speaking || 0, remote.skills?.speaking || 0),
+      writing: Math.max(local.skills?.writing || 0, remote.skills?.writing || 0),
+    },
+    learningPath: {
+      userId: profilePrimary.id,
+      entryLevel: primary.learningPath?.entryLevel || secondary.learningPath?.entryLevel || 'A1',
+      verifiedSentenceIds: uniqueStrings(
+        local.learningPath?.verifiedSentenceIds,
+        remote.learningPath?.verifiedSentenceIds
+      ),
+      writtenSentenceIds: uniqueStrings(
+        local.learningPath?.writtenSentenceIds,
+        remote.learningPath?.writtenSentenceIds
+      ),
+      readingAnswerIds: uniqueStrings(
+        local.learningPath?.readingAnswerIds,
+        remote.learningPath?.readingAnswerIds
+      ),
+      assessmentAnswerIds: uniqueStrings(
+        local.learningPath?.assessmentAnswerIds,
+        remote.learningPath?.assessmentAnswerIds
+      ),
+      curriculumRevision: Math.max(
+        Number(local.learningPath?.curriculumRevision || 0),
+        Number(remote.learningPath?.curriculumRevision || 0)
+      ),
+    },
+    history: mergeById(local.history, remote.history),
+    mistakes: mergeById(local.mistakes, remote.mistakes),
+    exerciseAttempts: mergeById(local.exerciseAttempts, remote.exerciseAttempts),
+    speakingSessions: mergeById(local.speakingSessions, remote.speakingSessions),
+    dailyWordAttempts: mergeById(local.dailyWordAttempts, remote.dailyWordAttempts),
+    achievements: mergeById(local.achievements, remote.achievements),
+    lessonProgressMap: {
+      ...(secondary.lessonProgressMap || {}),
+      ...(primary.lessonProgressMap || {}),
+    },
+    dailyConversationsMap: {
+      ...(secondary.dailyConversationsMap || {}),
+      ...(primary.dailyConversationsMap || {}),
+    },
+    readingProgressMap: {
+      ...(secondary.readingProgressMap || {}),
+      ...(primary.readingProgressMap || {}),
+    },
+    grammarAttemptsMap: {
+      ...(secondary.grammarAttemptsMap || {}),
+      ...(primary.grammarAttemptsMap || {}),
+    },
+    pronunciationProgressMap: {
+      ...(secondary.pronunciationProgressMap || {}),
+      ...(primary.pronunciationProgressMap || {}),
+    },
+    srsWords: {
+      ...(secondary.srsWords || {}),
+      ...(primary.srsWords || {}),
+    },
+  };
+
+  return normalizeAndValidateState(merged);
+}
+
+export function getProgressSignature(progress: UserProgressData): string {
+  return JSON.stringify({
+    level: progress.level,
+    lesson: progress.currentLessonId,
+    idx: progress.currentSentenceIndex,
+    completed: progress.completedLessonIds?.length || 0,
+    written: progress.learningPath?.writtenSentenceIds?.length || 0,
+    verified: progress.learningPath?.verifiedSentenceIds?.length || 0,
+    reading: progress.learningPath?.readingAnswerIds?.length || 0,
+    assessment: progress.learningPath?.assessmentAnswerIds?.length || 0,
+    words: progress.learnedWordIds?.length || 0,
+    saved: progress.savedSentenceIds?.length || 0,
+    correct: progress.correctAnswersCount || 0,
+    wrong: progress.wrongAnswersCount || 0,
+    minutes: progress.totalStudyMinutes || 0,
+    name: progress.userName,
+    profUpdated: progress.profile?.updatedAt || 0,
+    setUpdated: progress.settings?.updatedAt || 0,
+  });
+}
 
 export function getStoredCloudSession(): CloudSession | null {
   if (typeof window === 'undefined') return null;
@@ -39,7 +205,13 @@ export async function cloudRegister(
   email: string,
   password: string,
   localProgress?: UserProgressData
-): Promise<{ ok: boolean; session?: CloudSession; errorAm?: string; messageAm?: string }> {
+): Promise<{
+  ok: boolean;
+  session?: CloudSession;
+  progressData?: UserProgressData | null;
+  errorAm?: string;
+  messageAm?: string;
+}> {
   try {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
@@ -63,6 +235,7 @@ export async function cloudRegister(
     return {
       ok: true,
       session,
+      progressData: localProgress || null,
       messageAm: data.messageAm || 'Գրանցումը հաջողվեց։',
     };
   } catch (err) {
@@ -75,7 +248,8 @@ export async function cloudRegister(
 
 export async function cloudLogin(
   email: string,
-  password: string
+  password: string,
+  localProgress?: UserProgressData
 ): Promise<{
   ok: boolean;
   session?: CloudSession;
@@ -103,10 +277,19 @@ export async function cloudLogin(
     };
     setStoredCloudSession(session);
 
+    let finalProgress: UserProgressData | null = data.progressData || null;
+    if (localProgress && finalProgress) {
+      finalProgress = mergeProgressData(localProgress, finalProgress);
+      void cloudSyncPush(finalProgress);
+    } else if (localProgress && !finalProgress) {
+      finalProgress = localProgress;
+      void cloudSyncPush(localProgress);
+    }
+
     return {
       ok: true,
       session,
-      progressData: data.progressData || null,
+      progressData: finalProgress,
       messageAm: data.messageAm || 'Մուտքը հաջողվեց։',
     };
   } catch (err) {
@@ -122,8 +305,14 @@ export function cloudLogout(): void {
 }
 
 export async function cloudSyncPush(
-  progressData: UserProgressData
-): Promise<{ ok: boolean; lastSyncedAt?: number; errorAm?: string }> {
+  progressData: UserProgressData,
+  options?: { keepalive?: boolean; forceOverwrite?: boolean }
+): Promise<{
+  ok: boolean;
+  lastSyncedAt?: number;
+  progressData?: UserProgressData;
+  errorAm?: string;
+}> {
   const session = getStoredCloudSession();
   if (!session || !session.token) {
     return { ok: false, errorAm: 'Մուտք չեք գործել առցանց բազա։' };
@@ -132,11 +321,15 @@ export async function cloudSyncPush(
   try {
     const res = await fetch('/api/sync', {
       method: 'POST',
+      keepalive: options?.keepalive,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${session.token}`,
       },
-      body: JSON.stringify({ progressData }),
+      body: JSON.stringify({
+        progressData,
+        forceOverwrite: options?.forceOverwrite === true,
+      }),
     });
 
     const data = await res.json();
@@ -147,7 +340,11 @@ export async function cloudSyncPush(
     session.lastSyncedAt = data.lastSyncedAt || Date.now();
     setStoredCloudSession(session);
 
-    return { ok: true, lastSyncedAt: session.lastSyncedAt };
+    return {
+      ok: true,
+      lastSyncedAt: session.lastSyncedAt,
+      progressData: data.progressData,
+    };
   } catch (err) {
     return {
       ok: false,
@@ -168,10 +365,12 @@ export async function cloudSyncPull(): Promise<{
   }
 
   try {
-    const res = await fetch('/api/sync', {
+    const res = await fetch(`/api/sync?t=${Date.now()}`, {
       method: 'GET',
+      cache: 'no-store',
       headers: {
         Authorization: `Bearer ${session.token}`,
+        'Cache-Control': 'no-cache',
       },
     });
 
@@ -207,4 +406,3 @@ export async function checkCloudStatus(): Promise<{ isConfigured: boolean }> {
     return { isConfigured: false };
   }
 }
-

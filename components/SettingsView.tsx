@@ -51,6 +51,7 @@ import {
   cloudLogout,
   cloudSyncPush,
   cloudSyncPull,
+  mergeProgressData,
 } from '../lib/cloud-sync';
 import {
   BrowserVoiceOption,
@@ -184,7 +185,7 @@ export default function SettingsView({
     }
     setCloudLoading(true);
     setCloudFeedback(null);
-    const res = await cloudLogin(cloudEmail, cloudPassword);
+    const res = await cloudLogin(cloudEmail, cloudPassword, progress);
     setCloudLoading(false);
     if (res.ok && res.session) {
       setCloudSession(res.session);
@@ -212,6 +213,9 @@ export default function SettingsView({
     setCloudLoading(false);
     if (res.ok) {
       setCloudSession(getStoredCloudSession());
+      if (res.progressData && onProgressLoadedFromCloud) {
+        onProgressLoadedFromCloud(res.progressData);
+      }
       setCloudFeedback({ ok: true, messageAm: 'Առաջընթացը հաջողությամբ համաժամեցվեց ամպի հետ։' });
     } else {
       setCloudFeedback({ ok: false, messageAm: res.errorAm || 'Համաժամեցման սխալ։' });
@@ -225,8 +229,9 @@ export default function SettingsView({
     setCloudLoading(false);
     if (res.ok && res.progressData) {
       setCloudSession(getStoredCloudSession());
+      const merged = mergeProgressData(progress, res.progressData);
       if (onProgressLoadedFromCloud) {
-        onProgressLoadedFromCloud(res.progressData);
+        onProgressLoadedFromCloud(merged);
       }
       setCloudFeedback({ ok: true, messageAm: 'Առաջընթացը բեռնվեց առցանց բազայից։' });
     } else if (res.ok) {
