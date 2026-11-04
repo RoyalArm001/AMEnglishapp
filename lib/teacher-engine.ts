@@ -101,7 +101,7 @@ export function evaluateWithRuleBasedTeacher(
   req: TeacherEvaluationRequest
 ): TeacherEvaluationResponse {
   const currentQ =
-    TEACHER_CURRICULUM.find((q) => q.id === req.currentQuestionId && isAtOrBelowLevel(q.level, req.level || 'A1') && (!q.profession || q.profession === req.profession)) ||
+    TEACHER_CURRICULUM.find((q) => q.id === req.currentQuestionId) ||
     selectNextCurriculumQuestion('', [], [], req.difficultyScore, req.profession, req.level);
   const raw = req.userAnswer.trim();
   const normUser = normalizeEnglishText(raw);

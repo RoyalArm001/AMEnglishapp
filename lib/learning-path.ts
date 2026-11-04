@@ -119,5 +119,60 @@ export function normalizeLearningPath(progress: UserProgressData): UserProgressD
 
 // Personal pages remain usable; additional study pages unlock after the active course.
 export function isCoursePageUnlocked(progress: UserProgressData, tab: string) {
-  return ['Dashboard', 'Lessons', 'Profile', 'Settings', 'My Progress'].includes(tab) || isLevelCourseComplete(progress);
+  return ['Dashboard', 'Lessons', 'Speed Check', 'Profile', 'Settings', 'My Progress'].includes(tab) || isLevelCourseComplete(progress);
+}
+
+export interface PassedLessonSpeedGroup {
+  lesson: LessonItem;
+  isFullyCompleted: boolean;
+  passedSentences: LessonSentence[];
+}
+
+export function getPassedLessonsForSpeedCheck(progress: UserProgressData): PassedLessonSpeedGroup[] {
+  const completedIds = new Set(progress.completedLessonIds || []);
+  const writtenIds = new Set(progress.learningPath?.writtenSentenceIds || []);
+  const verifiedIds = new Set(progress.learningPath?.verifiedSentenceIds || []);
+
+  const groups: PassedLessonSpeedGroup[] = [];
+  const orderedLessons = [...LESSONS_DATA].sort((a, b) => a.order - b.order);
+
+  for (const lesson of orderedLessons) {
+    const isFullyCompleted = completedIds.has(lesson.id) || isCourseLessonComplete(progress, lesson);
+    if (isFullyCompleted) {
+      if (lesson.sentences.length > 0) {
+        groups.push({
+          lesson,
+          isFullyCompleted: true,
+          passedSentences: lesson.sentences,
+        });
+      }
+      continue;
+    }
+
+    const passedSentences = lesson.sentences.filter(
+      (s) => writtenIds.has(s.id) || verifiedIds.has(s.id)
+    );
+    if (passedSentences.length > 0) {
+      groups.push({
+        lesson,
+        isFullyCompleted: passedSentences.length === lesson.sentences.length,
+        passedSentences,
+      });
+    }
+  }
+
+  return groups;
+}
+
+export function getPassedCourseSentences(
+  progress: UserProgressData,
+  lessonFilterId: string = 'all'
+): LessonSentence[] {
+  const groups = getPassedLessonsForSpeedCheck(progress);
+  if (lessonFilterId && lessonFilterId !== 'all') {
+    const found = groups.find((g) => g.lesson.id === lessonFilterId);
+    return found ? found.passedSentences : [];
+  }
+  return groups.flatMap((g) => g.passedSentences);
+
 }

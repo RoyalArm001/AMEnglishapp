@@ -396,7 +396,19 @@ export default function DailyWordsView({
                   ref={inputRef}
                   type="text"
                   value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserInput(val);
+                    if (!currentWord || isAdvancing) return;
+                    const trimmed = val.trim().toLowerCase();
+                    const targetWord = currentWord.english.trim().toLowerCase();
+                    const synonyms = (currentWord.synonyms || []).map((s) => s.trim().toLowerCase());
+                    if (trimmed === targetWord || synonyms.includes(trimmed)) {
+                      setTimeout(() => {
+                        handleSubmitAnswer();
+                      }, 50);
+                    }
+                  }}
                   placeholder="Մուտքագրիր անգլերեն բառը..."
                   autoComplete="off"
                   autoCapitalize="off"

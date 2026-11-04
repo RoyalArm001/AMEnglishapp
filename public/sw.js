@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'haylingo-pwa-v1.7.0';
+const CACHE_VERSION = 'haylingo-pwa-v1.9.1';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -10,11 +10,29 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
+  const hasActiveController = Boolean(self.registration && self.registration.active);
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
       .then((cache) => cache.addAll(PRECACHE_URLS).catch(() => {}))
-      .then(() => self.skipWaiting())
+      .then(async () => {
+        if (!hasActiveController) {
+          // Առաջին տեղադրման ժամանակ անմիջապես ակտիվացնել
+          await self.skipWaiting();
+        } else {
+          // Եթե հավելվածն արդեն տեղադրված է, ուղարկել թարմացման հայտ հաճախորդին
+          const clientList = await self.clients.matchAll({
+            type: 'window',
+            includeUncontrolled: true,
+          });
+          for (const client of clientList) {
+            client.postMessage({
+              type: 'SW_UPDATE_AVAILABLE',
+              version: CACHE_VERSION,
+            });
+          }
+        }
+      })
   );
 });
 
@@ -23,13 +41,31 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) =>
+        // Մաքրվում են միայն հին HTTP քեշերը․ IndexedDB և localStorage բազաները երբեք չեն ջնջվում
         Promise.all(
           keys
-            .filter((key) => key.startsWith('haylingo-pwa-') && key !== STATIC_CACHE && key !== RUNTIME_CACHE)
+            .filter(
+              (key) =>
+                key.startsWith('haylingo-pwa-') &&
+                key !== STATIC_CACHE &&
+                key !== RUNTIME_CACHE
+            )
             .map((key) => caches.delete(key))
         )
       )
       .then(() => self.clients.claim())
+      .then(async () => {
+        const clientList = await self.clients.matchAll({
+          type: 'window',
+          includeUncontrolled: true,
+        });
+        for (const client of clientList) {
+          client.postMessage({
+            type: 'SW_ACTIVATED',
+            version: CACHE_VERSION,
+          });
+        }
+      })
   );
 });
 
@@ -71,7 +107,8 @@ self.addEventListener('fetch', (event) => {
           const searchMatch = await caches.match(request, { ignoreSearch: true });
           if (searchMatch) return searchMatch;
 
-          const rootMatch = (await caches.match('/')) || (await caches.match('/', { ignoreSearch: true }));
+          const rootMatch =
+            (await caches.match('/')) || (await caches.match('/', { ignoreSearch: true }));
           if (rootMatch) return rootMatch;
 
           return new Response(
@@ -132,16 +169,20 @@ self.addEventListener('message', (event) => {
 
   if (data.type === 'CLEAR_PWA_CACHE') {
     event.waitUntil(
-      caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+      caches
+        .keys()
+        .then((keys) =>
+          Promise.all(
+            keys.filter((k) => k.startsWith('haylingo-pwa-')).map((k) => caches.delete(k))
+          )
+        )
     );
   }
 
   if (data.type === 'SHOW_NOTIFICATION') {
     const title = data.title || '🔔 HayLingo — Ժամանակն է սովորել անգլերեն';
     const options = {
-      body:
-        data.body ||
-        'Այսօր ունես նոր առաջադրանք։ Սեղմիր՝ «Սկսել»։',
+      body: data.body || 'Այսօր ունես նոր առաջադրանք։ Սեղմիր՝ «Սկսել»։',
       icon: '/icons/icon-192.svg',
       badge: '/icons/icon-192.svg',
       tag: data.tag || 'haylingo-morning-reminder',
@@ -182,7 +223,8 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = (event.notification.data && event.notification.data.url) || '/?tab=daily-words';
+  const targetUrl =
+    (event.notification.data && event.notification.data.url) || '/?tab=daily-words';
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {

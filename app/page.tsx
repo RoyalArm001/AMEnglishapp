@@ -23,6 +23,7 @@ import {
   Settings,
   Sparkles,
   Sun,
+  Cloud,
   Briefcase,
   User,
   X,
@@ -68,7 +69,10 @@ import ExercisesView from '../components/ExercisesView';
 import VocabularyView from '../components/VocabularyView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
+import CloudAuthModal from '../components/CloudAuthModal';
+import { CloudSession, getStoredCloudSession } from '../lib/cloud-sync';
 import DailyWordsView from '../components/DailyWordsView';
+import SpeedCheckView from '../components/SpeedCheckView';
 
 const BookLibraryView = dynamic(() => import('../components/BookLibraryView'), {
   loading: () => <div className="p-8 text-center text-slate-400 font-bold">Գրադարանը բեռնվում է…</div>,
@@ -113,6 +117,7 @@ const TranslationView = dynamic(() => import('../components/TranslationView'), {
 type NavTabId =
   | 'Dashboard'
   | 'Lessons'
+  | 'Speed Check'
   | 'Exercises'
   | 'Study Assistant'
   | 'Voice Practice'
@@ -138,6 +143,7 @@ const NAV_ITEMS: { id: NavTabId; labelAm: string; subAm: string; icon: any }[] =
   { id: 'Grammar Academy', labelAm: 'Քերականություն', subAm: '18 թեմա (A1–C2)', icon: GraduationCap },
   { id: 'Accent Academy', labelAm: 'Արտասանություն & ակցենտ', subAm: '🇺🇸 US vs 🇬🇧 UK', icon: Languages },
   { id: 'Lessons', labelAm: UI_TEXT.nav.lessons, subAm: `${LESSON_CATEGORIES.length} բաժին · ${LESSONS_DATA.length} դաս`, icon: BookOpen },
+  { id: 'Speed Check', labelAm: 'Ստուգել իմ արագությունը', subAm: '1–5 րոպե · 1 վրկ ցուցադրում', icon: Clock },
   { id: 'Exercises', labelAm: UI_TEXT.nav.exercises, subAm: 'Վարժություններ Ա–Զ', icon: Brain },
   { id: 'Study Assistant', labelAm: UI_TEXT.nav.teacher, subAm: 'Հարց ու պատասխան', icon: MessageCircle },
   { id: 'Voice Practice', labelAm: UI_TEXT.nav.voice, subAm: 'Խոսք և Առավոտյան ռեժիմ', icon: Mic },
@@ -175,6 +181,8 @@ export default function HomePage() {
       setSessionState(
         [
           'Lessons',
+      'Speed Check',
+          'Speed Check',
           'Exercises',
           'Study Assistant',
           'Voice Practice',
@@ -199,6 +207,18 @@ export default function HomePage() {
     [setActiveTab]
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [cloudModalOpen, setCloudModalOpen] = useState<boolean>(false);
+  const [cloudSession, setCloudSession] = useState<CloudSession | null>(null);
+
+  useEffect(() => {
+    setCloudSession(getStoredCloudSession());
+  }, []);
+
+  const handleProgressLoadedFromCloud = (merged: UserProgressData) => {
+    setProgress(merged);
+    learningRepository.saveProgress(merged);
+    setCloudSession(getStoredCloudSession());
+  };
   const [sidebarOpen, setSidebarOpen] = useState(true);
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
@@ -220,6 +240,7 @@ export default function HomePage() {
   const isLearning =
     [
       'Lessons',
+      'Speed Check',
       'Exercises',
       'Study Assistant',
       'Voice Practice',
@@ -918,6 +939,19 @@ export default function HomePage() {
         <span className="navigation-page-title">{NAV_ITEMS.find(item => item.id === activeTab)?.labelAm}</span>
         <div className="navigation-header-actions">
           <div id="header-install-actions" />
+          <button
+            type="button"
+            className="navigation-button flex items-center gap-1.5 px-2.5 text-xs font-semibold"
+            onClick={() => setCloudModalOpen(true)}
+            title="Առցանց բազա (MongoDB Atlas)"
+            aria-label="Առցանց բազա"
+          >
+            <Cloud size={18} className={cloudSession ? 'text-emerald-500' : 'text-slate-500'} />
+            <span className="nav-desktop-only">Առցանց բազա</span>
+            {cloudSession && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+            )}
+          </button>
           <button type="button" className="navigation-button" onClick={handleCycleThemeMode} aria-label="Փոխել թեման">
             {progress.darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </button>
@@ -932,7 +966,7 @@ export default function HomePage() {
         <nav className="navigation-list" aria-label="Բաժինների ընտրություն" onKeyDown={navigateByKey}>
           {[
             {title:'Գլխավոր', ids:['Dashboard']},
-            {title:'Սովորել', ids:['Lessons','Daily Words','Daily Questions','Exercises','Daily Conversations','Book Library','Grammar Academy','Accent Academy','Voice Practice','IT English']},
+            {title:'Սովորել', ids:['Lessons','Speed Check','Daily Words','Daily Questions','Exercises','Daily Conversations','Book Library','Grammar Academy','Accent Academy','Voice Practice','IT English']},
             {title:'Գործիքներ', ids:['Study Assistant','Vocabulary','Translation']},
             {title:'Անձնական', ids:['My Progress','Profile','Settings']},
           ].map(group => {
@@ -1062,6 +1096,24 @@ export default function HomePage() {
                 };
               })}
               onAdvance={() => {const next = getNextCourseLevel(progress); if (next) handleChangeLevel(next);}}
+            />
+          )}
+
+          {activeTab === 'Speed Check' && (
+            <SpeedCheckView
+              progress={progress}
+              onSpeak={handleSpeak}
+              onOpenLessons={() => setActiveTab('Lessons')}
+              onRecordWordSuccess={() => {
+                updateAndPersist((prev) => ({
+                  ...prev,
+                  correctAnswersCount: prev.correctAnswersCount + 1,
+                }));
+              }}
+            />
+          )}
+          {false && (
+            <div
             />
           )}
 
@@ -1234,6 +1286,7 @@ export default function HomePage() {
               onImportSqlite={handleImportSqlite}
               onWipeAllData={handleWipeAllData}
               onSpeak={handleSpeak}
+              onProgressLoadedFromCloud={handleProgressLoadedFromCloud}
             />
           )}
           </>}
@@ -1326,6 +1379,15 @@ export default function HomePage() {
           <span className="text-[10px] mt-0.5">Պրոֆիլ</span>
         </button>
       </nav>
+      <CloudAuthModal
+        isOpen={cloudModalOpen}
+        onClose={() => {
+          setCloudModalOpen(false);
+          setCloudSession(getStoredCloudSession());
+        }}
+        currentProgress={progress}
+        onProgressLoadedFromCloud={handleProgressLoadedFromCloud}
+      />
     </div>
   );
 }

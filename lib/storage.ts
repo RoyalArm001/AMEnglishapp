@@ -431,7 +431,7 @@ class LocalLearningRepository implements ILearningRepository {
     try { const rawLocal = window.localStorage.getItem(SNAPSHOT_STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY_V2); hasLocalSnapshot = Boolean(rawLocal && isValidProgressBackup(JSON.parse(rawLocal))); } catch {}
     const db = await openIndexedDB();
     if (!db) {
-      return this.memoryState || syncState;
+      return hasLocalSnapshot ? (this.memoryState || syncState) : syncState;
     }
 
     return new Promise((resolve) => {
@@ -461,8 +461,12 @@ class LocalLearningRepository implements ILearningRepository {
             // A read must not become a new write that overwrites a newer edit.
             this.memoryState = merged;
             resolve(merged);
+          } else if (hasLocalSnapshot) {
+            this.memoryState = syncState;
+            resolve(syncState);
           } else {
-            resolve(this.memoryState || syncState);
+            this.memoryState = undefined;
+            resolve(syncState);
           }
         };
         req.onerror = () => resolve(this.memoryState || syncState);

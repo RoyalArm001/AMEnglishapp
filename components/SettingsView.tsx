@@ -21,6 +21,12 @@ import {
   Sun,
   Upload,
   Volume2,
+  AlertCircle,
+  Cloud,
+  Lock,
+  LogOut,
+  Mail,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   CEFRLevel,
@@ -36,6 +42,16 @@ import {
   SUPPORTED_TIMEZONES,
 } from '../lib/i18n';
 import { CEFR_LEVELS } from '../lib/storage';
+import CloudAuthModal from './CloudAuthModal';
+import {
+  CloudSession,
+  getStoredCloudSession,
+  cloudRegister,
+  cloudLogin,
+  cloudLogout,
+  cloudSyncPush,
+  cloudSyncPull,
+} from '../lib/cloud-sync';
 import {
   BrowserVoiceOption,
   checkSpeechSupport,
@@ -63,6 +79,7 @@ interface SettingsViewProps {
   onImportSqlite?: (file: File) => Promise<{ ok: boolean; errorAm?: string }>;
   onWipeAllData: () => Promise<void>;
   onSpeak: (text: string, speed?: 'slow' | 'normal') => void;
+  onProgressLoadedFromCloud?: (progress: UserProgressData) => void;
 }
 
 type SettingsSection = 'appearance' | 'display' | 'timezone' | 'audio' | 'reminders' | 'learning' | 'data' | 'app';
@@ -93,10 +110,12 @@ export default function SettingsView({
   onImportJson,
   onImportSqlite,
   onSpeak,
+  onProgressLoadedFromCloud,
 }: SettingsViewProps) {
   const { settings } = progress;
   const [activeSection, setActiveSection] = useState<SettingsSection | null>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [cloudSession, setCloudSession] = useState<CloudSession | null>(null);
   const openSection = (section: SettingsSection | null) => {
     setActiveSection(section);
     requestAnimationFrame(() => {
@@ -112,7 +131,7 @@ export default function SettingsView({
     learning: progress.level,
     reminders: progress.morningReminder?.isEnabled ? progress.morningReminder.reminderTime : 'Անջատված',
     timezone: `${settings.dailyGoalMinutes} րոպե / օր`,
-    data: 'Այս սարքում',
+    data: cloudSession ? cloudSession.email : 'Այս սարքում',
     app: APP_VERSION,
   };
   const [voices, setVoices] = useState<BrowserVoiceOption[]>([]);
@@ -129,6 +148,93 @@ export default function SettingsView({
   });
   const [pwaFeedback, setPwaFeedback] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isCloudModalOpen, setIsCloudModalOpen] = useState(false);
+  const [cloudEmail, setCloudEmail] = useState('');
+  const [cloudPassword, setCloudPassword] = useState('');
+  const [cloudLoading, setCloudLoading] = useState(false);
+  const [cloudFeedback, setCloudFeedback] = useState<{ ok: boolean; messageAm: string } | null>(null);
+
+  useEffect(() => {
+    setCloudSession(getStoredCloudSession());
+  }, []);
+
+  const handleQuickRegister = async () => {
+    if (!cloudEmail || !cloudPassword) {
+      setCloudFeedback({ ok: false, messageAm: 'Խնդրում ենք լրացնել էլ. փոստը և գաղտնաբառը։' });
+      return;
+    }
+    setCloudLoading(true);
+    setCloudFeedback(null);
+    const res = await cloudRegister(cloudEmail, cloudPassword, progress);
+    setCloudLoading(false);
+    if (res.ok && res.session) {
+      setCloudSession(res.session);
+      setCloudEmail('');
+      setCloudPassword('');
+      setCloudFeedback({ ok: true, messageAm: res.messageAm || 'Գրանցումը հաջողվեց։ Տվյալները պահպանվեցին ամպում։' });
+    } else {
+      setCloudFeedback({ ok: false, messageAm: res.errorAm || 'Գրանցման սխալ։' });
+    }
+  };
+
+  const handleQuickLogin = async () => {
+    if (!cloudEmail || !cloudPassword) {
+      setCloudFeedback({ ok: false, messageAm: 'Խնդրում ենք լրացնել էլ. փոստը և գաղտնաբառը։' });
+      return;
+    }
+    setCloudLoading(true);
+    setCloudFeedback(null);
+    const res = await cloudLogin(cloudEmail, cloudPassword);
+    setCloudLoading(false);
+    if (res.ok && res.session) {
+      setCloudSession(res.session);
+      setCloudEmail('');
+      setCloudPassword('');
+      setCloudFeedback({ ok: true, messageAm: res.messageAm || 'Մուտքը հաջողվեց։' });
+      if (res.progressData && onProgressLoadedFromCloud) {
+        onProgressLoadedFromCloud(res.progressData);
+      }
+    } else {
+      setCloudFeedback({ ok: false, messageAm: res.errorAm || 'Մուտքի սխալ։' });
+    }
+  };
+
+  const handleCloudLogout = () => {
+    cloudLogout();
+    setCloudSession(null);
+    setCloudFeedback({ ok: true, messageAm: 'Դուրս եկաք առցանց բազայից։' });
+  };
+
+  const handleCloudPush = async () => {
+    setCloudLoading(true);
+    setCloudFeedback(null);
+    const res = await cloudSyncPush(progress);
+    setCloudLoading(false);
+    if (res.ok) {
+      setCloudSession(getStoredCloudSession());
+      setCloudFeedback({ ok: true, messageAm: 'Առաջընթացը հաջողությամբ համաժամեցվեց ամպի հետ։' });
+    } else {
+      setCloudFeedback({ ok: false, messageAm: res.errorAm || 'Համաժամեցման սխալ։' });
+    }
+  };
+
+  const handleCloudPull = async () => {
+    setCloudLoading(true);
+    setCloudFeedback(null);
+    const res = await cloudSyncPull();
+    setCloudLoading(false);
+    if (res.ok && res.progressData) {
+      setCloudSession(getStoredCloudSession());
+      if (onProgressLoadedFromCloud) {
+        onProgressLoadedFromCloud(res.progressData);
+      }
+      setCloudFeedback({ ok: true, messageAm: 'Առաջընթացը բեռնվեց առցանց բազայից։' });
+    } else if (res.ok) {
+      setCloudFeedback({ ok: true, messageAm: 'Ամպում առկա տվյալներ չկան։' });
+    } else {
+      setCloudFeedback({ ok: false, messageAm: res.errorAm || 'Բեռնման սխալ։' });
+    }
+  };
 
   useEffect(() => {
     const loadVoices = () => {
@@ -685,6 +791,146 @@ export default function SettingsView({
           </p>
         </div>
 
+        {/* MongoDB Atlas Առցանց Բազա */}
+        <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/70 to-blue-50/40 dark:from-indigo-950/40 dark:to-slate-900/40 border border-indigo-200 dark:border-indigo-800/60 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm">
+                <Cloud size={18} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <span>Առցանց բազա (MongoDB Atlas)</span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                    {cloudSession ? 'Միացված է' : 'Առցանց'}
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Պահպանեք ձեր առաջընթացն առցանց ամպում՝ ապահով և հասանելի բոլոր սարքերում։
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsCloudModalOpen(true)}
+              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            >
+              <span>Բացել պատուհանը</span>
+              <ChevronRight size={14} />
+            </button>
+          </div>
+
+          {cloudFeedback && (
+            <div
+              className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 ${
+                cloudFeedback.ok
+                  ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 border border-emerald-500/30'
+                  : 'bg-rose-500/15 text-rose-800 dark:text-rose-200 border border-rose-500/30'
+              }`}
+            >
+              {cloudFeedback.ok ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
+              <span>{cloudFeedback.messageAm}</span>
+            </div>
+          )}
+
+          {cloudSession ? (
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs">
+                <div>
+                  <div className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                    <Mail size={13} className="text-indigo-500" />
+                    <span>{cloudSession.email}</span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    {cloudSession.lastSyncedAt
+                      ? `Վերջին համաժամեցում՝ ${new Date(cloudSession.lastSyncedAt).toLocaleString('hy-AM')}`
+                      : 'Համաժամեցված է'}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCloudLogout}
+                  className="px-3 py-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold transition flex items-center gap-1"
+                >
+                  <LogOut size={13} />
+                  <span>Դուրս գալ</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  disabled={cloudLoading}
+                  onClick={handleCloudPush}
+                  className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50"
+                >
+                  <RefreshCw size={14} className={cloudLoading ? 'animate-spin' : ''} />
+                  <span>Համաժամեցնել (Push)</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={cloudLoading}
+                  onClick={handleCloudPull}
+                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 transition disabled:opacity-50"
+                >
+                  <Download size={14} />
+                  <span>Բեռնել ամպից (Pull)</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3 pt-1">
+              <p className="text-xs text-slate-600 dark:text-slate-300">
+                Մուտքագրեք ձեր էլ. հասցեն և գաղտնաբառը՝ արագ գրանցվելու կամ գործող հաշվով մուտք գործելու համար։
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="relative">
+                  <Mail size={15} className="absolute left-3 top-3 text-slate-400" />
+                  <input
+                    type="email"
+                    value={cloudEmail}
+                    onChange={(e) => setCloudEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    aria-label="Էլ. փոստի հասցե"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="relative">
+                  <Lock size={15} className="absolute left-3 top-3 text-slate-400" />
+                  <input
+                    type="password"
+                    value={cloudPassword}
+                    onChange={(e) => setCloudPassword(e.target.value)}
+                    placeholder="Գաղտնաբառ (առնվազն 6 նիշ)"
+                    aria-label="Գաղտնաբառ"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  disabled={cloudLoading}
+                  onClick={handleQuickRegister}
+                  className="flex-1 min-w-[130px] px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+                >
+                  <ShieldCheck size={14} />
+                  <span>{cloudLoading ? 'Գրանցվում է...' : 'Գրանցվել'}</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={cloudLoading}
+                  onClick={handleQuickLogin}
+                  className="flex-1 min-w-[130px] px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700 transition disabled:opacity-50"
+                >
+                  <span>{cloudLoading ? 'Մուտք...' : 'Մուտք գործել'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {importFeedback && (
           <div
             className={`p-4 rounded-2xl text-xs md:text-sm font-bold ${
@@ -840,6 +1086,18 @@ export default function SettingsView({
           </button>
         </div>
       </section>
+      <CloudAuthModal
+        isOpen={isCloudModalOpen}
+        onClose={() => {
+          setIsCloudModalOpen(false);
+          setCloudSession(getStoredCloudSession());
+        }}
+        currentProgress={progress}
+        onProgressLoadedFromCloud={(p) => {
+          if (onProgressLoadedFromCloud) onProgressLoadedFromCloud(p);
+          setCloudSession(getStoredCloudSession());
+        }}
+      />
     </div>
   );
 }

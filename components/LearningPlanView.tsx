@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Lock, Star, Volume2 } from 'lucide-react';
 import type { LessonItem, UserProgressData } from '../lib/types';
 import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getCurrentCourseLesson, getFirstUnverifiedIndex, getNextCourseLevel, isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete, isCourseStepComplete, isLevelCourseComplete } from '../lib/learning-path';
@@ -67,9 +67,19 @@ export default function LearningPlanView(props: Props) {
 
 function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUpdateSentencePosition, onSelectLesson, onToggleSaveSentence}: Props & {lesson: LessonItem}) {
   const study = useStudyActivity();
-  const [checking, setChecking] = useState(false);
   const [answer, setAnswer] = useState('');
   const [incorrect, setIncorrect] = useState(false);
+  const [justCorrect, setJustCorrect] = useState(false);
+  const [hideEnglish, setHideEnglish] = useState(false);
+  const advanceTimer = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    };
+  }, []);
+
   const index = Math.min(progress.currentSentenceIndex, getFirstUnverifiedIndex(progress, lesson));
   const sentence = lesson.sentences[index];
   const verified = isCourseStepComplete(progress, sentence.id);
@@ -77,7 +87,45 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
   const readingComplete = isCourseReadingComplete(progress, lesson);
   const nextLesson = getCurrentCourseLesson(progress);
   const prompt = sentence.writingTask?.promptAm || `Սովորած արտահայտությունը գրիր անգլերեն՝ «${sentence.armenian}»։`;
-  const showMaterial = !checking || verified;
+  const showMaterial = !hideEnglish || verified;
+
+  const handleVerifyAnswer = (val: string) => {
+    if (!val.trim()) return;
+    study.start();
+    const correct = isCorrectWrittenAnswer(sentence, val);
+    if (correct) {
+      setIncorrect(false);
+      setJustCorrect(true);
+      onVerify(lesson.id, sentence.id, val);
+      if (index + 1 < lesson.sentences.length) {
+        if (advanceTimer.current) clearTimeout(advanceTimer.current);
+        advanceTimer.current = setTimeout(() => {
+          onUpdateSentencePosition(lesson.id, index + 1);
+        }, 500);
+      }
+    } else {
+      setIncorrect(true);
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const val = event.target.value;
+    setAnswer(val);
+    setIncorrect(false);
+
+    // Ավտոմատացում՝ երբ գրվում է ճիշտ պատասխանը, նա հաստատում է ավտոմատ
+    if (isCorrectWrittenAnswer(sentence, val)) {
+      study.start();
+      setJustCorrect(true);
+      onVerify(lesson.id, sentence.id, val);
+      if (index + 1 < lesson.sentences.length) {
+        if (advanceTimer.current) clearTimeout(advanceTimer.current);
+        advanceTimer.current = setTimeout(() => {
+          onUpdateSentencePosition(lesson.id, index + 1);
+        }, 500);
+      }
+    }
+  };
 
   return <section className="min-w-0 space-y-5 break-words rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
     <div><p className="text-xs font-semibold text-slate-500">Քայլ {index + 1} / {lesson.sentences.length}</p><h2 className="mt-1 text-xl font-bold">{lesson.titleAm}</h2></div>
@@ -85,34 +133,46 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
     {showMaterial && <p className="rounded-xl bg-slate-50 p-3 text-sm leading-relaxed dark:bg-slate-800">{lesson.grammarTipAm}</p>}
     <div className="space-y-2">
       {showMaterial && sentence.colorHex && <span className="block h-16 w-16 rounded-2xl border border-slate-400" style={{backgroundColor: sentence.colorHex}} role="img" aria-label={sentence.armenian} />}
-      {showMaterial && <><p lang="en" data-learning-text="english" className="font-bold">{sentence.english}</p><p data-learning-text="pronunciation" className="text-emerald-700 dark:text-emerald-300">{sentence.pronunciation}</p><p data-learning-text="armenian">{sentence.armenian}</p></>}
+      {showMaterial && <><p lang="en" data-learning-text="english" className="font-bold text-lg">{sentence.english}</p><p data-learning-text="pronunciation" className="text-emerald-700 dark:text-emerald-300 font-medium">{sentence.pronunciation}</p><p data-learning-text="armenian" className="text-slate-700 dark:text-slate-300">{sentence.armenian}</p></>}
       {showMaterial && sentence.grammarNoteAm && <p className="text-sm leading-relaxed text-slate-500">{sentence.grammarNoteAm}</p>}
-      <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => {study.start(); onSpeak(sentence.speechText || sentence.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2"><Volume2 size={18} />Լսել դանդաղ</button>
-        <button type="button" aria-pressed={progress.savedSentenceIds.includes(sentence.id)} onClick={() => onToggleSaveSentence(sentence.id)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2"><Star size={18} />{progress.savedSentenceIds.includes(sentence.id) ? 'Պահպանված է' : 'Պահպանել'}</button>
+      <div className="flex flex-wrap items-center gap-2 pt-1">
+        <button type="button" onClick={() => {study.start(); onSpeak(sentence.speechText || sentence.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition"><Volume2 size={18} />Լսել դանդաղ</button>
+        <button type="button" aria-pressed={progress.savedSentenceIds.includes(sentence.id)} onClick={() => onToggleSaveSentence(sentence.id)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition"><Star size={18} />{progress.savedSentenceIds.includes(sentence.id) ? 'Պահպանված է' : 'Պահպանել'}</button>
+        {!verified && <button type="button" onClick={() => setHideEnglish(v => !v)} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">{hideEnglish ? 'Ցույց տալ հուշումը' : 'Թաքցնել հուշումը'}</button>}
       </div>
     </div>
-    {checking && !verified ? <form className="space-y-3" onSubmit={event => {
+    {!verified ? <form className="space-y-3 pt-2" onSubmit={event => {
       event.preventDefault();
-      if (!answer.trim()) return;
-      study.start();
-      setIncorrect(!isCorrectWrittenAnswer(sentence, answer));
-      onVerify(lesson.id, sentence.id, answer);
+      handleVerifyAnswer(answer);
     }}>
-      <label htmlFor="course-written-answer" className="block font-semibold">{prompt}</label>
-      <input id="course-written-answer" name="course-written-answer" type="text" lang="en" dir="ltr" data-learning-text="english"
-        autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} required maxLength={500}
-        value={answer} onChange={event => {setAnswer(event.target.value); setIncorrect(false);}}
-        aria-invalid={incorrect} aria-describedby={`course-writing-help${incorrect ? ' course-writing-error' : ''}`}
-        placeholder="…" className="min-h-12 w-full min-w-0 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100" />
-      <p id="course-writing-help" className="text-sm text-slate-500">{sentence.writingTask?.caseSensitive ? 'Մեծատառն ու փոքրատառը գրիր հերթով՝ անգլերեն ստեղնաշարով։' : 'Գրիր անգլերեն տառերով։ Կարևոր են ճիշտ տառերն ու բառերի հերթականությունը։'} Ստուգելու համար կարող ես սեղմել Enter։</p>
-      {incorrect && <p id="course-writing-error" role="status" className="text-sm text-rose-700 dark:text-rose-300">Դեռ ճիշտ չէ։ Ստուգիր տառերն ու բառերի հերթականությունը։ Կարող ես նորից լսել կամ վերանայել սովորած տարբերակը։ Հաջորդ քայլը դեռ փակ է։</p>}
+      <label htmlFor="course-written-answer" className="block text-sm font-semibold text-slate-800 dark:text-slate-200">{prompt}</label>
+      <div className="relative">
+        <input id="course-written-answer" name="course-written-answer" ref={inputRef} type="text" lang="en" dir="ltr" data-learning-text="english"
+          autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} required maxLength={500}
+          value={answer} onChange={handleInputChange}
+          aria-invalid={incorrect} aria-describedby={`course-writing-help${incorrect ? " course-writing-error" : ""}`}
+          placeholder="Գրեք անգլերեն..." className={`min-h-12 w-full min-w-0 rounded-xl border px-4 py-3 text-slate-900 transition focus:outline-none focus:ring-2 dark:bg-slate-950 dark:text-slate-100 ${
+            justCorrect || verified
+              ? "border-emerald-500 bg-emerald-50/50 ring-2 ring-emerald-500/30"
+              : incorrect
+              ? "border-rose-500 bg-rose-50/20 focus:border-rose-500"
+              : "border-slate-300 bg-white focus:border-emerald-500 focus:ring-emerald-500/30 dark:border-slate-600"
+          }`} />
+        {(justCorrect || verified) && (
+          <span className="absolute right-3.5 top-3.5 text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 size={20} />
+          </span>
+        )}
+      </div>
+      <p id="course-writing-help" className="text-xs text-slate-500">{sentence.writingTask?.caseSensitive ? "Մեծատառն ու փոքրատառը գրիր հերթով՝ անգլերեն ստեղնաշարով։" : "Գրիր անգլերեն տառերով։ Ճիշտ պատասխանը գրելիս այն ավտոմատ կհաստատվի։"}</p>
+      {incorrect && <p id="course-writing-error" role="status" className="text-sm font-medium text-rose-700 dark:text-rose-300">Դեռ ճիշտ չէ։ Ստուգիր տառերն ու բառերի հերթականությունը։ Կարող ես նորից լսել կամ վերանայել սովորած տարբերակը։</p>}
       <div className="flex flex-wrap gap-3">
         <button type="submit" disabled={!answer.trim()} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Ստուգել գրածը</button>
-        <button type="button" className="min-h-11 rounded-xl border px-4 py-2" onClick={() => {setChecking(false); setAnswer(''); setIncorrect(false);}}>Վերանայել նյութը</button>
       </div>
-    </form> : !verified && <button type="button" onClick={() => {study.start(); setChecking(true);}} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white">Սովորեցի, հիմա գրեմ</button>}
-    {verified && <p role="status" className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300"><CheckCircle2 size={18} className="shrink-0" />Ճիշտ գրած է։ Կարող ես անցնել հաջորդ քայլին։</p>}
+    </form> : <div className="flex items-center gap-2.5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+      <CheckCircle2 size={20} className="shrink-0" />
+      <span>Ճիշտ գրված է։ Կարող ես անցնել հաջորդ քայլին։</span>
+    </div>}
     <div className="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
       {index > 0 && <button type="button" onClick={() => onUpdateSentencePosition(lesson.id, index - 1)} className="min-h-11 rounded-xl border px-4 py-2"><ArrowLeft size={16} className="mr-1 inline" />Նախորդը</button>}
       {index + 1 < lesson.sentences.length ? <button type="button" disabled={!verified} onClick={() => onUpdateSentencePosition(lesson.id, index + 1)} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Հաջորդ քայլը <ArrowRight size={16} className="ml-1 inline" /></button>

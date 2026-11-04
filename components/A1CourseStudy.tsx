@@ -75,23 +75,55 @@ export function A1FinalAssessment({progress, onVerify, onSpeak}: StudyProps) {
 function CourseAnswer({question, onAnswer, onSpeak}: {question: CourseQuestion; onAnswer: (answer: string) => void; onSpeak: StudyProps['onSpeak']}) {
   const [answer, setAnswer] = useState('');
   const [incorrect, setIncorrect] = useState(false);
+  const [justCorrect, setJustCorrect] = useState(false);
   const study = useStudyActivity();
   const speechAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window;
   const audioFallback = question.skill === 'listening' && !speechAvailable;
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const val = event.target.value;
+    setAnswer(val);
+    setIncorrect(false);
+    // Ավտոմատացում՝ ճիշտ պատասխանի դեպքում ավտոմատ հաստատում
+    if (isCorrectWrittenAnswer(question, val)) {
+      study.start();
+      setJustCorrect(true);
+      onAnswer(val);
+    }
+  };
+
   return <form className="space-y-3" onSubmit={event => {
     event.preventDefault();
     if (!answer.trim()) return;
     study.start();
-    setIncorrect(!isCorrectWrittenAnswer(question, answer));
-    onAnswer(answer);
+    const correct = isCorrectWrittenAnswer(question, answer);
+    setIncorrect(!correct);
+    if (correct) {
+      setJustCorrect(true);
+      onAnswer(answer);
+    }
   }}>
     <label htmlFor={`answer-${question.id}`} className="block font-semibold">{audioFallback ? question.writingTask?.promptAm || `Անգլերեն գրիր՝ «${question.armenian}»։` : question.promptAm}</label>
     {audioFallback && <p className="text-sm text-slate-500">Այս բրաուզերում ձայնը հասանելի չէ․ կատարիր գրավոր տարբերակը։</p>}
     {question.skill === 'listening' && speechAvailable && <button type="button" onClick={() => {study.start(); onSpeak(question.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2"><Volume2 size={18} />Լսել առաջադրանքը</button>}
-    <input id={`answer-${question.id}`} lang="en" dir="ltr" value={answer} onChange={event => {setAnswer(event.target.value); setIncorrect(false);}}
-      autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} required maxLength={500}
-      aria-invalid={incorrect} aria-describedby={incorrect ? `error-${question.id}` : undefined} data-learning-text="english"
-      className="min-h-12 w-full min-w-0 rounded-xl border border-slate-300 bg-transparent px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-600" />
+    <div className="relative">
+      <input id={`answer-${question.id}`} lang="en" dir="ltr" value={answer} onChange={handleInputChange}
+        autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} required maxLength={500}
+        aria-invalid={incorrect} aria-describedby={incorrect ? `error-${question.id}` : undefined} data-learning-text="english"
+        placeholder="Գրեք անգլերեն..."
+        className={`min-h-12 w-full min-w-0 rounded-xl border bg-transparent px-4 py-3 transition focus:outline-none focus:ring-2 ${
+          justCorrect
+            ? "border-emerald-500 bg-emerald-50/50 ring-2 ring-emerald-500/30"
+            : incorrect
+            ? "border-rose-500 bg-rose-50/20"
+            : "border-slate-300 focus:ring-emerald-500 dark:border-slate-600"
+        }`} />
+      {justCorrect && (
+        <span className="absolute right-3.5 top-3.5 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 size={20} />
+        </span>
+      )}
+    </div>
     {incorrect && <p id={`error-${question.id}`} role="status" className="text-sm text-rose-700 dark:text-rose-300">Դեռ ճիշտ չէ։ Վերանայիր հարցը, ստուգիր գրությունը և փորձիր կրկին։</p>}
     <button type="submit" disabled={!answer.trim()} className={buttonClass}>Ստուգել և շարունակել</button>
   </form>;

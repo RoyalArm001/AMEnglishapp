@@ -441,7 +441,15 @@ export default function ExercisesView({
                 type="text"
                 disabled={Boolean(checkedResult)}
                 value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setUserInput(val);
+                  if (!checkedResult && val.trim() && evaluateExerciseAnswer(currentExercise, val.trim())) {
+                    setTimeout(() => {
+                      handleCheck();
+                    }, 50);
+                  }
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !checkedResult) {
                     handleCheck();

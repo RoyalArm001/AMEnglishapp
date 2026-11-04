@@ -1,4 +1,4 @@
-export const APP_VERSION = 'v1.7.0';
+export const APP_VERSION = 'v1.9.1';
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -12,7 +12,9 @@ export interface BeforeInstallPromptEvent extends Event {
 export function isStandalonePWA(): boolean {
   if (typeof window === 'undefined') return false;
   const isStandaloneDisplay = window.matchMedia('(display-mode: standalone)').matches;
-  const isIOSStandalone = Boolean((window.navigator as unknown as { standalone?: boolean }).standalone);
+  const isIOSStandalone = Boolean(
+    (window.navigator as unknown as { standalone?: boolean }).standalone
+  );
   return isStandaloneDisplay || isIOSStandalone;
 }
 
@@ -20,6 +22,40 @@ export function isIOSDevice(): boolean {
   if (typeof window === 'undefined') return false;
   const ua = window.navigator.userAgent.toLowerCase();
   return /iphone|ipad|ipod/.test(ua);
+}
+
+export async function checkRemoteVersionUpdate(): Promise<{
+  hasUpdate: boolean;
+  remoteVersion: string;
+  currentVersion: string;
+}> {
+  if (typeof window === 'undefined') {
+    return { hasUpdate: false, remoteVersion: APP_VERSION, currentVersion: APP_VERSION };
+  }
+
+  try {
+    const res = await fetch(`/api/version?t=${Date.now()}`, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
+    });
+    if (!res.ok) {
+      return { hasUpdate: false, remoteVersion: APP_VERSION, currentVersion: APP_VERSION };
+    }
+    const data = await res.json();
+    const remoteVersion = typeof data?.version === 'string' ? data.version : APP_VERSION;
+    const hasUpdate = Boolean(remoteVersion && remoteVersion !== APP_VERSION);
+    return {
+      hasUpdate,
+      remoteVersion,
+      currentVersion: APP_VERSION,
+    };
+  } catch {
+    return { hasUpdate: false, remoteVersion: APP_VERSION, currentVersion: APP_VERSION };
+  }
 }
 
 export async function registerServiceWorker(
@@ -37,6 +73,7 @@ export async function registerServiceWorker(
   try {
     const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/',
+      updateViaCache: 'none',
     });
 
     if (registration.waiting && onUpdateAvailable) {
@@ -55,6 +92,9 @@ export async function registerServiceWorker(
 
     navigator.serviceWorker.addEventListener('message', (event) => {
       const data = event.data;
+      if (data?.type === 'SW_UPDATE_AVAILABLE') {
+        onUpdateAvailable?.(registration);
+      }
       if (data?.type === 'NAVIGATE_TAB' && typeof data.url === 'string' && onNavigateTab) {
         try {
           const parsed = new URL(data.url, window.location.origin);
@@ -68,16 +108,70 @@ export async function registerServiceWorker(
       }
     });
 
+    // Check for Service Worker updates when user focuses or returns to the installed app
+    const checkSwUpdate = () => {
+      registration.update().catch(() => {});
+    };
+    window.addEventListener('focus', checkSwUpdate);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        checkSwUpdate();
+      }
+    });
+
     return registration;
   } catch {
     return null;
   }
 }
 
-export function activateWaitingServiceWorker(registration: ServiceWorkerRegistration | null): void {
-  if (!registration?.waiting) return;
-  registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+/**
+ * Safely activates the new Service Worker and reloads the application
+ * WITHOUT touching or deleting IndexedDB or localStorage learner databases.
+ */
+export async function applySafePWAUpdate(
+  registration: ServiceWorkerRegistration | null,
+  targetVersion?: string
+): Promise<void> {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.sessionStorage.setItem('haylingo_just_updated_to', targetVersion || APP_VERSION);
+    window.localStorage.setItem('haylingo_installed_app_version', targetVersion || APP_VERSION);
+  } catch {
+    // ignore storage quota errors
+  }
+
+  try {
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys.filter((k) => k.startsWith('haylingo-pwa-')).map((k) => caches.delete(k))
+      );
+    }
+  } catch {
+    // ignore cache cleanup errors
+  }
+
+  if (registration?.waiting) {
+    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    await new Promise<void>((resolve) => {
+      let resolved = false;
+      const done = () => {
+        if (resolved) return;
+        resolved = true;
+        resolve();
+      };
+      navigator.serviceWorker.addEventListener('controllerchange', done, { once: true });
+      setTimeout(done, 800);
+    });
+  }
+
   window.location.reload();
+}
+
+export function activateWaitingServiceWorker(registration: ServiceWorkerRegistration | null): void {
+  void applySafePWAUpdate(registration);
 }
 
 export function getNotificationPermissionState(): NotificationPermission | 'unsupported' {
@@ -87,7 +181,9 @@ export function getNotificationPermissionState(): NotificationPermission | 'unsu
   return Notification.permission;
 }
 
-export async function requestPWANotificationPermission(): Promise<NotificationPermission | 'unsupported'> {
+export async function requestPWANotificationPermission(): Promise<
+  NotificationPermission | 'unsupported'
+> {
   if (typeof window === 'undefined' || !('Notification' in window)) {
     return 'unsupported';
   }
@@ -114,7 +210,7 @@ export async function sendPWANotification(
 
   let permission = Notification.permission;
   if (permission === 'default') {
-    permission = await requestPWANotificationPermission() as NotificationPermission;
+    permission = (await requestPWANotificationPermission()) as NotificationPermission;
   }
   if (permission !== 'granted') {
     return false;
@@ -178,10 +274,17 @@ export async function refreshPWACache(): Promise<boolean> {
 
   try {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k.startsWith('haylingo-pwa-')).map((k) => caches.delete(k)));
+    await Promise.all(
+      keys.filter((k) => k.startsWith('haylingo-pwa-')).map((k) => caches.delete(k))
+    );
 
     const cache = await caches.open(`haylingo-pwa-${APP_VERSION}-static`);
-    await cache.addAll(['/', '/manifest.webmanifest', '/icons/icon-192.svg', '/icons/icon-512.svg']);
+    await cache.addAll([
+      '/',
+      '/manifest.webmanifest',
+      '/icons/icon-192.svg',
+      '/icons/icon-512.svg',
+    ]);
     return true;
   } catch {
     return false;
