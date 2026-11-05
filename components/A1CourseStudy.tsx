@@ -42,7 +42,7 @@ export function CourseReadingPanel({lesson, progress, onVerify, onSpeak, onCompl
       </article>)}
     </div>
     <p role="status" className="text-sm font-semibold">Ընթերցանության ստուգում՝ {chapter.questions.filter(item => passed.includes(item.id)).length} / {chapter.questions.length}</p>
-    {question && <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} onAnswer={answer => onVerify('reading', question.id, answer)} />}
+    {question && <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} context={chapter.lines.map(line => line.english).join(' ')} onAnswer={answer => onVerify('reading', question.id, answer)} />}
     {checked && <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300"><CheckCircle2 size={19} />Գլուխն ու ստուգումն ավարտված են։</p>}
     {!done && <button type="button" disabled={!checked} onClick={() => onCompleteLesson(lesson.id)} className={buttonClass}>Ավարտել դասը</button>}
     <LessonSources lesson={lesson} age={progress.profile.age} onSpeak={onSpeak} />
@@ -62,20 +62,21 @@ export function A1FinalAssessment({progress, onVerify, onSpeak}: StudyProps) {
     <div className="space-y-2">
       <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">A1 · Պարտադիր ամփոփիչ աշխատանք</p>
       <h2 id="a1-final-heading" className="text-xl font-bold">Կիրառիր սովորածդ</h2>
-      <p className="text-sm leading-relaxed text-slate-500">{A1_FINAL_QUESTIONS.length} առաջադրանք՝ գրել, լսել և կարդալ։ Բոլոր պատասխանները պետք է ճիշտ լինեն։ Սխալվելու դեպքում կարող ես կրկնել։ Ճիշտ պատասխանները պահպանվում են, և կարող ես շարունակել ավելի ուշ։ A2-ն ու մյուս ուսումնական էջերը բացվում են այս աշխատանքն ավարտելուց հետո։</p>
+      <p className="text-sm leading-relaxed text-slate-500">{A1_FINAL_QUESTIONS.length} առաջադրանք՝ գրել, լսել և կարդալ։ Բոլոր պատասխանները պետք է ճիշտ լինեն։ Սխալվելու դեպքում կարող ես կրկնել, իսկ ընթերցանության հարցի երեք սխալ փորձից հետո համապատասխան տեքստը կցուցադրվի։ Ճիշտ պատասխանները պահպանվում են, և կարող ես շարունակել ավելի ուշ։ A2-ն ու մյուս ուսումնական էջերը բացվում են այս աշխատանքն ավարտելուց հետո։</p>
     </div>
     <p role="status" className="font-semibold">Ճիշտ ավարտված՝ {count} / {A1_FINAL_QUESTIONS.length}</p>
     <progress className="h-2 w-full accent-emerald-600" value={count} max={A1_FINAL_QUESTIONS.length} aria-label="Ամփոփիչ աշխատանքի առաջընթաց" />
     {question?.skill === 'reading' && <p lang="en" data-learning-text="english" className="rounded-xl bg-slate-50 p-4 leading-relaxed dark:bg-slate-800">{A1_FINAL_READING}</p>}
-    {question ? <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} onAnswer={answer => onVerify('assessment', question.id, answer)} />
+    {question ? <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} context={question.skill === 'reading' ? A1_FINAL_READING : undefined} onAnswer={answer => onVerify('assessment', question.id, answer)} />
       : <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300"><CheckCircle2 size={20} />Ամփոփիչ աշխատանքն անցած է։</p>}
   </section>;
 }
 
-function CourseAnswer({question, onAnswer, onSpeak}: {question: CourseQuestion; onAnswer: (answer: string) => void; onSpeak: StudyProps['onSpeak']}) {
+function CourseAnswer({question, onAnswer, onSpeak, context}: {question: CourseQuestion; onAnswer: (answer: string) => void; onSpeak: StudyProps['onSpeak']; context?: string}) {
   const [answer, setAnswer] = useState('');
   const [incorrect, setIncorrect] = useState(false);
   const [justCorrect, setJustCorrect] = useState(false);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
   const study = useStudyActivity();
   const speechAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window;
   const audioFallback = question.skill === 'listening' && !speechAvailable;
@@ -101,6 +102,8 @@ function CourseAnswer({question, onAnswer, onSpeak}: {question: CourseQuestion; 
     if (correct) {
       setJustCorrect(true);
       onAnswer(answer);
+    } else {
+      setWrongAttempts(attempts => attempts + 1);
     }
   }}>
     <label htmlFor={`answer-${question.id}`} className="block font-semibold">{audioFallback ? question.writingTask?.promptAm || `Անգլերեն գրիր՝ «${question.armenian}»։` : question.promptAm}</label>
@@ -125,6 +128,10 @@ function CourseAnswer({question, onAnswer, onSpeak}: {question: CourseQuestion; 
       )}
     </div>
     {incorrect && <p id={`error-${question.id}`} role="status" className="text-sm text-rose-700 dark:text-rose-300">Դեռ ճիշտ չէ։ Վերանայիր հարցը, ստուգիր գրությունը և փորձիր կրկին։</p>}
+    {wrongAttempts >= 3 && context && <div role="status" className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm dark:border-amber-800 dark:bg-amber-950">
+      <p className="font-semibold">Վերանայիր այս առաջադրանքի տեքստը․</p>
+      <p lang="en" data-learning-text="english" className="leading-relaxed">{context}</p>
+    </div>}
     <button type="submit" disabled={!answer.trim()} className={buttonClass}>Ստուգել և շարունակել</button>
   </form>;
 }

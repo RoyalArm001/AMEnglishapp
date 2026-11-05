@@ -28,6 +28,13 @@ export default function LearningPlanView(props: Props) {
   const nextLevel = getNextCourseLevel(progress);
   const lessonsComplete = areCourseLessonsComplete(progress);
   const writingComplete = active?.sentences.every(sentence => isCourseStepComplete(progress, sentence.id));
+  const activeLessonIdRef = useRef(active?.id);
+
+  useEffect(() => {
+    if (activeLessonIdRef.current === active?.id) return;
+    activeLessonIdRef.current = active?.id;
+    if (active) document.getElementById('course-lesson-step')?.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }, [active?.id]);
 
   return <div className="space-y-6">
     <header className="space-y-3">
@@ -129,7 +136,7 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
     }
   };
 
-  return <section className="min-w-0 space-y-5 break-words rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
+  return <section id="course-lesson-step" className="scroll-mt-24 min-w-0 space-y-5 break-words rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
     <div><p className="text-xs font-semibold text-slate-500">Քայլ {index + 1} / {lesson.sentences.length}</p><h2 className="mt-1 text-xl font-bold">{lesson.titleAm}</h2></div>
     {lesson.outcomeAm && <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Այս դասից հետո՝ {lesson.outcomeAm}</p>}
     {showMaterial && <p className="rounded-xl bg-slate-50 p-3 text-sm leading-relaxed dark:bg-slate-800">{lesson.grammarTipAm}</p>}
