@@ -2,11 +2,11 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.9.6**
+**English learning for Armenian speakers · v1.9.7**
 
-[Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Իրականացման հաշվետվություն](CODEX_IMPLEMENTATION_REPORT.md)
+[Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Տեղադրման և զարգացման ուղեցույց](docs/DEVELOPMENT.md)
 
-Հերթական դասապլան․ A1-ը սկսվում է մեծատառից ու փոքրատառից, «տղա», «աղջիկ» և այլ պարզ բառերից, ապա անցնում թվերին, առաջին նախադասություններին, տարեթվերին ու կարճ զրույցներին։ Սովորիր, լսիր և ինքդ գրիր պատասխանը։ Հաջորդ քայլը բացվում է ճիշտ գրելուց հետո, իսկ մյուս բաժինները՝ ընթացիկ մակարդակի ամբողջ դասապլանն ավարտելուց հետո։ [Դասապլանի փոփոխությունները](LEARNING_PATH_REPORT.md)։
+Հերթական դասապլան․ A1-ը սկսվում է մեծատառից ու փոքրատառից, «տղա», «աղջիկ» և այլ պարզ բառերից, ապա անցնում թվերին, առաջին նախադասություններին, տարեթվերին ու կարճ զրույցներին։ Սովորիր, լսիր և ինքդ գրիր պատասխանը։ Հաջորդ քայլը բացվում է ճիշտ գրելուց հետո, իսկ մյուս բաժինները՝ ընթացիկ մակարդակի ամբողջ դասապլանն ավարտելուց հետո։
 
 The guided A1 path starts with uppercase and lowercase letters, simple words, numbers, first sentences, years and short conversations. Study and listen, then type the answer yourself. Each step requires correct writing before you can continue.
 
@@ -18,7 +18,7 @@ Three HayLingo A1 coursebooks provide 29 lesson-linked chapters and 58 reading c
 
 Eight additional beginner units draw on open ESOL teaching topics and A1 learning goals, with locally authored examples and Armenian support. Selected lessons include an abridged VOA dialogue and optional official resource links. [Source and attribution notes](CONTENT_SOURCES.md).
 
-Նոր՝ էկրանը միացված պահել, Համակարգչային/Բջջային/Ավտոմատ ռեժիմ և չորս անկախ տառաչափեր (14–30px)։ [Ստուգման հաշվետվություն](DISPLAY_SETTINGS_REPORT.md)։
+Նոր՝ էկրանը միացված պահել, Համակարգչային/Բջջային/Ավտոմատ ռեժիմ և չորս անկախ տառաչափեր (14–30px)։
 
 New: study-session screen wake lock, Desktop/Mobile/Auto layouts, and independent interface, English, pronunciation and Armenian font sizes with live preview.
 

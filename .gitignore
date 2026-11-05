@@ -8,3 +8,7 @@ npm-debug.log*
 *.tsbuildinfo
 test-results/
 playwright-report/
+
+# Historical audit reports and evidence stay local, outside the source tree in Git.
+/*_REPORT.md
+/audit-evidence/

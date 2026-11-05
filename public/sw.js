@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'haylingo-pwa-v1.9.6';
+const CACHE_VERSION = 'haylingo-pwa-v1.9.7';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 

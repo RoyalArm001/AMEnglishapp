@@ -2,6 +2,12 @@
 
 Փոփոխությունների վայրը նշված է յուրաքանչյուր տարբերակի տակ։ Տարբերակի համարը պահվում է `package.json`, `lib/pwa.ts` և `public/sw.js` ֆայլերում։
 
+## v1.9.7 — 2026-11-05 — Պահոցի մաքրում
+
+- Git-ի ընթացիկ ծառից հեռացվել են 7 հին `*_REPORT.md` հաշվետվությունները և `audit-evidence/` արխիվի 25 ֆայլերը։ Տեղական պատճենները պահպանված են, իսկ հին տարբերակները հասանելի են Git-ի պատմությունում։
+- `.gitignore` — հին հաշվետվություններն ու ստուգումների արխիվն այլևս չեն ավելացվում Git-ում։
+- `README.md`, `docs/DEVELOPMENT.md`, `CHANGELOG.md` — թարմացվել են փաստաթղթերի հղումները։ Պահպանված են աղբյուրների ու օգտագործման պայմանների նկարագրությունը և տարբերակների պատմությունը։ Հավելվածի աշխատանքի տրամաբանությունը չի փոխվել։
+
 ## v1.9.6 — 2026-11-05 — Կատարված առաջադրանքների փակվող ցանկ
 
 - `components/ExercisesView.tsx` — կատարված առաջադրանքները հավաքվում են սկզբում փակ «Կատարված առաջադրանքներ» ցանկում՝ քանակով և յուրաքանչյուր առաջադրանքը կրկնելու կոճակով։ Ցանկը հաշվի է առնում ընտրված տեսակը և մակարդակը։
@@ -115,7 +121,7 @@
 - Ուսումնական բաղադրիչներ, `data/daily-questions-and-words.ts`, `data/professional-practice.ts`, `lib/teacher-engine.ts` — հասանելի մակարդակից բարձր նյութերի հեռացում ընտրություններից, հարցերի գեներացումից և անմիջական բացումից։
 - `components/DashboardView.tsx`, `lib/i18n.ts`, `data/site-updates.ts` — գլխավոր մուտքը դեպի «Իմ դասապլանը»։ Տարբերակները համապատասխանեցվել են v1.4.0-ին։
 - `README.md`, `app/manifest.ts` — նկարագրությունները համապատասխանեցվել են այբուբենով սկսվող դասապլանին։ Օրվա առաջադրանքների մակարդակը պահպանվում է, որպեսզի refresh-ը չվերացնի տվյալ մակարդակի առաջընթացը։
-- Սահմանափակումներ և չգործարկված ստուգումներ՝ [LEARNING_PATH_REPORT.md](LEARNING_PATH_REPORT.md)։ Թեստեր, build, պատկերներ, Git push և deployment չեն կատարվել։
+- Սահմանափակումներ և չգործարկված ստուգումներ՝ [LEARNING_PATH_REPORT.md](https://github.com/RoyalArm001/AMEnglishapp/blob/459024de68438560ad539f9b23ac9c7710f20ea1/LEARNING_PATH_REPORT.md)։ Թեստեր, build, պատկերներ, Git push և deployment չեն կատարվել։
 
 ## v1.3.5 — 2026-11-04 — Տեղադրման կոճակը վերին գոտում
 
@@ -166,7 +172,7 @@
 - Համակարգչային / Բջջային / Ավտոմատ ցուցադրում, keyboard navigation. `app/globals.css`, `lib/use-display-settings.ts`։
 - Անգլերեն, արտասանություն, թարգմանություն և UI՝ առանձին 14–30px չափերով ու live preview. `components/DisplaySettings.tsx` և ուսումնական բաղադրիչներ։
 - Local userId-ին կապված կարգավորումներ, անվտանգ legacy defaults, IndexedDB persistence. `lib/storage.ts`, `lib/display-settings.ts`, `lib/progress-validation.ts`։
-- Թեստերը և սահմանափակումները՝ [DISPLAY_SETTINGS_REPORT.md](DISPLAY_SETTINGS_REPORT.md)։ Production-ում չի հրապարակվել։
+- Թեստերը և սահմանափակումները՝ [DISPLAY_SETTINGS_REPORT.md](https://github.com/RoyalArm001/AMEnglishapp/blob/459024de68438560ad539f9b23ac9c7710f20ea1/DISPLAY_SETTINGS_REPORT.md)։ Production-ում չի հրապարակվել։
 
 ## v1.1.4 — 2026-10-29 — պատրաստված փոփոխություններ, production-ում չհրապարակված
 
@@ -178,7 +184,7 @@
 - **Խոսք և վարժություններ.** `lib/speech.ts`, `lib/exercise-validation.ts`, `components/ExercisesView.tsx`, `components/VoicePracticeView.tsx`, `components/LessonsView.tsx`: բառերի հերթականություն և ժխտում, միկրոֆոնի մաքրում, գործող դժվարության/կրկնության կարգավորումներ։
 - **Հեռախոս, պլանշետ, PWA.** `components/SettingsView.tsx`, `components/PWAManager.tsx`, `lib/pwa.ts`, `public/sw.js`: լայնության ուղղումներ, հիշեցումների և cache տարբերակի ուղղումներ։
 - **Փաստաթղթեր ու բրենդ.** `README.md`, `docs/DEVELOPMENT.md`, `components/Logo.tsx`, `app/layout.tsx`, `app/manifest.ts`: լեզուներ, տեխնոլոգիաներ, փաստացի քանակներ, `.uk` դոմեյն, HayLingo անվանում։ Նախորդ տարբերակի հավելվածային H լոգոն պահպանված է։
-- **Ստուգում.** `tests/storage.test.cjs`, `tests/e2e/learning.spec.ts`, `playwright.config.ts`: unit/integration և Chrome desktop/tablet/mobile E2E։ Փաստացի արդյունքները՝ [հաշվետվությունում](CODEX_IMPLEMENTATION_REPORT.md)։
+- **Ստուգում.** `tests/storage.test.cjs`, `tests/e2e/learning.spec.ts`, `playwright.config.ts`: unit/integration և Chrome desktop/tablet/mobile E2E։ Փաստացի արդյունքները՝ [հաշվետվությունում](https://github.com/RoyalArm001/AMEnglishapp/blob/459024de68438560ad539f9b23ac9c7710f20ea1/CODEX_IMPLEMENTATION_REPORT.md)։
 
 English: expands profession practice and learning content; fixes grading, local persistence, real study statistics, responsive controls and PWA behavior; adds automated database and browser tests. This version is prepared on a review branch and has not been deployed to production.
 

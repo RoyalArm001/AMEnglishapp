@@ -22,7 +22,7 @@ npm start
 
 Unit/integration tests cover translation, grading, progress, twelve IndexedDB stores, migration, import/export, streaks, study charts, and content integrity. Playwright runs installed Chrome at desktop, tablet and mobile viewport sizes against a local production server on port 3015. Install Chrome before running E2E tests. The production build checks TypeScript.
 
-See `CODEX_IMPLEMENTATION_REPORT.md` for the actual run results and hardware/browser limitations. New work stays on review branches; merging or pushing to `main` can deploy to production and requires the owner's separate approval.
+See [CHANGELOG.md](../CHANGELOG.md) for version-specific validation notes. Historical audit reports and evidence are excluded from the current source tree but remain available in Git history. Keep new reports and generated test output local. New work stays on review branches unless the owner explicitly requests otherwise; merging or pushing to `main` can deploy to production and requires the owner's approval.
 
 ## Learning content
 
