@@ -50,17 +50,19 @@ export default function LearningPlanView(props: Props) {
     <section aria-labelledby="course-order-heading" className="space-y-3">
       <h2 id="course-order-heading" className="text-lg font-bold">{progress.level} · Դասերի հերթականությունը</h2>
       <ol className="space-y-2">
-        {lessons.map((lesson, index) => {
-          const unlocked = canOpenCourseLesson(progress, lesson.id);
-          const done = isCourseLessonComplete(progress, lesson);
-          return <li key={lesson.id}>
-            <button type="button" disabled={!unlocked} aria-current={active?.id === lesson.id ? 'step' : undefined} onClick={() => props.onSelectLesson(lesson.id, getFirstUnverifiedIndex(progress, lesson))} className={`flex min-h-14 w-full items-center gap-3 rounded-xl border p-4 text-left disabled:cursor-not-allowed disabled:opacity-50 ${active?.id === lesson.id ? 'border-emerald-500 bg-emerald-500/10' : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'}`}>
-              {done ? <CheckCircle2 size={20} className="shrink-0 text-emerald-600" /> : unlocked ? <span className="font-bold">{index + 1}</span> : <Lock size={18} className="shrink-0" />}
-              <span className="flex-1"><span className="block font-semibold">{lesson.titleAm}</span><span className="mt-1 block text-xs text-slate-500">{done ? 'Ավարտված · կարող ես կրկնել' : unlocked ? `${lesson.sentences.length} քայլ` : 'Նախ ավարտիր նախորդ դասը'}</span></span>
-            </button>
-          </li>;
+        {lessons.map((lesson, index) => ({lesson, index, done: isCourseLessonComplete(progress, lesson)}))
+          .filter(item => !item.done)
+          .map(({lesson, index}) => {
+            const unlocked = canOpenCourseLesson(progress, lesson.id);
+            return <li key={lesson.id}>
+              <button type="button" disabled={!unlocked} aria-current={active?.id === lesson.id ? 'step' : undefined} onClick={() => props.onSelectLesson(lesson.id, getFirstUnverifiedIndex(progress, lesson))} className={`flex min-h-14 w-full items-center gap-3 rounded-xl border p-4 text-left disabled:cursor-not-allowed disabled:opacity-50 ${active?.id === lesson.id ? 'border-emerald-500 bg-emerald-500/10' : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'}`}>
+                {unlocked ? <span className="font-bold">{index + 1}</span> : <Lock size={18} className="shrink-0" />}
+                <span className="flex-1"><span className="block font-semibold">{lesson.titleAm}</span><span className="mt-1 block text-xs text-slate-500">{unlocked ? `${lesson.sentences.length} քայլ` : 'Նախ ավարտիր նախորդ դասը'}</span></span>
+              </button>
+            </li>;
         })}
       </ol>
+      {lessons.length > 0 && completed === lessons.length && <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">Բոլոր դասերն ավարտված են։</p>}
     </section>
   </div>;
 }
