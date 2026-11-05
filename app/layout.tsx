@@ -1,7 +1,8 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 
-const SITE_URL = 'https://armeng.royalarm.uk';
+import { SITE_URL } from '../lib/site';
+import packageInfo from '../package.json';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -46,10 +47,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: SITE_URL,
-    languages: {
-      'hy-AM': SITE_URL,
-      'en-US': SITE_URL,
-    },
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
   },
   manifest: '/manifest.webmanifest',
   appleWebApp: {
@@ -131,7 +131,7 @@ const structuredData = {
       applicationCategory: 'EducationalApplication',
       applicationSubCategory: 'LanguageLearning',
       operatingSystem: 'All (Web, Android, iOS, Windows, macOS)',
-      softwareVersion: '1.1.0',
+      softwareVersion: packageInfo.version,
       inLanguage: ['hy', 'en'],
       isAccessibleForFree: true,
       offers: {

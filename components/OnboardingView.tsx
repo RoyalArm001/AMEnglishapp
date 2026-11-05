@@ -13,9 +13,12 @@ import {
   UserProfileRecord,
 } from '../lib/types';
 import Logo from './Logo';
+import PublicIntroduction from './PublicIntroduction';
 
 interface OnboardingViewProps {
   initialProfile: UserProfileRecord;
+  onLogin: () => void;
+  signedInEmail?: string;
   onCompleteOnboarding: (params: {
     firstName: string;
     lastName: string;
@@ -31,6 +34,8 @@ interface OnboardingViewProps {
 
 export default function OnboardingView({
   initialProfile,
+  onLogin,
+  signedInEmail,
   onCompleteOnboarding,
 }: OnboardingViewProps) {
   const [firstName, setFirstName] = useState<string>(initialProfile.firstName || '');
@@ -108,15 +113,27 @@ export default function OnboardingView({
         {/* Top Hero Banner */}
         <div className="p-6 md:p-8 bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white">
           <Logo size="lg" className="mb-4" />
+          <div className="mb-5 rounded-2xl border border-emerald-300/30 bg-white/10 p-4">
+            {signedInEmail ? (
+              <div>
+              <p role="status" className="text-sm break-words">
+                Մուտք եք գործել՝ {signedInEmail}։ Հաշվում դեռ լրացված պրոֆիլ չկա․ լրացրեք տվյալները՝ ուսուցումը սկսելու համար։
+              </p>
+              <button type="button" onClick={onLogin} className="mt-2 text-sm font-bold underline underline-offset-4">Կառավարել հաշիվը</button>
+              </div>
+            ) : (
+              <>
+                <button type="button" onClick={onLogin} className="w-full sm:w-auto rounded-xl bg-white px-5 py-3 text-sm font-bold text-emerald-900 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+                  Արդեն հաշիվ ունեմ․ մուտք գործել
+                </button>
+                <p className="mt-2 text-sm text-emerald-100">Մուտք գործեք էլ. փոստով ու գաղտնաբառով՝ պահպանված պրոֆիլն ու առաջընթացը վերականգնելու համար։</p>
+              </>
+            )}
+          </div>
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-xs font-bold mb-3">
             <Sparkles size={14} /> {UI_TEXT.onboarding.welcomeBadge}
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold">
-            {UI_TEXT.onboarding.title}
-          </h1>
-          <p className="text-sm md:text-base text-emerald-100/90 mt-2 max-w-2xl">
-            {UI_TEXT.onboarding.subtitle}
-          </p>
+          <PublicIntroduction />
         </div>
 
         {/* Form Body */}

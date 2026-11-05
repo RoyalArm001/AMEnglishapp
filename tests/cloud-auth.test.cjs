@@ -30,6 +30,28 @@ const { LESSONS_DATA } = require('../data/lessons.ts');
 const { A1_CHAPTERS, A1_FINAL_QUESTIONS } = require('../data/a1-course.ts');
 const { mergeProgressData, getProgressSignature } = require('../lib/cloud-sync.ts');
 
+test('a fresh device restores the older completed account instead of newer defaults', () => {
+  const fresh = structuredClone(DEFAULT_USER_PROGRESS);
+  const saved = structuredClone(DEFAULT_USER_PROGRESS);
+  saved.onboardingCompleted = true;
+  saved.profile.firstName = 'Ani';
+  saved.profile.lastName = 'Saved';
+  saved.profile.updatedAt = 1000;
+  saved.settings.updatedAt = 1000;
+  saved.settings.themeMode = 'dark';
+  saved.lastActiveTimestamp = 1000;
+  saved.correctAnswersCount = 7;
+
+  const restored = mergeProgressData(fresh, saved);
+  assert.equal(restored.profile.firstName, 'Ani');
+  assert.equal(restored.profile.lastName, 'Saved');
+  assert.equal(restored.settings.themeMode, 'dark');
+  assert.equal(restored.correctAnswersCount, 7);
+  assert.equal(restored.onboardingCompleted, true);
+  assert.equal(fresh.onboardingCompleted, false);
+  assert.equal(mergeProgressData(saved, fresh).profile.firstName, 'Ani');
+});
+
 test('hashPassword creates a non-empty salt and 128-char hex hash', () => {
   const result = hashPassword('mySecurePassword123');
   assert.ok(result.salt && result.salt.length === 32, 'Salt should be 32 hex chars (16 bytes)');

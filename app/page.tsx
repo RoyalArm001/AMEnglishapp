@@ -60,6 +60,7 @@ import { LESSONS_DATA, LESSON_CATEGORIES } from '../data/lessons';
 import { speakEnglish, compareSpokenToTarget } from '../lib/speech';
 import { computeEffectiveDarkMode, getTimeStringInTimezone, UI_TEXT } from '../lib/i18n';
 import OnboardingView from '../components/OnboardingView';
+import PublicIntroduction from '../components/PublicIntroduction';
 import DashboardView from '../components/DashboardView';
 import LearningPlanView from '../components/LearningPlanView';
 import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getFirstUnverifiedIndex, getNextCourseLevel, isCorrectWrittenAnswer, isCoursePageUnlocked, isCourseReadingComplete, isCourseStepComplete } from '../lib/learning-path';
@@ -1041,19 +1042,42 @@ export default function HomePage() {
 
   if (!hydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-500 font-bold">
-        Բեռնվում է ուսուցման միջավայրը...
-      </div>
+      <main className="min-h-screen flex items-center justify-center bg-slate-950 p-4 md:p-8">
+        <div className="w-full max-w-4xl rounded-3xl bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 p-6 md:p-8 text-white">
+          <PublicIntroduction />
+          <p role="status" className="mt-6 text-sm text-emerald-100">Բեռնվում է ուսուցման միջավայրը...</p>
+          <noscript><p className="mt-3">Դասերն ու վարժությունները սկսելու համար միացրեք JavaScript-ը բրաուզերի կարգավորումներում։</p></noscript>
+        </div>
+      </main>
     );
   }
 
   // Show Onboarding screen on first visit before Dashboard
   if (!progress.onboardingCompleted) {
     return (
+      <>
       <OnboardingView
         initialProfile={progress.profile}
         onCompleteOnboarding={handleCompleteOnboarding}
+        onLogin={() => setCloudModalOpen(true)}
+        signedInEmail={cloudSession?.email}
       />
+      <CloudAuthModal
+        isOpen={cloudModalOpen}
+        onClose={() => {
+          setCloudModalOpen(false);
+          setCloudSession(getStoredCloudSession());
+        }}
+        currentProgress={progress}
+        initialMode="login"
+        allowRegistration={false}
+        onProgressLoadedFromCloud={handleProgressLoadedFromCloud}
+        onLoginSuccess={() => {
+          setCloudSession(getStoredCloudSession());
+          setCloudModalOpen(false);
+        }}
+      />
+      </>
     );
   }
 

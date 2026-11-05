@@ -7,6 +7,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
   HelpCircle,
   Mic,
   MicOff,
@@ -48,7 +49,7 @@ export default function ExercisesView({
   const onSpeak = (text: string, rate?: 'slow' | 'normal') => { studyActivity.start(); speakAudio(text, rate); };
   const [selectedType, setSelectedType] = useState<ExerciseType | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<CEFRLevel | 'all'>('all');
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
 
   const [userInput, setUserInput] = useState<string>('');
   const [selectedWords, setSelectedWords] = useState<{ word: string; origIdx: number }[]>([]);
@@ -76,8 +77,10 @@ export default function ExercisesView({
     });
   }, [selectedType, selectedLevel, progress.settings.exerciseDifficulty, progress.level]);
 
-  const currentExercise =
-    filteredExercises[currentIndex % Math.max(1, filteredExercises.length)] || EXERCISE_ITEMS[0];
+  const completedIds = useMemo(() => new Set(progress.completedExerciseIds), [progress.completedExerciseIds]);
+  const pendingExercises = filteredExercises.filter(ex => !completedIds.has(ex.id));
+  const completedExercises = filteredExercises.filter(ex => completedIds.has(ex.id));
+  const currentExercise = filteredExercises.find(ex => ex.id === selectedExerciseId) || pendingExercises[0];
 
   const resetStateForNext = () => {
     if (advanceTimer.current) clearTimeout(advanceTimer.current);
@@ -94,6 +97,7 @@ export default function ExercisesView({
   };
 
   const handleCheck = () => {
+    if (!currentExercise) return;
     studyActivity.start();
     const raw =
       currentExercise.type === 'build-sentence'
@@ -103,6 +107,8 @@ export default function ExercisesView({
     if (!raw.trim() || checkedResult) return;
 
     const isCorrect = evaluateExerciseAnswer(currentExercise, raw);
+    // Keep the submitted card visible until Next, even when it enters the completed list.
+    setSelectedExerciseId(currentExercise.id);
     setCheckedResult({
       isCorrect,
       submittedText: raw.trim(),
@@ -116,16 +122,20 @@ export default function ExercisesView({
 
     if (progress.settings?.autoAdvanceExercises && isCorrect) {
       advanceTimer.current = setTimeout(() => {
-        resetStateForNext();
-        setCurrentIndex((prev) => (prev + 1) % Math.max(1, filteredExercises.length));
+        handleNextExercise();
       }, 1500);
     }
   };
 
   const handleNextExercise = () => {
     resetStateForNext();
-    const retry = progress.settings.autoRepeatMistakes ? filteredExercises.findIndex(ex => ex.id !== currentExercise.id && progress.mistakes.some(m => m.exerciseId === ex.id && !m.resolved)) : -1;
-    setCurrentIndex(prev => retry >= 0 ? retry : (prev + 1) % Math.max(1, filteredExercises.length));
+    const position = filteredExercises.findIndex(ex => ex.id === currentExercise?.id);
+    const remaining = [...filteredExercises.slice(position + 1), ...filteredExercises.slice(0, Math.max(0, position))]
+      .filter(ex => !completedIds.has(ex.id));
+    const retry = progress.settings.autoRepeatMistakes
+      ? remaining.find(ex => progress.mistakes.some(m => m.exerciseId === ex.id && !m.resolved))
+      : undefined;
+    setSelectedExerciseId((retry || remaining[0])?.id || null);
   };
 
   const handleToggleWordChip = (word: string, origIdx: number) => {
@@ -165,7 +175,7 @@ export default function ExercisesView({
   };
 
   const typeInfo =
-    EXERCISE_TYPE_META.find((t) => t.id === currentExercise.type) || EXERCISE_TYPE_META[1];
+    EXERCISE_TYPE_META.find((t) => t.id === currentExercise?.type) || EXERCISE_TYPE_META[1];
 
   return (
     <div className="space-y-8">
@@ -200,7 +210,7 @@ export default function ExercisesView({
                 onClick={() => {
                   resetStateForNext();
                   setSelectedType(t.id);
-                  setCurrentIndex(0);
+                  setSelectedExerciseId(null);
                 }}
                 className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
                   active
@@ -224,7 +234,7 @@ export default function ExercisesView({
               onClick={() => {
                 resetStateForNext();
                 setSelectedLevel(lvl);
-                setCurrentIndex(0);
+                setSelectedExerciseId(null);
               }}
               className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
                 selectedLevel === lvl
@@ -239,7 +249,11 @@ export default function ExercisesView({
       </div>
 
       {/* Main Exercise Card */}
-      {filteredExercises.length === 0 ? <p role="status">Այս ֆիլտրերով առաջադրանք չկա։ Ընտրեք այլ մակարդակ կամ տեսակ։</p> : <motion.div
+      {!currentExercise ? <p role="status">{filteredExercises.length === 0
+        ? 'Այս ֆիլտրերով առաջադրանք չկա։ Ընտրեք այլ մակարդակ կամ տեսակ։'
+        : 'Այս ընտրության բոլոր առաջադրանքները կատարված են։ Կրկնելու համար բացեք «Կատարված առաջադրանքներ» ցանկը։'}</p> : <motion.div
+        id="current-exercise"
+        tabIndex={-1}
         key={currentExercise.id}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -257,8 +271,7 @@ export default function ExercisesView({
             <span className="text-xs text-slate-400 font-medium">{currentExercise.category}</span>
           </div>
           <span className="text-xs font-bold text-slate-400">
-            Առաջադրանք {(currentIndex % Math.max(1, filteredExercises.length)) + 1} /{' '}
-            {filteredExercises.length}
+            {completedIds.has(currentExercise.id) ? 'Կատարված առաջադրանք' : 'Ընթացիկ առաջադրանք'} · Մնացել է {pendingExercises.length}
           </span>
         </div>
 
@@ -560,6 +573,39 @@ export default function ExercisesView({
           </motion.div>
         )}
       </motion.div>}
+
+      <details className="group max-w-3xl rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl p-5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500 [&::-webkit-details-marker]:hidden">
+          <CheckCircle2 size={20} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span className="flex-1">Կատարված առաջադրանքներ ({completedExercises.length})</span>
+          <ChevronDown size={20} className="shrink-0 transition-transform group-open:rotate-180" />
+        </summary>
+        {completedExercises.length === 0 ? (
+          <p className="px-5 pb-5 text-sm text-slate-500">Այս ընտրության մեջ դեռ կատարված առաջադրանքներ չկան։</p>
+        ) : (
+          <ul className="divide-y divide-slate-100 border-t border-slate-100 dark:divide-slate-800 dark:border-slate-800">
+            {completedExercises.map(exercise => (
+              <li key={exercise.id} className="flex flex-wrap items-center gap-3 p-5">
+                <div className="min-w-0 flex-1 basis-48">
+                  <p className="text-xs text-slate-500">{exercise.level} · {EXERCISE_TYPE_META.find(type => type.id === exercise.type)?.labelAm}</p>
+                  <p className="mt-1 break-words text-sm">{exercise.promptAm}</p>
+                </div>
+                <button type="button" aria-label={`Կրկնել՝ ${exercise.promptAm}`} onClick={() => {
+                  resetStateForNext();
+                  setSelectedExerciseId(exercise.id);
+                  requestAnimationFrame(() => {
+                    const card = document.getElementById('current-exercise');
+                    card?.focus({ preventScroll: true });
+                    card?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                  });
+                }} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+                  <RotateCcw size={16} /> Կրկնել
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </details>
     </div>
   );
 }

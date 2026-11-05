@@ -40,6 +40,11 @@ export function mergeProgressData(
   const local = normalizeAndValidateState(localRaw);
   const remote = normalizeAndValidateState(remoteRaw);
 
+  // A fresh device's defaults have today's timestamps but are not a user profile.
+  // Restore the established account before applying timestamp-based merging.
+  if (!local.onboardingCompleted && remote.onboardingCompleted) return remote;
+  if (local.onboardingCompleted && !remote.onboardingCompleted) return local;
+
   const localTime = Number(local.lastActiveTimestamp || 0);
   const remoteTime = Number(remote.lastActiveTimestamp || 0);
   const primary = remoteTime > localTime ? remote : local;

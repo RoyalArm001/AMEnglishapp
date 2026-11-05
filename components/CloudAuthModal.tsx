@@ -19,6 +19,9 @@ interface CloudAuthModalProps {
   onClose: () => void;
   currentProgress: UserProgressData;
   onProgressLoadedFromCloud: (progress: UserProgressData) => void;
+  initialMode?: 'login' | 'register';
+  allowRegistration?: boolean;
+  onLoginSuccess?: () => void;
 }
 
 export default function CloudAuthModal({
@@ -26,9 +29,12 @@ export default function CloudAuthModal({
   onClose,
   currentProgress,
   onProgressLoadedFromCloud,
+  initialMode = 'register',
+  allowRegistration = true,
+  onLoginSuccess,
 }: CloudAuthModalProps) {
   const [session, setSession] = useState<CloudSession | null>(null);
-  const [mode, setMode] = useState<'login' | 'register'>('register');
+  const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,11 +43,12 @@ export default function CloudAuthModal({
 
   useEffect(() => {
     if (isOpen) {
+      setMode(allowRegistration ? initialMode : 'login');
       setSession(getStoredCloudSession());
       setErrorMessage('');
       setSuccessMessage('');
     }
-  }, [isOpen]);
+  }, [isOpen, initialMode, allowRegistration]);
 
   if (!isOpen) return null;
 
@@ -63,7 +70,7 @@ export default function CloudAuthModal({
         setErrorMessage(res.errorAm || 'Գրանցման սխալ։');
       }
     } else {
-      const res = await cloudLogin(email, password, currentProgress);
+      const res = await cloudLogin(email, password, currentProgress.onboardingCompleted ? currentProgress : undefined);
       setIsLoading(false);
       if (res.ok && res.session) {
         setSession(res.session);
@@ -73,6 +80,7 @@ export default function CloudAuthModal({
         if (res.progressData) {
           onProgressLoadedFromCloud(res.progressData);
         }
+        onLoginSuccess?.();
       } else {
         setErrorMessage(res.errorAm || 'Մուտքի սխալ։');
       }
@@ -120,11 +128,12 @@ export default function CloudAuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
+      <div role="dialog" aria-modal="true" aria-labelledby="cloud-auth-title" className="relative w-full max-w-md max-h-[90dvh] overflow-y-auto p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
+          disabled={isLoading}
           className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           aria-label="Փակել"
         >
@@ -137,8 +146,8 @@ export default function CloudAuthModal({
             <Cloud size={24} />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              Առցանց Բազա · MongoDB Atlas
+            <h2 id="cloud-auth-title" className="text-lg font-bold text-slate-900 dark:text-white">
+              {mode === 'login' && !session ? 'Մուտք գործել հաշիվ' : 'Առցանց հաշիվ'}
             </h2>
             <p className="text-xs text-slate-500">
               Միացիր առցանց բազային՝ առաջընթացդ բոլոր սարքերում պահպանելու համար։
@@ -148,7 +157,7 @@ export default function CloudAuthModal({
 
         {/* Feedback Alerts */}
         {errorMessage && (
-          <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold">
+          <div role="alert" className="flex items-start gap-2.5 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold">
             <AlertCircle size={16} className="shrink-0 mt-0.5" />
             <span>{errorMessage}</span>
           </div>
@@ -217,10 +226,11 @@ export default function CloudAuthModal({
           /* State B: Short Registration & Login Form */
           <form onSubmit={handleSubmit} className="space-y-4 pt-1">
             {/* Mode Switch Tabs */}
-            <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            {allowRegistration && <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={() => { setMode('register'); setErrorMessage(''); }}
+                disabled={isLoading}
                 className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition ${
                   mode === 'register'
                     ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
@@ -232,6 +242,7 @@ export default function CloudAuthModal({
               <button
                 type="button"
                 onClick={() => { setMode('login'); setErrorMessage(''); }}
+                disabled={isLoading}
                 className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition ${
                   mode === 'login'
                     ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
@@ -240,15 +251,18 @@ export default function CloudAuthModal({
               >
                 Մուտք (Գոյություն ունեցող)
               </button>
-            </div>
+            </div>}
 
             {/* Email Field */}
             <div className="space-y-1">
-              <label className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+              <label htmlFor="cloud-auth-email" className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
                 <Mail className="text-slate-400 w-3.5 h-3.5 shrink-0" />
                 <span>Էլ. փոստ (Email)</span>
               </label>
               <input
+                id="cloud-auth-email"
+                autoComplete="email"
+                autoFocus
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -260,11 +274,13 @@ export default function CloudAuthModal({
 
             {/* Password Field */}
             <div className="space-y-1">
-              <label className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+              <label htmlFor="cloud-auth-password" className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
                 <Lock className="text-slate-400 w-3.5 h-3.5 shrink-0" />
                 <span>Գաղտնաբառ (Password)</span>
               </label>
               <input
+                id="cloud-auth-password"
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -294,7 +310,7 @@ export default function CloudAuthModal({
             </button>
 
             <p className="text-[11px] text-center text-slate-400">
-              🔒 Տվյալները պահպանվում են անվտանգ MongoDB Atlas ամպում (Salt + SHA-512):
+              Մուտք գործեք նույն հաշվով՝ տարբեր սարքերից ուսուցումը շարունակելու համար։
             </p>
           </form>
         )}
