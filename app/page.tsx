@@ -750,6 +750,8 @@ export default function HomePage() {
       const lesson = getCourseLessons(prev.level).find(item => item.id === lessonId);
       if (!lesson || !canOpenCourseLesson(prev, lessonId) || !lesson.sentences.every(sentence => isCourseStepComplete(prev, sentence.id)) || !isCourseReadingComplete(prev, lesson)) return prev;
       if (prev.completedLessonIds.includes(lessonId)) return prev;
+      const courseLessons = getCourseLessons(prev.level);
+      const nextLesson = courseLessons[courseLessons.findIndex(item => item.id === lessonId) + 1];
       const completedLessonIds = Array.from(new Set([...prev.completedLessonIds, lessonId]));
       const readingBoost = Math.min(100, prev.skills.reading + 3);
       const tz = prev.settings?.timezone || 'Asia/Yerevan';
@@ -778,6 +780,7 @@ export default function HomePage() {
       return {
         ...prev,
         completedLessonIds,
+        ...(nextLesson ? {currentLessonId: nextLesson.id, currentSentenceIndex: 0} : {}),
         totalStudyMinutes: (prev.totalStudyMinutes || 0) + minutes,
         dailyStudyMinutes: prev.dailyStudyMinutes + minutes,
         lessonProgressMap: {

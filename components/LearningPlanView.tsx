@@ -22,7 +22,8 @@ interface Props {
 export default function LearningPlanView(props: Props) {
   const {progress} = props;
   const lessons = getCourseLessons(progress.level);
-  const active = lessons.find(lesson => lesson.id === progress.currentLessonId && canOpenCourseLesson(progress, lesson.id)) || getCurrentCourseLesson(progress);
+  const currentLesson = lessons.find(lesson => lesson.id === progress.currentLessonId && canOpenCourseLesson(progress, lesson.id));
+  const active = currentLesson && !isCourseLessonComplete(progress, currentLesson) ? currentLesson : getCurrentCourseLesson(progress);
   const complete = isLevelCourseComplete(progress);
   const completed = lessons.filter(lesson => isCourseLessonComplete(progress, lesson)).length;
   const nextLevel = getNextCourseLevel(progress);
@@ -74,29 +75,34 @@ export default function LearningPlanView(props: Props) {
   </div>;
 }
 
-function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUpdateSentencePosition, onSelectLesson, onToggleSaveSentence}: Props & {lesson: LessonItem}) {
+function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUpdateSentencePosition, onToggleSaveSentence}: Props & {lesson: LessonItem}) {
   const study = useStudyActivity();
   const [answer, setAnswer] = useState('');
   const [incorrect, setIncorrect] = useState(false);
   const [justCorrect, setJustCorrect] = useState(false);
   const [hideEnglish, setHideEnglish] = useState(false);
-  const advanceTimer = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (advanceTimer.current) clearTimeout(advanceTimer.current);
-    };
-  }, []);
 
   const index = Math.min(progress.currentSentenceIndex, getFirstUnverifiedIndex(progress, lesson));
   const sentence = lesson.sentences[index];
   const verified = isCourseStepComplete(progress, sentence.id);
   const done = isCourseLessonComplete(progress, lesson);
   const readingComplete = isCourseReadingComplete(progress, lesson);
-  const nextLesson = getCurrentCourseLesson(progress);
   const prompt = sentence.writingTask?.promptAm || `Սովորած արտահայտությունը գրիր անգլերեն՝ «${sentence.armenian}»։`;
   const showMaterial = !hideEnglish || verified;
+  const updateSentencePositionRef = useRef(onUpdateSentencePosition);
+
+  useEffect(() => {
+    updateSentencePositionRef.current = onUpdateSentencePosition;
+  }, [onUpdateSentencePosition]);
+
+  useEffect(() => {
+    if (!verified || index + 1 >= lesson.sentences.length) return;
+    const timer = setTimeout(() => {
+      updateSentencePositionRef.current(lesson.id, index + 1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [index, lesson.id, lesson.sentences.length, verified]);
 
   const handleVerifyAnswer = (val: string) => {
     if (!val.trim()) return;
@@ -106,12 +112,6 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
       setIncorrect(false);
       setJustCorrect(true);
       onVerify(lesson.id, sentence.id, val);
-      if (index + 1 < lesson.sentences.length) {
-        if (advanceTimer.current) clearTimeout(advanceTimer.current);
-        advanceTimer.current = setTimeout(() => {
-          onUpdateSentencePosition(lesson.id, index + 1);
-        }, 500);
-      }
     } else {
       setIncorrect(true);
     }
@@ -127,12 +127,6 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
       study.start();
       setJustCorrect(true);
       onVerify(lesson.id, sentence.id, val);
-      if (index + 1 < lesson.sentences.length) {
-        if (advanceTimer.current) clearTimeout(advanceTimer.current);
-        advanceTimer.current = setTimeout(() => {
-          onUpdateSentencePosition(lesson.id, index + 1);
-        }, 500);
-      }
     }
   };
 
@@ -180,14 +174,13 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
       </div>
     </form> : <div className="flex items-center gap-2.5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
       <CheckCircle2 size={20} className="shrink-0" />
-      <span>Ճիշտ գրված է։ Կարող ես անցնել հաջորդ քայլին։</span>
+      <span>{index + 1 < lesson.sentences.length ? 'Ճիշտ է։ Հաջորդ քայլը կբացվի ինքնաբերաբար։' : 'Ճիշտ գրված է։ Կարող ես շարունակել դասը։'}</span>
     </div>}
     <div className="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
       {index > 0 && <button type="button" onClick={() => onUpdateSentencePosition(lesson.id, index - 1)} className="min-h-11 rounded-xl border px-4 py-2"><ArrowLeft size={16} className="mr-1 inline" />Նախորդը</button>}
-      {index + 1 < lesson.sentences.length ? <button type="button" disabled={!verified} onClick={() => onUpdateSentencePosition(lesson.id, index + 1)} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Հաջորդ քայլը <ArrowRight size={16} className="ml-1 inline" /></button>
+      {index + 1 < lesson.sentences.length ? !verified && <button type="button" disabled className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Հաջորդ քայլը <ArrowRight size={16} className="ml-1 inline" /></button>
         : !readingComplete ? <button type="button" disabled={!verified} onClick={() => document.getElementById('course-reading')?.scrollIntoView({block: 'start'})} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Կարդալ դասագրքի գլուխը</button>
-        : !done ? <button type="button" disabled={!verified} onClick={() => onCompleteLesson(lesson.id)} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Ավարտել դասը</button>
-        : nextLesson && nextLesson.id !== lesson.id && <button type="button" onClick={() => onSelectLesson(nextLesson.id, getFirstUnverifiedIndex(progress, nextLesson))} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 text-white">Անցնել հաջորդ դասին</button>}
+        : !done && <button type="button" disabled={!verified} onClick={() => onCompleteLesson(lesson.id)} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Ավարտել դասը</button>}
       {done && progress.level === 'A1' && areCourseLessonsComplete(progress) && !isLevelCourseComplete(progress) && <button type="button" onClick={() => document.getElementById('a1-final-assessment')?.scrollIntoView({block: 'start'})} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white">Անցնել ամփոփիչ աշխատանքին</button>}
     </div>
   </section>;
