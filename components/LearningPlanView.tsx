@@ -89,12 +89,21 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
   const done = isCourseLessonComplete(progress, lesson);
   const readingComplete = isCourseReadingComplete(progress, lesson);
   const prompt = sentence.writingTask?.promptAm || `Սովորած արտահայտությունը գրիր անգլերեն՝ «${sentence.armenian}»։`;
-  const showMaterial = !hideEnglish || verified;
+  const showMaterial = !hideEnglish;
   const updateSentencePositionRef = useRef(onUpdateSentencePosition);
 
   useEffect(() => {
     updateSentencePositionRef.current = onUpdateSentencePosition;
   }, [onUpdateSentencePosition]);
+
+  useEffect(() => {
+    setAnswer('');
+    setIncorrect(false);
+    setJustCorrect(false);
+    setHideEnglish(false);
+    const timer = setTimeout(() => setHideEnglish(true), 5000);
+    return () => clearTimeout(timer);
+  }, [index, lesson.id]);
 
   useEffect(() => {
     if (!verified || index + 1 >= lesson.sentences.length) return;
@@ -141,7 +150,7 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
       <div className="flex flex-wrap items-center gap-2 pt-1">
         <button type="button" onClick={() => {study.start(); onSpeak(sentence.speechText || sentence.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition"><Volume2 size={18} />Լսել դանդաղ</button>
         <button type="button" aria-pressed={progress.savedSentenceIds.includes(sentence.id)} onClick={() => onToggleSaveSentence(sentence.id)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition"><Star size={18} />{progress.savedSentenceIds.includes(sentence.id) ? 'Պահպանված է' : 'Պահպանել'}</button>
-        {!verified && <button type="button" onClick={() => setHideEnglish(v => !v)} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">{hideEnglish ? 'Ցույց տալ հուշումը' : 'Թաքցնել հուշումը'}</button>}
+        <button type="button" onClick={() => setHideEnglish(v => !v)} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">{hideEnglish ? 'Ցույց տալ հուշումը' : 'Թաքցնել հուշումը'}</button>
       </div>
     </div>
     {!verified ? <form className="space-y-3 pt-2" onSubmit={event => {
