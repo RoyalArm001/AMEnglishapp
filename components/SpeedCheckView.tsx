@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 import type { LessonSentence, UserProgressData } from '../lib/types';
 import {
-  getPassedCourseSentences,
   getPassedLessonsForSpeedCheck,
+  isSpeedCheckWord,
   isCorrectWrittenAnswer,
 } from '../lib/learning-path';
 import { useStudyActivity } from '../lib/study-activity';
@@ -48,8 +48,16 @@ export default function SpeedCheckView({
 }: SpeedCheckViewProps) {
   const study = useStudyActivity();
 
-  const passedGroups = useMemo(() => getPassedLessonsForSpeedCheck(progress), [progress]);
-  const allPassedSentences = useMemo(() => getPassedCourseSentences(progress, 'all'), [progress]);
+  const passedGroups = useMemo(
+    () => getPassedLessonsForSpeedCheck(progress)
+      .map(group => ({...group, passedSentences: group.passedSentences.filter(isSpeedCheckWord)}))
+      .filter(group => group.passedSentences.length > 0),
+    [progress]
+  );
+  const allPassedWords = useMemo(
+    () => passedGroups.flatMap(group => group.passedSentences),
+    [passedGroups]
+  );
 
   const [selectedLessonId, setSelectedLessonId] = useState<string>('all');
   const [selectedMinutes, setSelectedMinutes] = useState<SpeedCheckDurationMinutes>(1);
@@ -76,10 +84,10 @@ export default function SpeedCheckView({
   const flashTimerRef = useRef<NodeJS.Timeout | null>(null);
   const nextWordTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const filteredSentences = useMemo(() => {
-    const list = getPassedCourseSentences(progress, selectedLessonId);
-    return list.length > 0 ? list : allPassedSentences;
-  }, [progress, selectedLessonId, allPassedSentences]);
+  const filteredWords = useMemo(() => {
+    if (selectedLessonId === 'all') return allPassedWords;
+    return passedGroups.find(group => group.lesson.id === selectedLessonId)?.passedSentences || [];
+  }, [selectedLessonId, allPassedWords, passedGroups]);
 
   const lessonTitleBySentenceId = useMemo(() => {
     const map = new Map<string, string>();
@@ -147,9 +155,9 @@ export default function SpeedCheckView({
   }, []);
 
   const startSpeedCheck = () => {
-    if (filteredSentences.length === 0) return;
+    if (filteredWords.length === 0) return;
     study.start();
-    const initialDeck = buildShuffledDeck(filteredSentences);
+    const initialDeck = buildShuffledDeck(filteredWords);
     setDeck(initialDeck);
     setCurrentIndex(0);
     setRoundStep(1);
@@ -169,7 +177,7 @@ export default function SpeedCheckView({
       if (idx + 1 < currentPool.length) {
         setCurrentIndex(idx + 1);
       } else {
-        const reshuffled = buildShuffledDeck(filteredSentences);
+        const reshuffled = buildShuffledDeck(filteredWords);
         setDeck(reshuffled);
         setCurrentIndex(0);
       }
@@ -178,10 +186,10 @@ export default function SpeedCheckView({
       setWrongSubmitAttempt(false);
       setRoundStep((prev) => prev + 1);
     },
-    [buildShuffledDeck, filteredSentences]
+    [buildShuffledDeck, filteredWords]
   );
 
-  const currentSentence: LessonSentence | undefined = deck[currentIndex] || filteredSentences[0];
+  const currentSentence: LessonSentence | undefined = deck[currentIndex] || filteredWords[0];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -253,26 +261,26 @@ export default function SpeedCheckView({
               Ստուգել իմ արագությունը
             </h1>
             <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 max-w-2xl">
-              Յուրաքանչյուր բառ կամ արտահայտություն <strong>1 վայրկյան</strong> ցուցադրվում է անգլերեն,
+              Յուրաքանչյուր կարճ բառ <strong>1 վայրկյան</strong> ցուցադրվում է անգլերեն,
               ապա թաքցվում է, իսկ հայերեն հուշումը մնում է էկրանին։ Գրիր անգլերեն տարբերակը ընտրված ժամանակի
               մեջ (1–5 րոպե)՝ ճիշտ գրելիս պատասխանը հաստատվում է <strong>ավտոմատ</strong>։
             </p>
           </div>
-          {allPassedSentences.length > 0 && (
+          {allPassedWords.length > 0 && (
             <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 text-right">
               <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                 Անցած դասեր և բառեր
               </div>
               <div className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                {passedGroups.length} դաս · {allPassedSentences.length} բառ
+                {passedGroups.length} դաս · {allPassedWords.length} բառ
               </div>
             </div>
           )}
         </div>
       </header>
 
-      {/* Empty State if no lessons or steps have been passed yet */}
-      {allPassedSentences.length === 0 && (
+      {/* Empty State if no short passed words are available */}
+      {allPassedWords.length === 0 && (
         <section className="rounded-2xl border border-amber-300/80 dark:border-amber-700/60 bg-amber-50/60 dark:bg-amber-950/20 p-6 space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
@@ -280,11 +288,11 @@ export default function SpeedCheckView({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                Դուք դեռ չեք անցել որևէ դաս կամ բառ
+                Արագ թեստի համար դեռ կարճ բառեր չկան
               </h2>
               <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-                Այս բաժնում ցուցադրվում են միայն այն դասերի բառերը, որոնք դուք արդեն անցել եք։
-                Նախ անցեք առնվազն մեկ քայլ կամ դաս «Իմ դասապլանը» բաժնում։
+                Արագ թեստում ցուցադրվում են միայն անցած դասերից վերցված առանձին, կարճ բառեր, ոչ թե նախադասություններ։
+                Շարունակիր սովորել «Իմ դասապլանը» բաժնում։
               </p>
             </div>
           </div>
@@ -300,7 +308,7 @@ export default function SpeedCheckView({
       )}
 
       {/* Setup Screen */}
-      {allPassedSentences.length > 0 && gameState === 'setup' && (
+      {allPassedWords.length > 0 && gameState === 'setup' && (
         <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-6 shadow-sm">
           {/* 1. Lesson selection (only passed lessons) */}
           <div className="space-y-3">
@@ -317,7 +325,7 @@ export default function SpeedCheckView({
               className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-3 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="all">
-                Բոլոր անցած դասերը ({allPassedSentences.length} բառ / արտահայտություն)
+                Բոլոր անցած դասերի կարճ բառերը ({allPassedWords.length})
               </option>
               {passedGroups.map((group) => (
                 <option key={group.lesson.id} value={group.lesson.id}>
@@ -384,13 +392,14 @@ export default function SpeedCheckView({
           {/* 3. Start button */}
           <div className="pt-2 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/80 dark:border-slate-800">
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              Ընտրված է՝ <strong>{filteredSentences.length} բառ</strong> · Ժամանակ՝{' '}
+              Ընտրված է՝ <strong>{filteredWords.length} բառ</strong> · Ժամանակ՝{' '}
               <strong>{selectedMinutes} րոպե</strong> · Ցուցադրում՝ <strong>1 վայրկյան</strong>
             </div>
             <button
               type="button"
+              disabled={filteredWords.length === 0}
               onClick={startSpeedCheck}
-              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-emerald-600/20 transition"
+              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-emerald-600/20 transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Play size={18} />
               Սկսել արագության ստուգումը ({selectedMinutes} րոպե)
@@ -646,4 +655,3 @@ export default function SpeedCheckView({
     </div>
   );
 }
-

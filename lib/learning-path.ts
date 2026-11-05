@@ -176,3 +176,9 @@ export function getPassedCourseSentences(
   return groups.flatMap((g) => g.passedSentences);
 
 }
+
+export function isSpeedCheckWord(sentence: Pick<LessonSentence, 'english'>): boolean {
+  const word = sentence.english.trim().replace(/[.!?]+$/, '');
+  return /^[A-Za-z]+(?:['’-][A-Za-z]+)?$/.test(word) &&
+    word.replace(/['’-]/g, '').length <= 10;
+}

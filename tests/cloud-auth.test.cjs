@@ -23,6 +23,7 @@ const {
   isCoursePageUnlocked,
   getPassedLessonsForSpeedCheck,
   getPassedCourseSentences,
+  isSpeedCheckWord,
 } = require('../lib/learning-path.ts');
 
 const { DEFAULT_USER_PROGRESS } = require('../lib/storage.ts');
@@ -127,6 +128,16 @@ test('getPassedLessonsForSpeedCheck and getPassedCourseSentences return only pas
     getPassedCourseSentences(progressWithCompletedLesson, firstLesson.id).length,
     firstLesson.sentences.length
   );
+});
+
+test('Speed Check only accepts short single English words', () => {
+  assert.equal(isSpeedCheckWord({ english: 'hello' }), true);
+  assert.equal(isSpeedCheckWord({ english: 'Hello.' }), true);
+  assert.equal(isSpeedCheckWord({ english: "I'm" }), true);
+  assert.equal(isSpeedCheckWord({ english: 'university' }), true);
+  assert.equal(isSpeedCheckWord({ english: 'He is a dog.' }), false);
+  assert.equal(isSpeedCheckWord({ english: 'twenty twenty-four' }), false);
+  assert.equal(isSpeedCheckWord({ english: 'configuration' }), false);
 });
 
 test('mergeProgressData losslessly combines phone and computer progress across devices', () => {
