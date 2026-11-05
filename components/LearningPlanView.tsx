@@ -90,6 +90,10 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
   const readingComplete = isCourseReadingComplete(progress, lesson);
   const prompt = sentence.writingTask?.promptAm || `Սովորած արտահայտությունը գրիր անգլերեն՝ «${sentence.armenian}»։`;
   const showMaterial = !hideEnglish;
+  const previewText = [lesson.grammarTipAm, sentence.english, sentence.pronunciation, sentence.armenian, sentence.grammarNoteAm]
+    .filter(Boolean)
+    .join(' ');
+  const previewDuration = Math.max(2500, previewText.trim().split(/\s+/).filter(Boolean).length * 300 + 1500);
   const updateSentencePositionRef = useRef(onUpdateSentencePosition);
 
   useEffect(() => {
@@ -101,9 +105,9 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
     setIncorrect(false);
     setJustCorrect(false);
     setHideEnglish(false);
-    const timer = setTimeout(() => setHideEnglish(true), 5000);
+    const timer = setTimeout(() => setHideEnglish(true), previewDuration);
     return () => clearTimeout(timer);
-  }, [index, lesson.id]);
+  }, [index, lesson.id, previewDuration]);
 
   useEffect(() => {
     if (!verified || index + 1 >= lesson.sentences.length) return;
