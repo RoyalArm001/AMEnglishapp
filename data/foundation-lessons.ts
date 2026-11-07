@@ -25,7 +25,7 @@ const year = (value: number, english: string, pronunciation: string, acceptedAns
 
 const reply = (id: string, english: string, pronunciation: string, armenian: string, promptAm: string, acceptedAnswers: string[] = []): LessonSentence => ({
   id: `foundation-dialogue-${id}`, english, pronunciation, armenian,
-  writingTask: {promptAm, acceptedAnswers},
+  writingTask: {promptAm, acceptedAnswers, answerMode: 'short-answer'},
 });
 
 export const FOUNDATION_LESSONS: LessonItem[] = [
@@ -114,7 +114,7 @@ export const FOUNDATION_LESSONS: LessonItem[] = [
     ],
   },
   {
-    id: 'foundation-tens', categoryId: 'numbers', order: -92,
+    id: 'foundation-tens', categoryId: 'numbers', order: -85,
     titleAm: 'Տասնյակներ, հարյուր և հազար', titleEn: 'Tens, a hundred and a thousand', level: 'A1', estimatedMinutes: 7,
     descriptionAm: 'Սովորիր այն թվերը, որոնք պետք են նաև տարեթվերը կարդալու համար։',
     grammarTipAm: 'Տասնյակները վերջանում են -ty-ով։ 40-ը գրվում է forty, ոչ թե fourty։ Հարյուրը՝ one hundred, հազարը՝ one thousand։',
@@ -131,19 +131,19 @@ export const FOUNDATION_LESSONS: LessonItem[] = [
   {
     id: 'foundation-introduction', categoryId: 'grammar-basics', order: -91,
     titleAm: 'Ես, դու և առաջին նախադասությունը', titleEn: 'Introducing yourself', level: 'A1', estimatedMinutes: 6,
-    descriptionAm: 'Սովորիր ներկայանալ և կազմել պարզ նախադասություններ։',
+    descriptionAm: 'Կարդա կարճ օրինակը և լրացրու միայն պակասող բառը։',
     grammarTipAm: 'I am = ես եմ, you are = դու ես, he/she is = նա է։ «I» դերանունը միշտ գրվում է մեծատառով։',
     sentences: [
-      {id:'foundation-i',english:'I am Anna.',pronunciation:'Այ էմ Աննա։',armenian:'Ես Աննան եմ։'},
-      {id:'foundation-you',english:'You are my friend.',pronunciation:'Յու ար մայ ֆրենդ։',armenian:'Դու իմ ընկերն ես։'},
-      {id:'foundation-he',english:'He is a student.',pronunciation:'Հի իզ ը սթյուդընթ։',armenian:'Նա ուսանող է (արական)։'},
-      {id:'foundation-she',english:'She is a teacher.',pronunciation:'Շի իզ ը թիչըր։',armenian:'Նա ուսուցիչ է (իգական)։'},
-      {id:'foundation-we',english:'We are ready.',pronunciation:'Ուի ար րեդի։',armenian:'Մենք պատրաստ ենք։'},
-      {id:'foundation-name',english:'What is your name?',pronunciation:'Ուոթ իզ յոր նեյմ՞',armenian:'Ի՞նչ է քո անունը։'},
+      {id:'foundation-i',english:'I am Anna.',pronunciation:'Այ էմ Աննա։',armenian:'Ես Աննան եմ։', writingTask: {promptAm: 'Լրացրու՝ I ___ Anna. Գրիր միայն պակասող բառը։', acceptedAnswers: ['am'], answerMode: 'short-answer'}},
+      {id:'foundation-you',english:'You are my friend.',pronunciation:'Յու ար մայ ֆրենդ։',armenian:'Դու իմ ընկերն ես։', writingTask: {promptAm: 'Լրացրու՝ You ___ my friend.', acceptedAnswers: ['are'], answerMode: 'short-answer'}},
+      {id:'foundation-he',english:'He is a student.',pronunciation:'Հի իզ ը սթյուդընթ։',armenian:'Նա ուսանող է (արական)։', writingTask: {promptAm: 'Լրացրու՝ He ___ a student.', acceptedAnswers: ['is'], answerMode: 'short-answer'}},
+      {id:'foundation-she',english:'She is a teacher.',pronunciation:'Շի իզ ը թիչըր։',armenian:'Նա ուսուցիչ է (իգական)։', writingTask: {promptAm: 'Լրացրու՝ She is a ___. Նա ուսուցիչ է։', acceptedAnswers: ['teacher'], answerMode: 'short-answer'}},
+      {id:'foundation-we',english:'We are ready.',pronunciation:'Ուի ար րեդի։',armenian:'Մենք պատրաստ ենք։', writingTask: {promptAm: 'Լրացրու՝ We ___ ready.', acceptedAnswers: ['are'], answerMode: 'short-answer'}},
+      {id:'foundation-name',english:'What is your name?',pronunciation:'Ուոթ իզ յոր նեյմ՞',armenian:'Ի՞նչ է քո անունը։', writingTask: {promptAm: 'Լրացրու՝ What is your ___? Հարցնում ենք անունը։', acceptedAnswers: ['name'], answerMode: 'short-answer'}},
     ],
   },
   {
-    id: 'foundation-years', categoryId: 'time-and-dates', order: -90,
+    id: 'foundation-years', categoryId: 'time-and-dates', order: 4.5,
     titleAm: 'Պարզ տարեթվեր', titleEn: 'Reading years', level: 'A1', estimatedMinutes: 6,
     descriptionAm: 'Թվերից անցիր տարեթվերին՝ լսելով և գրելով մի քանի օրինակ։',
     grammarTipAm: '1990-ը սովորաբար կարդում ենք երկու մասով՝ nineteen ninety։ 2000-ը՝ two thousand։ 2026-ը՝ twenty twenty-six կամ two thousand and twenty-six։ 21–99 բաղադրյալ թվերը սովորաբար գրվում են գծիկով։',
@@ -160,11 +160,11 @@ export const FOUNDATION_LESSONS: LessonItem[] = [
     id: 'foundation-dialogue-greeting', categoryId: 'daily-conversations', order: -89,
     titleAm: 'Փոքր զրույց․ բարևել', titleEn: 'A short greeting', level: 'A1', estimatedMinutes: 5,
     descriptionAm: 'Չորս կարճ արտահայտությամբ բարևիր և հարցրու՝ ինչպես է զրուցակիցդ։',
-    grammarTipAm: 'I am fine նշանակում է «Ես լավ եմ»։ Կարող ես գրել նաև կարճ տարբերակը՝ I’m fine։ Յուրաքանչյուր քայլում գրիր զրույցի մեկ արտահայտություն։',
+    grammarTipAm: 'How are you? հարցին կարող ես կարճ պատասխանել՝ Fine կամ Good։ Ամբողջ օրինակը արտագրելու կարիք չկա։',
     sentences: [
       reply('hello', 'Hello.', 'Հելոու։', 'Բարև։', 'Հանդիպում ես ընկերոջդ։ Անգլերեն գրիր՝ «Բարև»։', ['Hi.']),
       reply('how-are-you', 'How are you?', 'Հաու ար յու՞', 'Ինչպե՞ս ես։', 'Բարևելուց հետո հարցրու՝ «Ինչպե՞ս ես»։'),
-      reply('fine', 'I am fine.', 'Այ էմ ֆայն։', 'Ես լավ եմ։', 'Ընկերդ հարցնում է՝ ինչպես ես։ Պատասխանիր՝ «Ես լավ եմ»։', ["I'm fine."]),
+      reply('fine', 'Fine.', 'Ֆայն։', 'Լավ։', 'How are you? — Ինչպե՞ս ես։ Պատասխանիր՝ լավ։ Մեկ բառն էլ բավական է։', ['I am fine.', "I'm fine.", 'Good.', 'I am good.', "I'm good.", 'Fine, thanks.', 'Fine thank you.']),
       reply('thanks', 'Thank you.', 'Թենք յու։', 'Շնորհակալություն։', 'Շնորհակալություն հայտնիր ընկերոջդ։', ['Thanks.']),
     ],
   },
@@ -175,21 +175,21 @@ export const FOUNDATION_LESSONS: LessonItem[] = [
     grammarTipAm: 'My name is նշանակում է «Իմ անունն է»։ Այս զրույցում ներկայանում ես Աննա անունով։ Nice to meet you = Ուրախ եմ ծանոթանալու համար։',
     sentences: [
       reply('ask-name', 'What is your name?', 'Ուոթ իզ յոր նեյմ՞', 'Ի՞նչ է քո անունը։', 'Նոր ծանոթիդ անգլերեն հարցրու՝ «Ի՞նչ է քո անունը»։', ["What's your name?"]),
-      reply('my-name', 'My name is Anna.', 'Մայ նեյմ իզ Աննա։', 'Իմ անունը Աննա է։', 'Ներկայացիր՝ «Իմ անունը Աննա է»։', ["My name's Anna."]),
+      reply('my-name', 'My name is Anna.', 'Մայ նեյմ իզ Աննա։', 'Իմ անունը Աննա է։', 'Այս փոքր զրույցում դու Աննան ես։ What is your name? Կարող ես գրել միայն անունը։', ['Anna', "My name's Anna.", 'I am Anna.', "I'm Anna."]),
       reply('nice', 'Nice to meet you.', 'Նայս թու միթ յու։', 'Ուրախ եմ ծանոթանալու համար։', 'Ասա՝ «Ուրախ եմ ծանոթանալու համար»։'),
-      reply('nice-too', 'Nice to meet you too.', 'Նայս թու միթ յու թու։', 'Ես էլ եմ ուրախ ծանոթանալու համար։', 'Զրուցակիցդ ուրախ է ծանոթանալու համար։ Պատասխանիր՝ «Ես էլ եմ ուրախ ծանոթանալու համար»։'),
+      reply('nice-too', 'You too.', 'Յու թու։', 'Ես էլ։', 'Քեզ ասում են՝ Nice to meet you. Կարճ պատասխանիր՝ «Ես էլ»։', ['Nice to meet you too.']),
     ],
   },
   {
     id: 'foundation-dialogue-age', categoryId: 'daily-conversations', order: -87,
     titleAm: 'Փոքր զրույց․ տարիք', titleEn: 'Talking about age', level: 'A1', estimatedMinutes: 5,
     descriptionAm: 'Օգտագործիր սովորած թվերը՝ տարիքի մասին հարցնելիս և պատասխանելիս։',
-    grammarTipAm: 'How old are you? = Քանի՞ տարեկան ես։ I am ten years old = Ես տասը տարեկան եմ։ Այստեղ թվերը գրում ենք բառերով։',
+    grammarTipAm: 'How old are you? = Քանի՞ տարեկան ես։ Քո տարիքը կարող ես գրել կարճ՝ 11, eleven կամ I’m 11։ Օրինակի տարիքը պարտադիր չէ կրկնել։',
     sentences: [
       reply('ask-age', 'How old are you?', 'Հաու օուլդ ար յու՞', 'Քանի՞ տարեկան ես։', 'Անգլերեն հարցրու՝ «Քանի՞ տարեկան ես»։'),
-      reply('ten', 'I am ten years old.', 'Այ էմ թեն յիրզ օուլդ։', 'Ես տասը տարեկան եմ։', 'Զրույցում պատասխանիր՝ «Ես տասը տարեկան եմ»։ Թիվը գրիր բառերով։', ["I'm ten years old."]),
+      {...reply('ten', "I'm eleven.", 'Այմ իլեվըն։', 'Ես տասնմեկ տարեկան եմ։', ''), writingTask: {promptAm: 'How old are you? — Քանի՞ տարեկան ես։ Պատասխանիր քո մասին։', answerMode: 'personal-age', helpAm: 'Գրիր քո տարիքը՝ թվանշանով կամ անգլերեն բառով։ Օրինակ՝ 11, eleven, I am 11 կամ I’m eleven years old։ Հետո սեղմիր «Ստուգել»։'}},
       reply('and-you', 'And you?', 'Ընդ յու՞', 'Իսկ դո՞ւ։', 'Հիմա նույն հարցն ուղղիր զրուցակցիդ՝ «Իսկ դո՞ւ»։'),
-      reply('eleven', 'I am eleven years old.', 'Այ էմ իլեվըն յիրզ օուլդ։', 'Ես տասնմեկ տարեկան եմ։', 'Զրուցակցիդ անունից գրիր՝ «Ես տասնմեկ տարեկան եմ»։ Թիվը գրիր բառերով։', ["I'm eleven years old."]),
+      reply('eleven', 'Eleven.', 'Իլեվըն։', 'Տասնմեկ։', 'Հիմա խոսում ես 11 տարեկան Աննայի անունից։ How old are you? Կարճ պատասխանիր։', ['11', 'I am eleven.', "I'm eleven.", 'I am 11.', "I'm 11.", 'I am eleven years old.', "I'm eleven years old.", 'I am 11 years old.', "I'm 11 years old.", 'eleven years old', '11 years old']),
     ],
   },
 ];

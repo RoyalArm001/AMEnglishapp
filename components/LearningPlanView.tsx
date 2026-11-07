@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Lock, Star, Volume2 } from 'lucide-react';
 import type { LessonItem, UserProgressData } from '../lib/types';
-import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getCurrentCourseLesson, getFirstUnverifiedIndex, getNextCourseLevel, isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete, isCourseStepComplete, isLevelCourseComplete } from '../lib/learning-path';
+import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getCurrentCourseLesson, getFirstUnverifiedIndex, getNextCourseLevel, isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete, isCourseStepComplete, isLevelCourseComplete, needsAnswerConfirmation } from '../lib/learning-path';
 import { A1FinalAssessment, CourseReadingPanel } from './A1CourseStudy';
 import { useStudyActivity } from '../lib/study-activity';
 
@@ -41,7 +41,7 @@ export default function LearningPlanView(props: Props) {
     <header className="space-y-3">
       <span className="inline-block rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-700 dark:text-emerald-300">{progress.level} · Քո դասապլանը</span>
       <h1 className="text-2xl font-bold">{progress.level === 'A1' ? 'Սկսիր զրոյից՝ քայլ առ քայլ' : 'Սովորիր հերթականությամբ'}</h1>
-      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">{progress.level === 'A1' ? 'Այբուբեն → պարզ բառեր → թվեր → առաջին նախադասություններ → տարեթվեր → կարճ զրույցներ։ ' : ''}Նախ սովորիր և լսիր, հետո ինքդ գրիր անգլերեն։ Միայն ճիշտ գրելուց հետո կարող ես անցնել հաջորդ քայլին։ Մյուս ուսումնական էջերը բացվում են այս մակարդակի դասապլանն ավարտելիս։</p>
+      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">Լսիր, փորձիր ու շարունակիր քո արագությամբ։ Հարցերին պատասխանիր քո բառերով՝ կարճ կամ երկար։ Բաց թողնված տեղում բավական է գրել պակասող բառը։</p>
       <p className="text-sm font-semibold">Ավարտված է {completed} / {lessons.length} դաս</p>
       <progress className="h-2 w-full accent-emerald-600" value={completed} max={Math.max(1, lessons.length)} aria-label="Դասապլանի առաջընթաց" />
       {progress.level === 'A1' && <p className="text-sm text-slate-500">Ամեն դաս՝ սովորել և գրել → կարդալ դասագրքի գլուխը → պատասխանել հարցերին։ Բոլոր դասերից հետո՝ պարտադիր ամփոփիչ աշխատանք։</p>}
@@ -55,11 +55,11 @@ export default function LearningPlanView(props: Props) {
     {progress.level === 'A1' && lessonsComplete && <A1FinalAssessment progress={progress} onVerify={props.onVerifyCourseQuestion} onSpeak={props.onSpeak} />}
     {active && <LessonStep key={`${progress.profile.id}-${active.id}-${progress.currentSentenceIndex}`} {...props} lesson={active} />}
     {active && active.level === 'A1' && writingComplete && <CourseReadingPanel key={active.id} lesson={active} progress={progress} onVerify={props.onVerifyCourseQuestion} onSpeak={props.onSpeak} onCompleteLesson={props.onCompleteLesson} />}
-    <section aria-labelledby="course-order-heading" className="space-y-3">
-      <h2 id="course-order-heading" className="text-lg font-bold">{progress.level} · Դասերի հերթականությունը</h2>
+    <details className="space-y-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+      <summary className="cursor-pointer text-lg font-bold">Իմ հասանելի դասերը</summary>
       <ol className="space-y-2">
         {lessons.map((lesson, index) => ({lesson, index, done: isCourseLessonComplete(progress, lesson)}))
-          .filter(item => !item.done)
+          .filter(item => !item.done && canOpenCourseLesson(progress, item.lesson.id))
           .map(({lesson, index}) => {
             const unlocked = canOpenCourseLesson(progress, lesson.id);
             return <li key={lesson.id}>
@@ -71,7 +71,7 @@ export default function LearningPlanView(props: Props) {
         })}
       </ol>
       {lessons.length > 0 && completed === lessons.length && <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">Բոլոր դասերն ավարտված են։</p>}
-    </section>
+    </details>
   </div>;
 }
 
@@ -90,6 +90,7 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
   const readingComplete = isCourseReadingComplete(progress, lesson);
   const prompt = sentence.writingTask?.promptAm || `Սովորած արտահայտությունը գրիր անգլերեն՝ «${sentence.armenian}»։`;
   const showMaterial = !hideEnglish;
+  const confirmAnswer = needsAnswerConfirmation(sentence);
   const previewText = [lesson.grammarTipAm, sentence.english, sentence.pronunciation, sentence.armenian, sentence.grammarNoteAm]
     .filter(Boolean)
     .join(' ');
@@ -118,7 +119,7 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
   }, [index, lesson.id, lesson.sentences.length, verified]);
 
   const handleVerifyAnswer = (val: string) => {
-    if (!val.trim()) return;
+    if (!val.trim() || verified || justCorrect) return;
     study.start();
     const correct = isCorrectWrittenAnswer(sentence, val);
     if (correct) {
@@ -136,7 +137,7 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
     setIncorrect(false);
 
     // Ավտոմատացում՝ երբ գրվում է ճիշտ պատասխանը, նա հաստատում է ավտոմատ
-    if (isCorrectWrittenAnswer(sentence, val)) {
+    if (!confirmAnswer && !verified && !justCorrect && isCorrectWrittenAnswer(sentence, val)) {
       study.start();
       setJustCorrect(true);
       onVerify(lesson.id, sentence.id, val);
@@ -148,6 +149,7 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
     {lesson.outcomeAm && <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Այս դասից հետո՝ {lesson.outcomeAm}</p>}
     {showMaterial && <p className="rounded-xl bg-slate-50 p-3 text-sm leading-relaxed dark:bg-slate-800">{lesson.grammarTipAm}</p>}
     <div className="space-y-2">
+      {showMaterial && sentence.writingTask?.answerMode === 'personal-age' && <p className="text-xs font-semibold text-slate-500">Պատասխանի օրինակ․ դու գրիր քո տարիքը</p>}
       {showMaterial && sentence.colorHex && <span className="block h-16 w-16 rounded-2xl border border-slate-400" style={{backgroundColor: sentence.colorHex}} role="img" aria-label={sentence.armenian} />}
       {showMaterial && <><p lang="en" data-learning-text="english" className="font-bold text-lg">{sentence.english}</p><p data-learning-text="pronunciation" className="text-emerald-700 dark:text-emerald-300 font-medium">{sentence.pronunciation}</p><p data-learning-text="armenian" className="text-slate-700 dark:text-slate-300">{sentence.armenian}</p></>}
       {showMaterial && sentence.grammarNoteAm && <p className="text-sm leading-relaxed text-slate-500">{sentence.grammarNoteAm}</p>}
@@ -180,10 +182,10 @@ function LessonStep({lesson, progress, onVerify, onSpeak, onCompleteLesson, onUp
           </span>
         )}
       </div>
-      <p id="course-writing-help" className="text-xs text-slate-500">{sentence.writingTask?.caseSensitive ? "Մեծատառն ու փոքրատառը գրիր հերթով՝ անգլերեն ստեղնաշարով։" : "Գրիր անգլերեն տառերով։ Ճիշտ պատասխանը գրելիս այն ավտոմատ կհաստատվի։"}</p>
-      {incorrect && <p id="course-writing-error" role="status" className="text-sm font-medium text-rose-700 dark:text-rose-300">Դեռ ճիշտ չէ։ Ստուգիր տառերն ու բառերի հերթականությունը։ Կարող ես նորից լսել կամ վերանայել սովորած տարբերակը։</p>}
+      <p id="course-writing-help" className="text-xs text-slate-500">{sentence.writingTask?.helpAm || (sentence.writingTask?.caseSensitive ? 'Մեծատառն ու փոքրատառը գրիր հերթով՝ անգլերեն ստեղնաշարով։' : confirmAnswer ? 'Կարող ես կարճ պատասխանել։ Ավարտելուց հետո սեղմիր «Ստուգել» կամ Enter։' : 'Գրիր անգլերեն տառերով։ Ճիշտ բառը գրելիս այն ավտոմատ կհաստատվի։')}</p>
+      {incorrect && <p id="course-writing-error" role="status" className="text-sm font-medium text-rose-700 dark:text-rose-300">{sentence.writingTask?.meaning ? 'Պատասխանի իմաստը չհաստատվեց։ Ստուգիր՝ ում կամ ինչի մասին է հարցը։ Կարող ես նույն միտքը ավելի պարզ գրել։' : 'Փորձենք նորից։ Նայիր հարցին կամ բացիր հուշումը և ստուգիր բառի գրությունը։'}</p>}
       <div className="flex flex-wrap gap-3">
-        <button type="submit" disabled={!answer.trim()} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Ստուգել գրածը</button>
+        <button type="submit" disabled={!answer.trim() || justCorrect} className="min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white disabled:opacity-40">Ստուգել</button>
       </div>
     </form> : <div className="flex items-center gap-2.5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
       <CheckCircle2 size={20} className="shrink-0" />

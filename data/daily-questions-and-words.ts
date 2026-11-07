@@ -5,7 +5,12 @@ import {
   DailyWordChallengeState,
   DailyQuestionDayState,
 } from '../lib/types';
-import { isAtOrBelowLevel } from '../lib/learning-path';
+import { isAtOrBelowLevel, isCorrectWrittenAnswer } from '../lib/learning-path';
+import { CALENDAR_QUESTIONS } from './calendar-questions';
+import { TRANSLATION_PUZZLES } from './translation-puzzles';
+import { matchesAnswerMeaning } from '../lib/answer-meaning';
+
+export const DAILY_QUESTION_POOL_REVISION = 3;
 
 export const DAILY_WORDS_POOL: DailyWordItem[] = [
   // A1 Level (12 words)
@@ -718,6 +723,8 @@ export const DAILY_WORDS_POOL: DailyWordItem[] = [
 ];
 
 export const DAILY_QUESTIONS_POOL: DailyQuestionItem[] = [
+  ...CALENDAR_QUESTIONS,
+  ...TRANSLATION_PUZZLES,
   // Type 1: Fill in the blank (10 items)
   {
     id: 'dq-fb-1',
@@ -1841,7 +1848,8 @@ export function getDailyQuestionsDayState(
   date: string,
   level: CEFRLevel = 'A1',
   profession?: string,
-  count: number = 10
+  count: number = 10,
+  userId: string = 'user-main'
 ): DailyQuestionDayState {
   let seed = 0;
   for (let i = 0; i < date.length; i++) {
@@ -1866,28 +1874,86 @@ export function getDailyQuestionsDayState(
     || levels.indexOf(a) - levels.indexOf(b)
   );
   const selected: DailyQuestionItem[] = [];
+  const target = Math.max(1, Math.min(30, Number.isFinite(count) ? Math.floor(count) : 10));
+  const topics: NonNullable<DailyQuestionItem['topic']>[] = ['days', 'months', 'years', 'puzzles'];
+  const topicOrder = [...topics.slice(seed % topics.length), ...topics.slice(0, seed % topics.length)];
+  // Two rounds guarantee coverage without allowing a large topic pool to
+  // crowd out other topics. Short sessions rotate their first topic daily.
+  for (let round = 0; round < 2 && selected.length < target; round++) {
+    for (const topic of topicOrder) {
+      if (selected.length >= target) break;
+      const candidateLevel = closestLevels.find(candidate => eligible.some(question => question.level === candidate && question.topic === topic));
+      const pool = eligible.filter(question => question.level === candidateLevel && question.topic === topic && !selected.some(item => item.id === question.id));
+      if (pool.length) selected.push(pool[(seed + round * 17 + selected.length * 11) % pool.length]);
+    }
+  }
   for (const candidateLevel of closestLevels) {
-    const pool = eligible.filter(question => question.level === candidateLevel);
-    while (selected.length < count && pool.length > 0) {
+    const pool = eligible.filter(question => question.level === candidateLevel && !question.topic);
+    while (selected.length < target && pool.length > 0) {
       const idx = (seed + selected.length * 11) % pool.length;
       selected.push(pool[idx]);
       pool.splice(idx, 1);
     }
-    if (selected.length >= count) break;
+    if (selected.length >= target) break;
+  }
+  for (const candidateLevel of closestLevels) {
+    const pool = eligible.filter(question => question.level === candidateLevel && !selected.some(item => item.id === question.id));
+    while (selected.length < target && pool.length) {
+      const index = (seed + selected.length * 11) % pool.length;
+      selected.push(pool.splice(index, 1)[0]);
+    }
   }
 
   return {
     id: `dq-${date}`,
-    userId: 'user-main',
+    userId,
+    poolRevision: DAILY_QUESTION_POOL_REVISION,
     date,
     level,
     totalQuestions: selected.length,
     currentIndex: 0,
     isCompleted: false,
     score: 0,
-    questions: selected,
+    // Restore grading rules from the trusted content pool by ID. Do not copy
+    // the large year-alias table into every learner's persisted snapshot.
+    questions: selected.map(({meaning, ...question}) => question),
     answers: [],
     updatedAt: Date.now(),
   };
+}
+
+export function evaluateDailyQuestionAnswer(question: DailyQuestionItem, answer: string): boolean {
+  const canonical = DAILY_QUESTIONS_POOL.find(item => item.id === question.id);
+  if (canonical?.meaning) return matchesAnswerMeaning(canonical.meaning, answer);
+  const source = canonical || question;
+  const alternatives = source.acceptableAnswers || [];
+  const fullAnswers = source.type === 'fill-blank' && source.questionEn.includes('___')
+    ? [source.correctAnswer, ...alternatives].map(value => source.questionEn.replace(/___+/g, value)) : [];
+  return isCorrectWrittenAnswer({id: source.id, english: source.correctAnswer, pronunciation: '', armenian: source.questionAm,
+    writingTask: {promptAm: source.questionAm, acceptedAnswers: [...alternatives, ...fullAnswers]},
+  }, answer);
+}
+
+export function restoreDailyQuestionsDayState(
+  saved: DailyQuestionDayState | undefined, date: string, level: CEFRLevel,
+  profession: string | undefined, userId: string, count = 10,
+): DailyQuestionDayState {
+  const fresh = getDailyQuestionsDayState(date, level, profession, count, userId);
+  if (!saved || saved.date !== date || !Array.isArray(saved.questions) || !saved.questions.length ||
+    (saved.userId && saved.userId !== userId && saved.userId !== 'user-main') ||
+    (saved.level && saved.level !== level) || saved.questions.some(question => !isAtOrBelowLevel(question.level, level))) return fresh;
+  // Finished work remains finished. The new selection is available tomorrow,
+  // or through the existing explicit "Start again" action.
+  if (saved.isCompleted || saved.completed || saved.poolRevision === DAILY_QUESTION_POOL_REVISION) return {...saved, userId, poolRevision: DAILY_QUESTION_POOL_REVISION};
+  const answers = Array.isArray(saved.answers) ? saved.answers : [];
+  const answeredIds = new Set(answers.map(answer => answer.questionId));
+  const index = Math.min(saved.questions.length, Math.max(0, saved.currentIndex ?? saved.currentQuestionIndex ?? 0));
+  const completedQuestions = saved.questions.filter((question, position) => position < index || answeredIds.has(question.id));
+  const keptIds = new Set(completedQuestions.map(question => question.id));
+  const questions = [...completedQuestions, ...fresh.questions.filter(question => !keptIds.has(question.id))]
+    .slice(0, Math.max(count, completedQuestions.length));
+  return {...saved, userId, level, poolRevision: DAILY_QUESTION_POOL_REVISION, questions, answers,
+    totalQuestions: questions.length, currentIndex: completedQuestions.length,
+    isCompleted: completedQuestions.length >= questions.length, updatedAt: Date.now()};
 }
 

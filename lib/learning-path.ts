@@ -1,18 +1,27 @@
 import { LESSONS_DATA } from '../data/lessons';
 import { A1_CHAPTERS, A1_FINAL_QUESTIONS, getA1Chapter } from '../data/a1-course';
 import type { CEFRLevel, LessonItem, LessonSentence, UserProgressData } from './types';
+import { ageMeaning, matchesAnswerMeaning } from './answer-meaning';
 
 export const COURSE_LEVELS: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-export const CURRENT_CURRICULUM_REVISION = 2;
+export const CURRENT_CURRICULUM_REVISION = 3;
 export const isAtOrBelowLevel = (level: CEFRLevel, maximum: CEFRLevel) =>
   COURSE_LEVELS.indexOf(level) >= 0 && COURSE_LEVELS.indexOf(level) <= COURSE_LEVELS.indexOf(maximum);
 
-// Exact spelling and word order, with harmless formatting differences allowed.
+// Personal replies and short answers need an explicit submit: typing "11" must
+// not accept the first "1", and "Anna" must not interrupt "Anna is ...".
+export const needsAnswerConfirmation = (sentence: LessonSentence) => Boolean(sentence.writingTask?.answerMode || sentence.writingTask?.meaning);
+
+// Match the task's intent; spelling exercises still require the target word.
 export function isCorrectWrittenAnswer(sentence: LessonSentence, answer: string): boolean {
+  if (sentence.writingTask?.meaning) return matchesAnswerMeaning(sentence.writingTask.meaning, answer);
+  if (sentence.writingTask?.answerMode === 'personal-age') return matchesAnswerMeaning(ageMeaning(), answer);
   const normalize = (value: string) => {
-    const text = value.normalize('NFKC').replace(/[’‘]/g, "'")
+    const text = value.normalize('NFKC').replace(/[’‘]/g, "'").replace(/,/g, '')
       .trim().replace(/[.!?]+$/g, '').replace(/[-‐‑]/g, ' ').replace(/\s+/g, ' ').trim();
-    return sentence.writingTask?.caseSensitive ? text : text.toLowerCase();
+    return sentence.writingTask?.caseSensitive ? text : text.toLowerCase()
+      .replace(/\bi'm\b/g, 'i am').replace(/\bisn't\b/g, 'is not')
+      .replace(/\baren't\b/g, 'are not').replace(/\bdon't\b/g, 'do not');
   };
   const actual = normalize(answer);
   return actual.length > 0 && [sentence.english, ...(sentence.writingTask?.acceptedAnswers || [])]
@@ -82,7 +91,7 @@ export function normalizeLearningPath(progress: UserProgressData): UserProgressD
   const sameUser = saved?.userId === progress.profile.id;
   let entryLevel: CEFRLevel = sameUser && saved && COURSE_LEVELS.includes(saved.entryLevel)
     ? saved.entryLevel : COURSE_LEVELS.includes(progress.level) ? progress.level : 'A1';
-  // Keep a previously earned level during the one-time writing-check migration.
+  // Keep a previously earned level when curriculum requirements change.
   // Multiple-choice history remains stored, but does not count as a written answer.
   if (sameUser && saved && (saved.writtenSentenceIds === undefined || saved.readingAnswerIds === undefined || saved.curriculumRevision !== CURRENT_CURRICULUM_REVISION) &&
     COURSE_LEVELS.includes(progress.level) && isAtOrBelowLevel(entryLevel, progress.level)) {

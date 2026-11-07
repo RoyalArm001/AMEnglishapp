@@ -1344,6 +1344,7 @@ export default function HomePage() {
 
           {activeTab === 'Daily Questions' && (
             <DailyQuestionsView
+              key={`${progress.profile.id}-${progress.level}-${getTodayDateString(progress.settings?.timezone)}`}
               userProgress={progress}
               onSaveProgress={(upd) => updateAndPersist(() => upd)}
               onNavigateTab={(tab, subId, step) => {

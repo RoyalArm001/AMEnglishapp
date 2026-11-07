@@ -5,6 +5,11 @@ function step(id: string, english: string, pronunciation: string, armenian: stri
   return {id: `intl-${id}`, english, pronunciation, armenian, grammarNoteAm: note,
     writingTask: {promptAm: `Գրիր սովորած տարբերակը անգլերեն՝ «${armenian}»։`, acceptedAnswers: alternatives}};
 }
+function fill(id: string, english: string, pronunciation: string, armenian: string, promptAm: string, answer: string): LessonSentence {
+  return {...step(id, english, pronunciation, armenian), writingTask: {
+    promptAm, acceptedAnswers: [answer], answerMode: 'short-answer', helpAm: 'Գրիր միայն պակասող բառը։ Ամբողջ նախադասությունը գրել պարտադիր չէ։',
+  }};
+}
 
 export const INTERNATIONAL_LESSONS: LessonItem[] = [
   {
@@ -61,28 +66,28 @@ export const INTERNATIONAL_LESSONS: LessonItem[] = [
     id: 'intl-be-questions', categoryId: 'questions-answers', order: -90.75, level: 'A1', estimatedMinutes: 6,
     titleAm: 'Ես եմ, դո՞ւ ես․ հարց ու պատասխան', titleEn: 'Questions with be', descriptionAm: 'Պարզ հարցեր՝ am, is, are բայաձևերով։',
     outcomeAm: 'Կկարողանաս պարզ հարց տալ և պատասխանել այո կամ ոչ։', sourceIds: ['pcc-be'],
-    grammarTipAm: 'You are → Are you? She is → Is she? Կարճ պատասխաններում պահում ենք բայը՝ Yes, I am / No, I am not։',
+    grammarTipAm: 'You are → Are you? Հարցում are-ը տեղափոխվում է սկիզբ։ Այս դասում լրացրու միայն պակասող բառը։',
     sentences: [
-      step('are-you', 'Are you a student?', 'Ար յու ը սթյուդընթ՞', 'Դու ուսանո՞ղ ես։'),
-      step('yes-i-am', 'Yes, I am.', 'Յես այ էմ։', 'Այո, ես եմ։', undefined, ['Yes I am.']),
-      step('no-i-am', 'No, I am not.', 'Նոու այ էմ նոթ։', 'Ոչ, ես չեմ։', undefined, ["No, I'm not.", 'No I am not', "No I'm not"]),
-      step('is-she', 'Is she a teacher?', 'Իզ շի ը թիչըր՞', 'Նա ուսուցի՞չ է։'),
-      step('yes-she', 'Yes, she is.', 'Յես շի իզ։', 'Այո, նա է։', undefined, ['Yes she is.']),
-      step('no-she', 'No, she is not.', 'Նոու շի իզ նոթ։', 'Ոչ, նա չէ։', undefined, ["No, she isn't.", 'No she is not', "No she isn't"]),
+      fill('are-you', 'Are you a student?', 'Ար յու ը սթյուդընթ՞', 'Դու ուսանո՞ղ ես։', 'Լրացրու՝ ___ you a student?', 'are'),
+      fill('yes-i-am', 'Yes, I am.', 'Յես այ էմ։', 'Այո, ես եմ։', 'Լրացրու՝ Yes, I ___.', 'am'),
+      fill('no-i-am', 'No, I am not.', 'Նոու այ էմ նոթ։', 'Ոչ, ես չեմ։', 'Լրացրու՝ No, I am ___.', 'not'),
+      fill('is-she', 'Is she a teacher?', 'Իզ շի ը թիչըր՞', 'Նա ուսուցի՞չ է։', 'Լրացրու՝ ___ she a teacher?', 'is'),
+      fill('yes-she', 'Yes, she is.', 'Յես շի իզ։', 'Այո, նա է։', 'Լրացրու՝ Yes, she ___.', 'is'),
+      fill('no-she', 'No, she is not.', 'Նոու շի իզ նոթ։', 'Ոչ, նա չէ։', 'Լրացրու՝ No, she is ___.', 'not'),
     ],
   },
   {
     id: 'intl-have', categoryId: 'grammar-basics', order: -90.5, level: 'A1', estimatedMinutes: 6,
     titleAm: 'Ինչ ունեմ ես', titleEn: 'Have and has', descriptionAm: 'Խոսիր քո և ուրիշների ունեցած իրերի մասին։',
     outcomeAm: 'Կկարողանաս ասել՝ ինչ ունես, և հարցնել ուրիշին։', sourceIds: ['pcc-have'],
-    grammarTipAm: 'I/you/we/they have, բայց he/she/it has։ Հարցի համար՝ Do you have…? Բացասումը՝ I do not have… կամ I don’t have…։',
+    grammarTipAm: 'I have = ես ունեմ։ He has / She has = նա ունի։ Նախ կարդա օրինակը, հետո լրացրու մեկ բառ։',
     sentences: [
-      step('i-have', 'I have a book.', 'Այ հեվ ը բուք։', 'Ես գիրք ունեմ։'),
-      step('you-have', 'You have a pen.', 'Յու հեվ ը փեն։', 'Դու գրիչ ունես։'),
-      step('he-has', 'He has a dog.', 'Հի հեզ ը դոգ։', 'Նա շուն ունի (արական)։'),
-      step('she-has', 'She has a cat.', 'Շի հեզ ը քեթ։', 'Նա կատու ունի (իգական)։'),
-      step('no-car', 'I do not have a car.', 'Այ դու նոթ հեվ ը քար։', 'Ես մեքենա չունեմ։', undefined, ["I don't have a car."]),
-      step('have-question', 'Do you have a book?', 'Դու յու հեվ ը բուք՞', 'Դու գիրք ունե՞ս։'),
+      fill('i-have', 'I have a book.', 'Այ հեվ ը բուք։', 'Ես գիրք ունեմ։', 'Լրացրու՝ I ___ a book.', 'have'),
+      fill('you-have', 'You have a pen.', 'Յու հեվ ը փեն։', 'Դու գրիչ ունես։', 'Լրացրու՝ You have a ___. Դու գրիչ ունես։', 'pen'),
+      fill('he-has', 'He has a dog.', 'Հի հեզ ը դոգ։', 'Նա շուն ունի (արական)։', 'Լրացրու՝ He ___ a dog.', 'has'),
+      fill('she-has', 'She has a cat.', 'Շի հեզ ը քեթ։', 'Նա կատու ունի (իգական)։', 'Լրացրու՝ She has a ___. Նա կատու ունի։', 'cat'),
+      fill('no-car', 'I do not have a car.', 'Այ դու նոթ հեվ ը քար։', 'Ես մեքենա չունեմ։', 'Լրացրու՝ I do ___ have a car.', 'not'),
+      fill('have-question', 'Do you have a book?', 'Դու յու հեվ ը բուք՞', 'Դու գիրք ունե՞ս։', 'Լրացրու՝ Do you ___ a book?', 'have'),
     ],
   },
   {

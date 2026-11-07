@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   HelpCircle,
   CheckCircle2,
@@ -19,11 +19,13 @@ import {
   DailyQuestionDayState,
   DailyQuestionAnswerRecord,
 } from '@/lib/types';
-import { getDailyQuestionsDayState } from '@/data/daily-questions-and-words';
-import { isAtOrBelowLevel } from '../lib/learning-path';
+import { DAILY_QUESTION_POOL_REVISION, evaluateDailyQuestionAnswer, getDailyQuestionsDayState, restoreDailyQuestionsDayState } from '@/data/daily-questions-and-words';
+import { CALENDAR_TOPIC_LABELS } from '@/data/calendar-questions';
 import { speakEnglishText, startSpeechRecognition } from '@/lib/speech';
 import { setPageMemory } from '@/lib/page-memory';
 import { getTodayDateString, recordLearningAttempt } from '@/lib/storage';
+
+const TOPIC_LABELS = {...CALENDAR_TOPIC_LABELS, puzzles: 'Հանելուկ և թարգմանություն'};
 
 interface DailyQuestionsViewProps {
   userProgress: UserProgressData;
@@ -41,28 +43,18 @@ export default function DailyQuestionsView({
   const todayStr = getTodayDateString(userProgress.settings?.timezone);
 
   // Restore or generate day state
-  const [dayState, setDayState] = useState<DailyQuestionDayState>(() => {
-    const saved = userProgress.dailyQuestionsState;
-    if (
-      saved && saved.date === todayStr && Array.isArray(saved.questions) &&
-      (saved.level === userProgress.level || (!saved.level && saved.questions.every(question => question.level === userProgress.level))) &&
-      saved.questions.every(question => isAtOrBelowLevel(question.level, userProgress.level))
-    ) {
-      return saved;
-    }
-    return getDailyQuestionsDayState(
-      todayStr,
-      userProgress.level,
-      userProgress.profile?.profession,
-      10
-    );
-  });
+  const [dayState, setDayState] = useState<DailyQuestionDayState>(() => restoreDailyQuestionsDayState(
+    userProgress.dailyQuestionsState, todayStr, userProgress.level,
+    userProgress.profile?.profession, userProgress.profile.id, 10,
+  ));
+  const initialized = useRef(false);
 
   const [currentIndex, setCurrentIndex] = useState<number>(() => {
     if (
       typeof initialStep === 'number' &&
       initialStep >= 0 &&
-      initialStep < dayState.questions.length
+      initialStep < dayState.questions.length &&
+      initialStep === (dayState.currentIndex ?? 0)
     ) {
       return initialStep;
     }
@@ -75,9 +67,20 @@ export default function DailyQuestionsView({
   const [stopRecordingFn, setStopRecordingFn] = useState<(() => void) | null>(null);
   const [showResult, setShowResult] = useState<DailyQuestionAnswerRecord | null>(null);
   const [viewHistoryMode, setViewHistoryMode] = useState(false);
+  const [hintShown, setHintShown] = useState(false);
 
   const currentQ = dayState.questions[currentIndex];
   const isFinished = dayState.isCompleted || currentIndex >= dayState.questions.length;
+
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+    const saved = userProgress.dailyQuestionsState;
+    if (saved?.date === todayStr && saved.level === userProgress.level && saved.userId === userProgress.profile.id && saved.poolRevision === DAILY_QUESTION_POOL_REVISION) return;
+    const history = {...userProgress.dailyQuestionsHistory};
+    if (saved?.date && saved.date !== todayStr) history[saved.date] = saved;
+    onSaveProgress({...userProgress, dailyQuestionsState: dayState, dailyQuestionsHistory: history});
+  }, [dayState, onSaveProgress, todayStr, userProgress]);
 
   // Sync page memory with URL query
   useEffect(() => {
@@ -92,6 +95,7 @@ export default function DailyQuestionsView({
     setUserInput('');
     setSelectedOption(null);
     setShowResult(null);
+    setHintShown(false);
   }, [currentIndex]);
 
   const handlePlayAudio = (text: string) => {
@@ -135,20 +139,10 @@ export default function DailyQuestionsView({
   const handleSubmitAnswer = () => {
     if (!currentQ || showResult) return;
 
-    let submittedText = (selectedOption !== null ? selectedOption : userInput).trim();
+    const submittedText = (selectedOption !== null ? selectedOption : userInput).trim();
     if (!submittedText) return;
 
-    const lowerSub = submittedText.toLowerCase();
-    const lowerCorrect = currentQ.correctAnswer.toLowerCase();
-    const acceptable = (currentQ.acceptableAnswers || []).map((a) => a.toLowerCase());
-    const requiredKeywords = (currentQ.requiredKeywords || []).map((k) => k.toLowerCase());
-
-    let isCorrect = lowerSub === lowerCorrect || acceptable.includes(lowerSub);
-
-    // If answer contains all required keywords (e.g. for free-form answering)
-    if (!isCorrect && requiredKeywords.length > 0) {
-      isCorrect = requiredKeywords.every((kw) => lowerSub.includes(kw));
-    }
+    const isCorrect = evaluateDailyQuestionAnswer(currentQ, submittedText);
 
     const answerRecord: DailyQuestionAnswerRecord = {
       questionId: currentQ.id,
@@ -210,12 +204,19 @@ export default function DailyQuestionsView({
       todayStr,
       userProgress.level,
       userProgress.profile?.profession,
-      dayState.totalQuestions
+      dayState.totalQuestions,
+      userProgress.profile.id
     );
     setDayState(fresh);
     setCurrentIndex(0);
     setShowResult(null);
     setViewHistoryMode(false);
+    setUserInput('');
+    setSelectedOption(null);
+    setHintShown(false);
+    onSaveProgress({...userProgress, dailyQuestionsState: fresh,
+      dailyQuestionsHistory: {...userProgress.dailyQuestionsHistory, [dayState.date]: dayState},
+    });
   };
 
   return (
@@ -256,7 +257,7 @@ export default function DailyQuestionsView({
           ) : (
             <div className="space-y-3">
               {dayState.answers.map((a, idx) => {
-                const q = dayState.questions[idx];
+                const q = dayState.questions.find(question => question.id === a.questionId);
                 return (
                   <div
                     key={idx}
@@ -336,6 +337,7 @@ export default function DailyQuestionsView({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
               Հարց {currentIndex + 1} / {dayState.totalQuestions} ({currentQ?.level})
+              {currentQ?.topic && <span className="mt-1 block normal-case text-slate-300">{TOPIC_LABELS[currentQ.topic]}</span>}
             </span>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-emerald-400">
@@ -353,13 +355,14 @@ export default function DailyQuestionsView({
 
           {/* Question Prompt */}
           <div className="bg-slate-950/70 rounded-2xl border border-slate-800 p-5 space-y-2">
-            <div className="text-lg sm:text-xl font-bold text-white">
+            {currentQ?.puzzleKind && <p className="text-xs font-semibold text-amber-300">{currentQ.puzzleKind === 'word' ? 'Գուշակիր բառը և գրիր անգլերեն' : 'Փոքր իրավիճակ․ թարգմանիր անգլերեն'}</p>}
+            <div lang="en" data-learning-text="english" className="break-words text-lg sm:text-xl font-bold text-white">
               {currentQ?.questionEn}
             </div>
-            <div className="text-xs text-indigo-300">
+            {currentQ?.questionPronunciation && <div data-learning-text="pronunciation" className="text-xs text-indigo-300">
               [{currentQ?.questionPronunciation}]
-            </div>
-            <div className="text-xs text-slate-400 pt-1 border-t border-slate-800/80">
+            </div>}
+            <div data-learning-text="armenian" className="break-words text-sm text-slate-300 pt-1 border-t border-slate-800/80">
               {currentQ?.questionAm}
             </div>
           </div>
@@ -391,6 +394,8 @@ export default function DailyQuestionsView({
                   <div className="relative">
                     <input
                       type="text"
+                      aria-label="Քո պատասխանը"
+                      maxLength={500}
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
                       onKeyDown={(e) => {
@@ -412,13 +417,18 @@ export default function DailyQuestionsView({
                       {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                     </button>
                   </div>
-                  {currentQ?.hintAm && (
-                    <p className="text-xs text-slate-500 italic">
-                      Հուշում․ {currentQ.hintAm}
-                    </p>
-                  )}
+                  {currentQ?.topic && <p className="text-xs text-slate-400">Պատասխանիր կարճ կամ երկար՝ քո բառերով։ Օրինակը կրկնել պետք չէ։</p>}
                 </div>
               )}
+
+              {currentQ?.hintAm && <div className="space-y-2">
+                <button type="button" aria-expanded={hintShown} aria-controls="daily-question-hint"
+                  onClick={() => setHintShown(value => !value)}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-amber-500/30 px-3 py-2 text-sm text-amber-200 hover:bg-amber-500/10">
+                  <HelpCircle size={17} />{hintShown ? 'Թաքցնել հուշումը' : 'Փոքր հուշում'}
+                </button>
+                {hintShown && <p id="daily-question-hint" role="status" className="rounded-xl bg-amber-500/10 p-3 text-sm leading-relaxed text-amber-100">{currentQ.hintAm}</p>}
+              </div>}
 
               {/* Submit button */}
               <button

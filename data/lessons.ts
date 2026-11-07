@@ -1,4 +1,6 @@
 import { ADDITIONAL_LESSONS } from './additional-lessons';
+import { BEGINNER_LESSONS } from './beginner-lessons';
+import { withAnswerMeaning } from './answer-meanings';
 import { FOUNDATION_LESSONS } from './foundation-lessons';
 import { INTERNATIONAL_LESSONS } from './international-lessons';
 import { LessonCategoryMeta, LessonItem, LessonSentence } from '../lib/types';
@@ -135,194 +137,11 @@ export const LESSON_CATEGORIES: LessonCategoryMeta[] = [
   },
 ];
 
-export const LESSONS_DATA: LessonItem[] = [
+const BASE_LESSONS: LessonItem[] = [
   ...FOUNDATION_LESSONS,
   ...INTERNATIONAL_LESSONS,
-  // 1. Days of the Week (2 lessons)
-  {
-    id: 'lesson-1-days',
-    categoryId: 'days-of-week',
-    order: 1,
-    titleAm: 'Շաբաթվա օրերը և աշխատանքային շաբաթը',
-    titleEn: 'Days of the Week & Work Schedule',
-    descriptionAm: 'Սովորիր շաբաթվա 7 օրերը և ինչպես խոսել աշխատանքային օրերի մասին (`on Monday`, `from Monday to Friday`)։',
-    level: 'A1',
-    estimatedMinutes: 8,
-    grammarTipAm: 'Շաբաթվա օրերի հետ միշտ օգտագործվում է «on» նախդիրը (օրինակ՝ on Monday — երկուշաբթի օրը)։',
-    sentences: [
-      {
-        id: 's-1',
-        english: 'I study from Monday to Friday.',
-        pronunciation: 'Այ սթադի ֆրոմ Մանդեյ թու Ֆրայդեյ։',
-        armenian: 'Ես սովորում եմ երկուշաբթիից ուրբաթ։',
-        grammarNoteAm: 'from ... to ... = ...-ից մինչև ...',
-      },
-      {
-        id: 's-2',
-        english: 'On Tuesday morning, we have a short team meeting.',
-        pronunciation: 'Օն Թյուզդեյ մորնինգ, ուի հեվ ը շորթ թիմ միթինգ։',
-        armenian: 'Երեքշաբթի առավոտյան մենք ունենում ենք կարճ թիմային հանդիպում։',
-      },
-      {
-        id: 's-3',
-        english: 'Wednesday is the busiest day of our week.',
-        pronunciation: 'Ուենզդեյ իզ դը բիզիեսթ դեյ օվ աուըր ուիք։',
-        armenian: 'Չորեքշաբթին մեր շաբաթվա ամենածանրաբեռնված օրն է։',
-        grammarNoteAm: 'Ուշադրություն դարձրու՝ Wednesday-ում «d» տառը չի կարդացվում (Ուենզդեյ)։',
-      },
-      {
-        id: 's-4',
-        english: 'I check the server backups every Thursday afternoon.',
-        pronunciation: 'Այ չեք դը սըրվըր բեքափս էվրի Թըրզդեյ աֆթըրնուն։',
-        armenian: 'Ես ստուգում եմ սերվերի պահուստային պատճենները ամեն հինգշաբթի կեսօրից հետո։',
-      },
-      {
-        id: 's-5',
-        english: 'I do not work on Saturday and Sunday because it is the weekend.',
-        pronunciation: 'Այ դու նոթ ուըրք օն Սեթըրդեյ ընդ Սանդեյ բիքոզ իթ իզ դը ուիքենդ։',
-        armenian: 'Ես չեմ աշխատում շաբաթ և կիրակի օրերին, քանի որ հանգստյան օրեր են։',
-      },
-    ],
-  },
-  {
-    id: 'lesson-2-days-plans',
-    categoryId: 'days-of-week',
-    order: 2,
-    titleAm: 'Շաբաթական պլանավորում և սովորություններ',
-    titleEn: 'Weekly Habits & Plans',
-    descriptionAm: 'Ինչպես նկարագրել կրկնվող գործողությունները շաբաթվա տարբեր օրերին։',
-    level: 'A1',
-    estimatedMinutes: 7,
-    grammarTipAm: '«Every Monday» կամ «On Mondays» նշանակում է «ամեն երկուշաբթի»։',
-    sentences: [
-      {
-        id: 's-6',
-        english: 'What days do you work from the office?',
-        pronunciation: 'Ուաթ դեյզ դու յու ուըրք ֆրոմ դի օֆիս։',
-        armenian: 'Շաբաթվա ո՞ր օրերին եք աշխատում գրասենյակից։',
-      },
-      {
-        id: 's-7',
-        english: 'I work remotely on Mondays and Fridays.',
-        pronunciation: 'Այ ուըրք րիմոութլի օն Մանդեյզ ընդ Ֆրայդեյզ։',
-        armenian: 'Ես հեռավար եմ աշխատում երկուշաբթի և ուրբաթ օրերին։',
-      },
-      {
-        id: 's-8',
-        english: 'We deploy new software updates on Wednesday night.',
-        pronunciation: 'Ուի դիփլոյ նյու սոֆթուեըր ափդեյթս օն Ուենզդեյ նայթ։',
-        armenian: 'Մենք տեղադրում ենք ծրագրային նոր թարմացումները չորեքշաբթի գիշերը։',
-      },
-      {
-        id: 's-9',
-        english: 'Let us schedule our call for Thursday morning.',
-        pronunciation: 'Լեթ աս սքեջուլ աուըր քոլ ֆոր Թըրզդեյ մորնինգ։',
-        armenian: 'Եկեք մեր զանգը պլանավորենք հինգշաբթի առավոտյան համար։',
-      },
-      {
-        id: 's-10',
-        english: 'On Sunday evening, I prepare my task list for the next week.',
-        pronunciation: 'Օն Սանդեյ իվնինգ, այ փրիփեըր մայ թասք լիսթ ֆոր դը նեքսթ ուիք։',
-        armenian: 'Կիրակի երեկոյան ես պատրաստում եմ հաջորդ շաբաթվա իմ առաջադրանքների ցանկը։',
-      },
-    ],
-  },
-
-  // 2. Months of the Year
-  {
-    id: 'lesson-3-months',
-    categoryId: 'months-of-year',
-    order: 3,
-    titleAm: 'Տարվա 12 ամիսները և եղանակները',
-    titleEn: 'Months of the Year & Seasons',
-    descriptionAm: 'Ամիսների անվանումները և նախագծերի ժամկետների նշումը (`in January`, `in October`)։',
-    level: 'A1',
-    estimatedMinutes: 9,
-    grammarTipAm: 'Ամիսների և տարվա եղանակների հետ օգտագործվում է «in» նախդիրը (օր.՝ in May, in winter)։',
-    sentences: [
-      {
-        id: 's-11',
-        english: 'Our company started the new cloud project in January.',
-        pronunciation: 'Աուըր քամփընի սթարթիդ դը նյու քլաուդ փրոջեքթ ին Ջենյուերի։',
-        armenian: 'Մեր ընկերությունը սկսեց նոր ամպային նախագիծը հունվարին։',
-      },
-      {
-        id: 's-12',
-        english: 'In February and March, we upgraded all office computers.',
-        pronunciation: 'Ին Ֆեբրուերի ընդ Մարչ, ուի ափգրեյդիդ օլ օֆիս քըմփյութըրզ։',
-        armenian: 'Փետրվարին և մարտին մենք արդիականացրինք գրասենյակի բոլոր համակարգիչները։',
-      },
-      {
-        id: 's-13',
-        english: 'The weather becomes warm in April and May.',
-        pronunciation: 'Դը ուեդըր բիքամզ ուորմ ին Էյփրիլ ընդ Մեյ։',
-        armenian: 'Եղանակը տաքանում է ապրիլին և մայիսին։',
-      },
-      {
-        id: 's-14',
-        english: 'Many colleagues take their summer vacation in July or August.',
-        pronunciation: 'Մենի քոլիգզ թեյք դեըր սամըր վըքեյշըն ին Ջուլայ օր Օգըսթ։',
-        armenian: 'Շատ գործընկերներ իրենց ամառային արձակուրդը վերցնում են հուլիսին կամ օգոստոսին։',
-      },
-      {
-        id: 's-15',
-        english: 'The annual security audit takes place in October and November.',
-        pronunciation: 'Դի էնյուըլ սիքյուրիթի օդիթ թեյքս փլեյս ին Օքթոուբըր ընդ Նոուվեմբըր։',
-        armenian: 'Տարեկան անվտանգության աուդիտը տեղի է ունենում հոկտեմբերին և նոյեմբերին։',
-      },
-      {
-        id: 's-16',
-        english: 'In December, we finish our yearly reports before the holidays.',
-        pronunciation: 'Ին Դիսեմբըր, ուի ֆինիշ աուըր յիրլի րիփորթս բիֆոր դը հոլիդեյզ։',
-        armenian: 'Դեկտեմբերին մենք ավարտում ենք մեր տարեկան հաշվետվությունները տոներից առաջ։',
-      },
-    ],
-  },
-
+  ...BEGINNER_LESSONS,
   // 3. Numbers (0 - 1,000,000) (2 lessons)
-  {
-    id: 'lesson-4-numbers-small',
-    categoryId: 'numbers',
-    order: 4,
-    titleAm: 'Թվեր 0-ից 1,000՝ քանակ, տարիք և սենյակներ',
-    titleEn: 'Numbers 0 to 1,000 in Daily Work',
-    descriptionAm: 'Տասնավորների և հարյուրավորների արտասանության տարբերությունը (15 vs 50, 18 vs 80)։',
-    level: 'A1',
-    estimatedMinutes: 8,
-    grammarTipAm: 'Տասնավորների վերջում շեշտվում է «-teen» (fifteen — 15), իսկ կլոր տասնյակներում՝ առաջին վանկը «-ty» (fifty — 50)։',
-    sentences: [
-      {
-        id: 's-17',
-        english: 'There are fifteen laptops and fifty monitors in the storage room.',
-        pronunciation: 'Դեըր ար ֆիֆթին լեփթոփս ընդ ֆիֆթի մոնիթըրզ ին դը սթորիջ րում։',
-        armenian: 'Պահեստային սենյակում կա տասնհինգ նոութբուք և հիսուն մոնիտոր։',
-      },
-      {
-        id: 's-18',
-        english: 'Our office is on the fourth floor, room four hundred and twelve.',
-        pronunciation: 'Աուըր օֆիս իզ օն դը ֆորթ ֆլոր, րում ֆոր հանդրըդ ընդ թուելվ։',
-        armenian: 'Մեր գրասենյակը չորրորդ հարկում է՝ չորս հարյուր տասներկու սենյակում։',
-      },
-      {
-        id: 's-19',
-        english: 'The download speed is two hundred and fifty megabits per second.',
-        pronunciation: 'Դը դաունլոուդ սփիդ իզ թու հանդրըդ ընդ ֆիֆթի մեգաբիթս փըր սեքընդ։',
-        armenian: 'Ներբեռնման արագությունը երկու հարյուր հիսուն մեգաբիթ է վայրկյանում։',
-      },
-      {
-        id: 's-20',
-        english: 'We resolved eighty-seven support tickets this week.',
-        pronunciation: 'Ուի րիզոլվդ էյթի-սեվըն սըփորթ թիքեթս դիս ուիք։',
-        armenian: 'Այս շաբաթ մենք լուծել ենք ութսունյոթ աջակցության հայտ։',
-      },
-      {
-        id: 's-21',
-        english: 'Zero errors were found during the system check.',
-        pronunciation: 'Զիրոու էրըրզ ուըր ֆաունդ դյուրինգ դը սիսթըմ չեք։',
-        armenian: 'Համակարգի ստուգման ընթացքում զրո սխալ է հայտնաբերվել։',
-      },
-    ],
-  },
   {
     id: 'lesson-5-numbers-large',
     categoryId: 'numbers',
@@ -367,140 +186,9 @@ export const LESSONS_DATA: LessonItem[] = [
     ],
   },
 
-  // 4. Time and Dates
-  {
-    id: 'lesson-6-time-dates',
-    categoryId: 'time-and-dates',
-    order: 6,
-    titleAm: 'Ժամեր, րոպեներ և ամսաթվերի ճիշտ նշում',
-    titleEn: 'Telling Time & Scheduling Dates',
-    descriptionAm: 'Ինչպես ասել ժամը (`at 9:00 AM`, `half past`, `quarter to`) և նշել ամսաթիվը (`on the twenty-ninth of October`)։',
-    level: 'A1',
-    estimatedMinutes: 9,
-    grammarTipAm: 'Ժամերի հետ օգտագործվում է «at» նախդիրը (at 8:30), իսկ կոնկրետ ամսաթվերի հետ՝ «on» (on October 29th)։',
-    sentences: [
-      {
-        id: 's-27',
-        english: 'I usually wake up at seven thirty in the morning.',
-        pronunciation: 'Այ յուժուըլի ուեյք ափ էթ սեվըն թըրթի ին դը մորնինգ։',
-        armenian: 'Ես սովորաբար արթնանում եմ առավոտյան ժամը յոթ անց կեսին։',
-      },
-      {
-        id: 's-28',
-        english: 'My workday starts at nine o’clock and finishes at six o’clock.',
-        pronunciation: 'Մայ ուըրքդեյ սթարթս էթ նայն օքլոք ընդ ֆինիշիզ էթ սիքս օքլոք։',
-        armenian: 'Իմ աշխատանքային օրը սկսվում է ժամը իննին և ավարտվում ժամը վեցին։',
-      },
-      {
-        id: 's-29',
-        english: 'The system maintenance starts at a quarter to midnight.',
-        pronunciation: 'Դը սիսթըմ մեյնթենընս սթարթս էթ ը քուորթըր թու միդնայթ։',
-        armenian: 'Համակարգի տեխնիկական սպասարկումը սկսվում է կեսգիշերից տասնհինգ րոպե պակաս։',
-      },
-      {
-        id: 's-30',
-        english: 'What time is convenient for you to join the video call?',
-        pronunciation: 'Ուաթ թայմ իզ քընվինիընթ ֆոր յու թու ջոյն դը վիդիոու քոլ։',
-        armenian: 'Ո՞ր ժամն է Ձեզ հարմար տեսազանգին միանալու համար։',
-      },
-      {
-        id: 's-31',
-        english: 'The project deadline is on the fifteenth of November.',
-        pronunciation: 'Դը փրոջեքթ դեդլայն իզ օն դը ֆիֆթինթ օվ Նոուվեմբըր։',
-        armenian: 'Նախագծի վերջնաժամկետը նոյեմբերի տասնհինգին է։',
-      },
-    ],
-  },
 
-  // 5. Directions
-  {
-    id: 'lesson-7-directions',
-    categoryId: 'directions',
-    order: 7,
-    titleAm: 'Աջ, ձախ, վերև, ներքև և ուղղություններ',
-    titleEn: 'Directions Inside & Outside the Office',
-    descriptionAm: 'Ինչպես բացատրել ճանապարհը քաղաքում, շենքում կամ էկրանի վրա (`on the top right`, `go straight`, `turn left`)։',
-    level: 'A1',
-    estimatedMinutes: 8,
-    grammarTipAm: 'Էկրանի անկյունների համար օգտագործիր «in the top-right corner» (վերևի աջ անկյունում) կամ «on the left side» (ձախ կողմում)։',
-    sentences: [
-      {
-        id: 's-32',
-        english: 'Go straight ahead and turn left at the second corridor.',
-        pronunciation: 'Գոու սթրեյթ ըհեդ ընդ թըրն լեֆթ էթ դը սեքընդ քորիդոր։',
-        armenian: 'Գնացեք ուղիղ և երկրորդ միջանցքում թեքվեք ձախ։',
-      },
-      {
-        id: 's-33',
-        english: 'The server room is downstairs, on the right side of the elevator.',
-        pronunciation: 'Դը սըրվըր րում իզ դաունսթեըրզ, օն դը րայթ սայդ օվ դի էլիվեյթըր։',
-        armenian: 'Սերվերային սենյակը ներքևի հարկում է՝ վերելակի աջ կողմում։',
-      },
-      {
-        id: 's-34',
-        english: 'Click the settings button in the top-right corner of your screen.',
-        pronunciation: 'Քլիք դը սեթինգզ բաթըն ին դը թոփ-րայթ քորնըր օվ յուր սքրին։',
-        armenian: 'Սեղմեք կարգավորումների կոճակը Ձեր էկրանի վերևի աջ անկյունում։',
-      },
-      {
-        id: 's-35',
-        english: 'Scroll down to the bottom of the page and look at the left menu.',
-        pronunciation: 'Սքրոլ դաուն թու դը բոթըմ օվ դը փեյջ ընդ լուք էթ դը լեֆթ մենյու։',
-        armenian: 'Իջեցրեք էջը մինչև ներքև և նայեք ձախ ընտրացանկին։',
-      },
-      {
-        id: 's-36',
-        english: 'The IT department is upstairs, opposite the conference room.',
-        pronunciation: 'Դի այ թի դիփարթմընթ իզ ափսթեըրզ, օփըզիթ դը քոնֆըրընս րում։',
-        armenian: 'ՏՏ բաժինը վերևի հարկում է՝ նիստերի դահլիճի դիմաց։',
-      },
-    ],
-  },
 
   // 6. Daily Conversations (2 lessons)
-  {
-    id: 'lesson-8-daily-greetings',
-    categoryId: 'daily-conversations',
-    order: 8,
-    titleAm: 'Առօրյա ծանոթություն և քաղաքավարի շփում',
-    titleEn: 'Greetings & Small Talk',
-    descriptionAm: 'Բնական արտահայտություններ ամենօրյա զրույց սկսելու և շարունակելու համար։',
-    level: 'A1',
-    estimatedMinutes: 8,
-    grammarTipAm: '«How is it going?»-ը բնական և ընկերական տարբերակ է «How are you?»-ի փոխարեն։',
-    sentences: [
-      {
-        id: 's-37',
-        english: 'Good morning! How is your day going so far?',
-        pronunciation: 'Գուդ մորնինգ։ Հաու իզ յուր դեյ գոուինգ սոու ֆար։',
-        armenian: 'Բարի առավոտ։ Ինչպե՞ս է անցնում Ձեր օրը մինչ այժմ։',
-      },
-      {
-        id: 's-38',
-        english: 'Everything is going well, thank you for asking.',
-        pronunciation: 'Էվրիթինգ իզ գոուինգ ուել, թենք յու ֆոր ասքինգ։',
-        armenian: 'Ամեն ինչ լավ է ընթանում, շնորհակալություն հարցնելու համար։',
-      },
-      {
-        id: 's-39',
-        english: 'Would you like to grab a cup of coffee during the break?',
-        pronunciation: 'Ուուդ յու լայք թու գրեբ ը քափ օվ քոֆի դյուրինգ դը բրեյք։',
-        armenian: 'Կցանկանայի՞ք մեկ գավաթ սուրճ խմել ընդմիջման ժամանակ։',
-      },
-      {
-        id: 's-40',
-        english: 'Could you please speak a little bit slower?',
-        pronunciation: 'Քուդ յու փլիզ սփիք ը լիթըլ բիթ սլոուըր։',
-        armenian: 'Կարո՞ղ եք, խնդրում եմ, մի փոքր ավելի դանդաղ խոսել։',
-      },
-      {
-        id: 's-41',
-        english: 'It was nice talking to you. Have a great evening!',
-        pronunciation: 'Իթ ուոզ նայս թոքինգ թու յու։ Հեվ ը գրեյթ իվնինգ։',
-        armenian: 'Հաճելի էր Ձեզ հետ զրուցել։ Հիանալի երեկո եմ մաղթում։',
-      },
-    ],
-  },
   {
     id: 'lesson-9-daily-routines',
     categoryId: 'daily-conversations',
@@ -1142,6 +830,10 @@ export const LESSONS_DATA: LessonItem[] = [
   ...PROFESSION_LESSONS,
   ...ADDITIONAL_LESSONS,
 ];
+
+export const LESSONS_DATA: LessonItem[] = BASE_LESSONS.map(lesson => ({
+  ...lesson, sentences: lesson.sentences.map(withAnswerMeaning),
+}));
 
 export const ALL_LESSON_SENTENCES: LessonSentence[] = LESSONS_DATA.flatMap(
   (lesson) => lesson.sentences

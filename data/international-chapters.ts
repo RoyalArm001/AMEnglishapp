@@ -1,13 +1,15 @@
-import type { CourseChapter } from './a1-course';
+import type { CourseChapter, CourseQuestion } from './a1-course';
+import { withAnswerMeaning } from './answer-meanings';
 
 type Line = [english: string, pronunciation: string, armenian: string];
 function reading(lessonId: string, titleAm: string, bookId: string, lines: Line[], checks: [string, string][]): CourseChapter {
   return {lessonId, titleAm, bookId,
     lines: lines.map(([english, pronunciation, armenian]) => ({english, pronunciation, armenian})),
-    questions: checks.map(([promptAm, english], index) => ({
+    questions: checks.map(([promptAm, english], index) => withAnswerMeaning({
       id: `reading-${lessonId}-${index + 1}`, lessonId, promptAm, english,
       armenian: promptAm, pronunciation: '', skill: 'reading',
-    })),
+      writingTask: {promptAm, answerMode: 'short-answer'},
+    } as CourseQuestion)),
   };
 }
 
@@ -35,13 +37,14 @@ export const INTERNATIONAL_CHAPTERS: CourseChapter[] = [
   reading('intl-be-questions', 'Ո՞վ է Աննան', 'numbers-and-me', [
     ['Anna is a teacher.', 'Աննա իզ ը թիչըր։', 'Աննան ուսուցիչ է։'],
     ['Is she a student?', 'Իզ շի ը սթյուդընթ՞', 'Նա ուսանո՞ղ է։'],
-    ['No, she is not. She is a teacher.', 'Նոու շի իզ նոթ։ Շի իզ ը թիչըր։', 'Ոչ։ Նա ուսուցիչ է։'],
+    ['No, she is not.', 'Նոու շի իզ նոթ։', 'Ոչ, նա ուսանող չէ։'],
   ], [['Տեքստով՝ Աննան teacher է, թե student։ Գրիր ճիշտ բառը։', 'teacher'], ['Լրացրու հարցը՝ ___ she a student?', 'Is']]),
   reading('intl-have', 'Գիրքն ու գրիչը', 'numbers-and-me', [
-    ['I have a book and a pen.', 'Այ հեվ ը բուք ընդ ը փեն։', 'Ես գիրք և գրիչ ունեմ։'],
+    ['I have a book.', 'Այ հեվ ը բուք։', 'Ես գիրք ունեմ։'],
+    ['I have a pen.', 'Այ հեվ ը փեն։', 'Ես գրիչ ունեմ։'],
     ['My sister has a cat.', 'Մայ սիսթըր հեզ ը քեթ։', 'Քույրս կատու ունի։'],
     ['I do not have a car.', 'Այ դու նոթ հեվ ը քար։', 'Ես մեքենա չունեմ։'],
-  ], [['Ի՞նչ կենդանի ունի պատմողի քույրը։ Գրիր մեկ անգլերեն բառ։', 'cat'], ['Լրացրու՝ My sister ___ a cat.', 'has']]),
+  ], [['Ի՞նչ կենդանի ունի պատմողի քույրը։', 'cat'], ['Լրացրու՝ My sister ___ a cat.', 'has']]),
   reading('intl-food', 'Թեյ, խնդրում եմ', 'everyday-reading', [
     ['Tea, please. Thank you!', 'Թի փլիզ։ Թենք յու։', 'Թեյ, խնդրում եմ։ Շնորհակալություն։'],
     ['I like apples.', 'Այ լայք էփըլզ։', 'Ես սիրում եմ խնձոր։'],
@@ -52,5 +55,5 @@ export const INTERNATIONAL_CHAPTERS: CourseChapter[] = [
     ['I go to school.', 'Այ գոու թու սքուլ։', 'Ես գնում եմ դպրոց։'],
     ['I read a book. I study English every day.', 'Այ րիդ ը բուք։ Այ սթադի Ինգլիշ էվրի դեյ։', 'Ես գիրք եմ կարդում։ Ամեն օր անգլերեն եմ սովորում։'],
     ['I go to bed.', 'Այ գոու թու բեդ։', 'Ես գնում եմ քնելու։'],
-  ], [['Ո՞ւր է գնում պատմողը նախաճաշից հետո։ Գրիր մեկ բառ։', 'school'], ['Ո՞ր լեզուն է սովորում ամեն օր։', 'English']]),
+  ], [['Ո՞ւր է գնում պատմողը նախաճաշից հետո։', 'school'], ['Ո՞ր լեզուն է սովորում ամեն օր։', 'English']]),
 ];

@@ -2,13 +2,19 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.9.7**
+**English learning for Armenian speakers · v1.12.0**
 
 [Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Տեղադրման և զարգացման ուղեցույց](docs/DEVELOPMENT.md)
 
-Հերթական դասապլան․ A1-ը սկսվում է մեծատառից ու փոքրատառից, «տղա», «աղջիկ» և այլ պարզ բառերից, ապա անցնում թվերին, առաջին նախադասություններին, տարեթվերին ու կարճ զրույցներին։ Սովորիր, լսիր և ինքդ գրիր պատասխանը։ Հաջորդ քայլը բացվում է ճիշտ գրելուց հետո, իսկ մյուս բաժինները՝ ընթացիկ մակարդակի ամբողջ դասապլանն ավարտելուց հետո։
+Օրական հարցաշարում՝ 54 հարց շաբաթվա օրերից, ամիսներից և տարեթվերից, նաև 24 թարգմանական հանելուկ՝ A1–A2 մակարդակների համար։ Նոր 10 հարցանոց շարքում օրերից, ամիսներից, տարեթվերից և հանելուկներից ընտրվում է 2-ական հարց, իսկ մնացած 2-ը՝ այլ հասանելի թեմաներից։ «Փոքր հուշում»-ը բացվում է միայն սեղմելիս։ Օրինակ՝ «Ես էջեր ունեմ, ինձ կարդում են» → book։ Ընտրությունը նույն օրվա ընթացքում կայուն է և փոխվում է ըստ ամսաթվի։ Արդեն ավարտված օրվա արդյունքը չի ջնջվում․ նոր հարցերը կտեսնես հաջորդ օրը կամ «Սկսել նորից» կոճակով։
 
-The guided A1 path starts with uppercase and lowercase letters, simple words, numbers, first sentences, years and short conversations. Study and listen, then type the answer yourself. Each step requires correct writing before you can continue.
+Daily practice includes 54 calendar questions and 24 translation puzzles for A1–A2. Each fresh 10-question session includes two questions each about weekdays, months, years and puzzles, plus two other available questions. Puzzles combine word riddles and short situational translations with an optional hint button. Selection respects the learner's level. Completed sessions remain intact; unfinished sessions keep their answered questions when the pool is updated.
+
+Հերթական դասապլան․ A1-ը սկսվում է մեծատառից ու փոքրատառից, «տղա», «աղջիկ» և այլ պարզ բառերից, ապա անցնում փոքր թվերին ու առաջին զրույցներին։ Տասնյակներն ու տարեթվերը գալիս են ավելի ուշ։ Սովորիր, լսիր և ինքդ գրիր պատասխանը։ Հաջորդ քայլը բացվում է ճիշտ պատասխանելուց հետո, իսկ մյուս բաժինները՝ ընթացիկ մակարդակի ամբողջ դասապլանն ավարտելուց հետո։
+
+The guided A1 path starts with letters, simple words, numbers and short conversations. Everyday lessons use small steps and one-word gaps. Personal age questions accept a number, an English number word or a short sentence (11 / eleven / I'm 11); spelling exercises still require the English word. Tens and years follow the first conversations. Correct answers and completed work remain saved.
+
+Սկսնակի դասերում երկար աշխատանքային օրինակները փոխարինված են պարզ բառերով ու կարճ արտահայտություններով։ Հարցերին կարող ես պատասխանել քո բառերով՝ կարճ կամ երկար։ Տարիքի, քանակի, ժամի և ընթերցանության փաստական հարցերի տեղային ստուգումը հաշվի է առնում հարցի առարկան, պատասխանի արժեքն ու ժխտումը։ Օրինակ՝ «11», «I’m eleven» և «I am eleven years old and I am a student» կարող են նույն կերպ պատասխանել տարիքի հարցին։ Սա ընդհանուր լեզվային AI չէ և չի ճանաչում բոլոր հնարավոր ազատ ձևակերպումները։ Բացթողման կամ ուղղագրության վարժությունում շարունակում է ստուգվել սովորած բառը։ Պատասխանները հաստատվում են «Ստուգել»-ով, որպեսզի մուտքագրումը չընդհատվի։
 
 A1-ի դասերին կցված են HayLingo-ի երեք ուսումնական դասագրքեր՝ 29 գլուխ և 58 ընթերցանության հարց։ Բոլոր դասերից հետո պարտադիր է 33 առաջադրանքով ամփոփիչ աշխատանքը․ միայն դրա ավարտն է բացում A2-ն ու մյուս ուսումնական էջերը։ Գլուխները հասանելի են հենց դասապլանում՝ առանց ընդհանուր գրադարանի բացմանը սպասելու։ Պրոֆիլի չավարտված խմբագրումները պահվում են որպես սևագիր՝ էջից դուրս գալուց և refresh-ից հետո շարունակելու համար։
 
@@ -43,7 +49,7 @@ HayLingo-ն օգնում է անգլերեն սովորել հասկանալի �
 | Բովանդակություն | Ներկա ծավալը |
 | --- | ---: |
 | Դասերի բաժիններ / դասեր | 16 / 50 |
-| Ուսումնական քայլեր՝ տառեր, բառեր և նախադասություններ | 287 |
+| Ուսումնական քայլեր՝ տառեր, բառեր և նախադասություններ | 295 |
 | A1 դասագրքեր / դասերին կցված գլուխներ | 3 / 29 |
 | Ընթերցանության հարցեր / ամփոփիչ առաջադրանքներ | 58 / 33 |
 | Բառաքարտերի բառեր | 210 |

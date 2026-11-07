@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { BookOpen, CheckCircle2, Volume2 } from 'lucide-react';
 import { A1_EXTRA_READING, A1_FINAL_QUESTIONS, A1_FINAL_READING, A1_TEXTBOOKS, getA1Chapter, type CourseQuestion } from '../data/a1-course';
-import { isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete } from '../lib/learning-path';
+import { isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete, needsAnswerConfirmation } from '../lib/learning-path';
 import { useStudyActivity } from '../lib/study-activity';
 import type { LessonItem, UserProgressData } from '../lib/types';
 import LessonSources from './LessonSources';
@@ -86,7 +86,7 @@ function CourseAnswer({question, onAnswer, onSpeak, context}: {question: CourseQ
     setAnswer(val);
     setIncorrect(false);
     // Ավտոմատացում՝ ճիշտ պատասխանի դեպքում ավտոմատ հաստատում
-    if (isCorrectWrittenAnswer(question, val)) {
+    if (!justCorrect && !needsAnswerConfirmation(question) && isCorrectWrittenAnswer(question, val)) {
       study.start();
       setJustCorrect(true);
       onAnswer(val);
@@ -95,7 +95,7 @@ function CourseAnswer({question, onAnswer, onSpeak, context}: {question: CourseQ
 
   return <form className="space-y-3" onSubmit={event => {
     event.preventDefault();
-    if (!answer.trim()) return;
+    if (!answer.trim() || justCorrect) return;
     study.start();
     const correct = isCorrectWrittenAnswer(question, answer);
     setIncorrect(!correct);
@@ -107,6 +107,7 @@ function CourseAnswer({question, onAnswer, onSpeak, context}: {question: CourseQ
     }
   }}>
     <label htmlFor={`answer-${question.id}`} className="block font-semibold">{audioFallback ? question.writingTask?.promptAm || `Անգլերեն գրիր՝ «${question.armenian}»։` : question.promptAm}</label>
+    {needsAnswerConfirmation(question) && <p className="text-sm text-slate-500">{question.writingTask?.helpAm || 'Կարճ պատասխանը բավական է։ Գրիր ու սեղմիր «Ստուգել և շարունակել»։'}</p>}
     {audioFallback && <p className="text-sm text-slate-500">Այս բրաուզերում ձայնը հասանելի չէ․ կատարիր գրավոր տարբերակը։</p>}
     {question.skill === 'listening' && speechAvailable && <button type="button" onClick={() => {study.start(); onSpeak(question.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2"><Volume2 size={18} />Լսել առաջադրանքը</button>}
     <div className="relative">
@@ -127,11 +128,11 @@ function CourseAnswer({question, onAnswer, onSpeak, context}: {question: CourseQ
         </span>
       )}
     </div>
-    {incorrect && <p id={`error-${question.id}`} role="status" className="text-sm text-rose-700 dark:text-rose-300">Դեռ ճիշտ չէ։ Վերանայիր հարցը, ստուգիր գրությունը և փորձիր կրկին։</p>}
+    {incorrect && <p id={`error-${question.id}`} role="status" className="text-sm text-rose-700 dark:text-rose-300">{question.writingTask?.meaning ? 'Պատասխանի իմաստը չհաստատվեց։ Վերանայիր հարցը կամ նույն միտքը ավելի պարզ գրիր։' : 'Դեռ ճիշտ չէ։ Վերանայիր հարցը, ստուգիր գրությունը և փորձիր կրկին։'}</p>}
     {wrongAttempts >= 3 && context && <div role="status" className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm dark:border-amber-800 dark:bg-amber-950">
       <p className="font-semibold">Վերանայիր այս առաջադրանքի տեքստը․</p>
       <p lang="en" data-learning-text="english" className="leading-relaxed">{context}</p>
     </div>}
-    <button type="submit" disabled={!answer.trim()} className={buttonClass}>Ստուգել և շարունակել</button>
+    <button type="submit" disabled={!answer.trim() || justCorrect} className={buttonClass}>Ստուգել և շարունակել</button>
   </form>;
 }

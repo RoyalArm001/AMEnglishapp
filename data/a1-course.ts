@@ -1,5 +1,6 @@
 import { LESSONS_DATA } from './lessons';
 import { INTERNATIONAL_CHAPTERS } from './international-chapters';
+import { withAnswerMeaning } from './answer-meanings';
 import type { LessonSentence } from '../lib/types';
 
 export interface CourseQuestion extends LessonSentence {
@@ -26,11 +27,11 @@ type Check = [prompt: string, answer: string, alternatives?: string[]];
 function chapter(lessonId: string, titleAm: string, bookId: string, lines: Line[], checks: Check[]): CourseChapter {
   return {lessonId, titleAm, bookId,
     lines: lines.map(([english, pronunciation, armenian]) => ({english, pronunciation, armenian})),
-    questions: checks.map(([promptAm, english, alternatives], index) => ({
+    questions: checks.map(([promptAm, english, alternatives], index) => withAnswerMeaning({
       id: `reading-${lessonId}-${index + 1}`, lessonId, promptAm, english,
       armenian: promptAm, pronunciation: '', skill: 'reading',
-      writingTask: {promptAm, acceptedAnswers: alternatives, caseSensitive: lessonId.startsWith('foundation-alphabet-')},
-    })),
+      writingTask: {promptAm, acceptedAnswers: alternatives, caseSensitive: lessonId.startsWith('foundation-alphabet-'), answerMode: lessonId.startsWith('foundation-alphabet-') ? undefined : 'short-answer'},
+    } as CourseQuestion)),
   };
 }
 
@@ -80,7 +81,8 @@ export const A1_CHAPTERS: CourseChapter[] = [
   chapter('foundation-introduction', 'Աննան և իր ընկերը', 'numbers-and-me', [
     ['I am Anna.', 'Այ էմ Աննա։', 'Ես Աննան եմ։'],
     ['You are my friend.', 'Յու ար մայ ֆրենդ։', 'Դու իմ ընկերն ես։'],
-    ['He is a student. She is a teacher.', 'Հի իզ ը սթյուդընթ։ Շի իզ ը թիչըր։', 'Նա ուսանող է։ Նա ուսուցիչ է։'],
+    ['He is a student.', 'Հի իզ ը սթյուդընթ։', 'Նա ուսանող է։'],
+    ['She is a teacher.', 'Շի իզ ը թիչըր։', 'Նա ուսուցիչ է։'],
     ['We are ready.', 'Ուի ար րեդի։', 'Մենք պատրաստ ենք։'],
   ], [['Ի՞նչ է ներկայացող մարդու անունը։ Գրիր անգլերեն։', 'Anna'], ['Լրացրու տեքստի նախադասությունը՝ He is a ___.', 'student']]),
   chapter('foundation-years', 'Տարեթվերի էջը', 'numbers-and-me', [
@@ -91,67 +93,70 @@ export const A1_CHAPTERS: CourseChapter[] = [
   ], [['2000 թվականը գրիր անգլերեն բառերով։', 'two thousand'], ['2026 թվականը գրիր անգլերեն բառերով։', 'twenty twenty-six', ['two thousand and twenty-six', 'two thousand twenty-six']]]),
   chapter('foundation-dialogue-greeting', 'Բարև, ինչպե՞ս ես', 'everyday-reading', [
     ['Anna: Hello!', 'Աննա՝ Հելոու։', 'Աննա․ Բարև։'],
-    ['Ben: Hello! How are you?', 'Բեն՝ Հելոու։ Հաու ար յու՞', 'Բեն․ Բարև։ Ինչպե՞ս ես։'],
-    ['Anna: I am fine. Thank you.', 'Աննա՝ Այ էմ ֆայն։ Թենք յու։', 'Աննա․ Ես լավ եմ։ Շնորհակալություն։'],
+    ['Ben: How are you?', 'Բեն՝ Հաու ար յու՞', 'Բեն․ Ինչպե՞ս ես։'],
+    ['Anna: Fine, thanks.', 'Աննա՝ Ֆայն թենքս։', 'Աննա․ Լավ եմ, շնորհակալություն։'],
   ], [['Բենի հարցը՝ «Ինչպե՞ս ես», գրիր անգլերեն։', 'How are you'], ['Աննան ինչպե՞ս է։ Գրիր տեքստի մեկ բառը։', 'fine']]),
   chapter('foundation-dialogue-name', 'Նոր ծանոթ', 'everyday-reading', [
     ['Ben: What is your name?', 'Բեն՝ Ուոթ իզ յոր նեյմ՞', 'Բեն․ Ի՞նչ է քո անունը։'],
     ['Anna: My name is Anna.', 'Աննա՝ Մայ նեյմ իզ Աննա։', 'Աննա․ Իմ անունը Աննա է։'],
     ['Ben: Nice to meet you.', 'Բեն՝ Նայս թու միթ յու։', 'Բեն․ Ուրախ եմ ծանոթանալու համար։'],
-    ['Anna: Nice to meet you too.', 'Աննա՝ Նայս թու միթ յու թու։', 'Աննա․ Ես էլ եմ ուրախ ծանոթանալու համար։'],
+    ['Anna: You too.', 'Աննա՝ Յու թու։', 'Աննա․ Ես էլ։'],
   ], [['Ի՞նչ է աղջկա անունը։ Գրիր անգլերեն։', 'Anna'], ['Լրացրու՝ My ___ is Anna.', 'name']]),
   chapter('foundation-dialogue-age', 'Քանի՞ տարեկան ես', 'everyday-reading', [
     ['Anna: How old are you?', 'Աննա՝ Հաու օուլդ ար յու՞', 'Աննա․ Քանի՞ տարեկան ես։'],
-    ['Ben: I am ten years old. And you?', 'Բեն՝ Այ էմ թեն յիրզ օուլդ։ Ընդ յու՞', 'Բեն․ Ես տասը տարեկան եմ։ Իսկ դո՞ւ։'],
-    ['Anna: I am eleven years old.', 'Աննա՝ Այ էմ իլեվըն յիրզ օուլդ։', 'Աննա․ Ես տասնմեկ տարեկան եմ։'],
-  ], [['Քանի՞ տարեկան է Բենը։ Գրիր միայն թիվը՝ անգլերեն բառով։', 'ten'], ['Քանի՞ տարեկան է Աննան։ Գրիր միայն թիվը՝ անգլերեն բառով։', 'eleven']]),
+    ['Ben: Ten. And you?', 'Բեն՝ Թեն։ Ընդ յու՞', 'Բեն․ Տասը։ Իսկ դո՞ւ։'],
+    ['Anna: Eleven.', 'Աննա՝ Իլեվըն։', 'Աննա․ Տասնմեկ։'],
+  ], [['Քանի՞ տարեկան է Բենը։ Կարող ես գրել միայն թիվը։', 'ten', ['10', 'He is ten.', "He's ten.", 'He is 10.', 'He is ten years old.', 'He is 10 years old.']], ['Քանի՞ տարեկան է Աննան։ Կարող ես գրել միայն թիվը։', 'eleven', ['11', 'She is eleven.', "She's eleven.", 'She is 11.', 'She is eleven years old.', 'She is 11 years old.']]]),
   chapter('lesson-1-days', 'Իմ շաբաթը', 'everyday-reading', [
-    ['Today is Monday.', 'Թուդեյ իզ Մանդեյ։', 'Այսօր երկուշաբթի է։'],
-    ['I study English on Tuesday and Thursday.', 'Այ սթադի Ինգլիշ օն Թյուզդեյ ընդ Թըրզդեյ։', 'Ես անգլերեն եմ սովորում երեքշաբթի և հինգշաբթի։'],
-    ['On Sunday, I rest.', 'Օն Սանդեյ այ րեսթ։', 'Կիրակի ես հանգստանում եմ։'],
-  ], [['Տեքստում այսօր շաբաթվա ո՞ր օրն է։ Գրիր անգլերեն։', 'Monday'], ['Ո՞ր օրն է պատմողը հանգստանում։', 'Sunday']]),
+    ['Monday · Tuesday', 'Մանդեյ · Թյուզդեյ', 'երկուշաբթի · երեքշաբթի'],
+    ['Wednesday · Thursday', 'Ուենզդեյ · Թըրզդեյ', 'չորեքշաբթի · հինգշաբթի'],
+    ['Friday · Saturday · Sunday', 'Ֆրայդեյ · Սեթըրդեյ · Սանդեյ', 'ուրբաթ · շաբաթ · կիրակի'],
+  ], [['Գրիր «երկուշաբթի» բառը անգլերեն։', 'Monday'], ['Գրիր «կիրակի» բառը անգլերեն։', 'Sunday']]),
   chapter('lesson-2-days-plans', 'Շաբաթական պլան', 'everyday-reading', [
-    ['On Wednesday, I read a book.', 'Օն Ուենզդեյ այ րիդ ը բուք։', 'Չորեքշաբթի ես գիրք եմ կարդում։'],
-    ['On Friday, I meet my friend.', 'Օն Ֆրայդեյ այ միթ մայ ֆրենդ։', 'Ուրբաթ ես հանդիպում եմ ընկերոջս։'],
-    ['On Saturday, we go to the park.', 'Օն Սեթըրդեյ ուի գոու թու դը փարք։', 'Շաբաթ մենք գնում ենք այգի։'],
-  ], [['Ո՞ր օրն է պատմողը գիրք կարդում։', 'Wednesday'], ['Ո՞ր օրն է հանդիպում ընկերոջը։', 'Friday']]),
+    ['I read on Monday.', 'Այ րիդ օն Մանդեյ։', 'Երկուշաբթի ես կարդում եմ։'],
+    ['I play on Tuesday.', 'Այ փլեյ օն Թյուզդեյ։', 'Երեքշաբթի ես խաղում եմ։'],
+    ['I rest on Sunday.', 'Այ րեսթ օն Սանդեյ։', 'Կիրակի ես հանգստանում եմ։'],
+  ], [['Ո՞ր օրն է պատմողը կարդում։', 'Monday'], ['Ո՞ր օրն է խաղում։', 'Tuesday']]),
   chapter('lesson-3-months', 'Տարվա իմ օրացույցը', 'everyday-reading', [
-    ['January is in winter.', 'Ջենյուերի իզ ին ուինթըր։', 'Հունվարը ձմռանն է։'],
-    ['My birthday is in May.', 'Մայ բըրթդեյ իզ ին Մեյ։', 'Իմ ծննդյան օրը մայիսին է։'],
-    ['July and August are in summer.', 'Ջուլայ ընդ Օգըսթ ար ին սամըր։', 'Հուլիսն ու օգոստոսը ամռանն են։'],
-  ], [['Ո՞ր ամսին է պատմողի ծննդյան օրը։', 'May'], ['Տեքստի ո՞ր ամիսն է ձմռանը։', 'January']]),
+    ['January · February · March', 'Ջենյուերի · Ֆեբրուերի · Մարչ', 'հունվար · փետրվար · մարտ'],
+    ['April · May · June', 'Էյփրիլ · Մեյ · Ջուն', 'ապրիլ · մայիս · հունիս'],
+    ['July · August · September', 'Ջուլայ · Օգըսթ · Սեփթեմբըր', 'հուլիս · օգոստոս · սեպտեմբեր'],
+    ['October · November · December', 'Օքթոուբըր · Նոուվեմբըր · Դիսեմբըր', 'հոկտեմբեր · նոյեմբեր · դեկտեմբեր'],
+  ], [['Գրիր «մայիս» բառը անգլերեն։', 'May'], ['Գրիր տարվա առաջին ամսվա անունը անգլերեն։', 'January']]),
   chapter('lesson-4-numbers-small', 'Մեր դասարանը', 'everyday-reading', [
-    ['There are twelve students in our class.', 'Դեր ար թուելվ սթյուդընթս ին աուըր քլաս։', 'Մեր դասարանում տասներկու աշակերտ կա։'],
-    ['I have two books and three pens.', 'Այ հեվ թու բուքս ընդ թրի փենզ։', 'Ես ունեմ երկու գիրք և երեք գրիչ։'],
-    ['Our room is number ten.', 'Աուըր րում իզ նամբըր թեն։', 'Մեր սենյակը տասներորդ համարն է։'],
-  ], [['Քանի՞ ուսանող կա դասարանում։ Թիվը գրիր բառով։', 'twelve'], ['Քանի՞ գրիչ ունի պատմողը։ Թիվը գրիր բառով։', 'three']]),
+    ['Twelve students.', 'Թուելվ սթյուդընթս։', 'Տասներկու աշակերտ։'],
+    ['Two books. Three pens.', 'Թու բուքս։ Թրի փենզ։', 'Երկու գիրք։ Երեք գրիչ։'],
+    ['Room ten.', 'Րում թեն։', 'Սենյակ տասը։'],
+  ], [['Քանի՞ աշակերտ կա։', 'twelve', ['12', 'twelve students']], ['Քանի՞ գրիչ կա։', 'three', ['3', 'three pens']]]),
   chapter('lesson-6-time-dates', 'Հանդիպման ժամը', 'everyday-reading', [
-    ['Our lesson starts at nine o’clock.', 'Աուըր լեսըն սթարթս էթ նայն ըքլոք։', 'Մեր դասը սկսվում է ժամը իննին։'],
-    ['Lunch is at twelve o’clock.', 'Լանչ իզ էթ թուելվ ըքլոք։', 'Ճաշը ժամը տասներկուսին է։'],
-    ['We meet on Friday at three o’clock.', 'Ուի միթ օն Ֆրայդեյ էթ թրի ըքլոք։', 'Մենք հանդիպում ենք ուրբաթ՝ ժամը երեքին։'],
-  ], [['Ժամը քանի՞սին է սկսվում դասը։ Գրիր միայն թիվը՝ բառով։', 'nine'], ['Շաբաթվա ո՞ր օրն են հանդիպում։', 'Friday']]),
+    ['The lesson is at nine.', 'Դը լեսըն իզ էթ նայն։', 'Դասը ժամը իննին է։'],
+    ['Lunch is at twelve.', 'Լանչ իզ էթ թուելվ։', 'Ճաշը ժամը տասներկուսին է։'],
+    ['We meet on Friday.', 'Ուի միթ օն Ֆրայդեյ։', 'Մենք հանդիպում ենք ուրբաթ։'],
+  ], [['Ժամը քանի՞սին է դասը։', 'nine', ['9', 'at nine', 'at 9', '9:00']], ['Շաբաթվա ո՞ր օրն են հանդիպում։', 'Friday', ['on Friday']]]),
   chapter('lesson-7-directions', 'Դեպի գրադարան', 'everyday-reading', [
     ['Go straight. Turn left.', 'Գոու սթրեյթ։ Թըրն լեֆթ։', 'Գնա ուղիղ։ Թեքվիր ձախ։'],
-    ['The library is next to the school.', 'Դը լայբրըրի իզ նեքստ թու դը սքուլ։', 'Գրադարանը դպրոցի կողքին է։'],
-    ['The door is on your right.', 'Դը դոր իզ օն յոր րայթ։', 'Դուռը քո աջ կողմում է։'],
-  ], [['Տեքստով՝ ուղիղ գնալուց հետո ո՞ր կողմ պետք է թեքվել։ Գրիր left կամ right։', 'left'], ['Ո՞ր շենքի կողքին է գրադարանը։ Գրիր մեկ անգլերեն բառ։', 'school']]),
+    ['Go up. Turn right.', 'Գոու ափ։ Թըրն րայթ։', 'Բարձրացիր վերև։ Թեքվիր աջ։'],
+    ['Here is the school.', 'Հիըր իզ դը սքուլ։', 'Ահա դպրոցը։'],
+  ], [['Առաջին տողով՝ ո՞ր կողմ պետք է թեքվել։ Գրիր left կամ right։', 'left', ['turn left']], ['Ի՞նչ շենք է վերջում։ Գրիր մեկ անգլերեն բառ։', 'school', ['the school']]]),
   chapter('lesson-8-daily-greetings', 'Առաջին օրը', 'everyday-reading', [
-    ['Good morning! My name is Anna.', 'Գուդ մորնինգ։ Մայ նեյմ իզ Աննա։', 'Բարի լույս։ Իմ անունը Աննա է։'],
-    ['I am from Armenia. I am a student.', 'Այ էմ ֆրոմ Արմինիա։ Այ էմ ը սթյուդընթ։', 'Ես Հայաստանից եմ։ Ես ուսանող եմ։'],
-    ['Nice to meet you. See you tomorrow!', 'Նայս թու միթ յու։ Սի յու թըմորոու։', 'Ուրախ եմ ծանոթանալու համար։ Կհանդիպենք վաղը։'],
+    ['Good morning!', 'Գուդ մորնինգ։', 'Բարի լույս։'],
+    ['I am from Armenia.', 'Այ էմ ֆրոմ Արմինիա։', 'Ես Հայաստանից եմ։'],
+    ['I am a student.', 'Այ էմ ը սթյուդընթ։', 'Ես ուսանող եմ։'],
+    ['Goodbye!', 'Գուդբայ։', 'Ցտեսություն։'],
   ], [['Ո՞ր երկրից է Աննան։ Գրիր երկրի անգլերեն անունը։', 'Armenia'], ['Լրացրու տեքստից՝ I am a ___.', 'student']]),
-  // Append to preserve the existing final-review question modes and IDs.
+  // Preserve the existing chapter order and final-review IDs.
   ...INTERNATIONAL_CHAPTERS,
 ];
 
 export const getA1Chapter = (lessonId: string) => A1_CHAPTERS.find(chapter => chapter.lessonId === lessonId);
 
-export const A1_FINAL_READING = 'My name is Mari. I am a student. I have two books. On Monday, my English lesson starts at ten o’clock. On Sunday, I read at home.';
+export const A1_FINAL_READING = 'I am Mari. I am a student. I have two books. My lesson is on Monday. It is at ten.';
 export const A1_FINAL_QUESTIONS: CourseQuestion[] = [
   ...A1_CHAPTERS.map((chapter, index): CourseQuestion => {
     const lesson = LESSONS_DATA.find(item => item.id === chapter.lessonId)!;
-    const sentence = lesson.sentences[Math.floor(lesson.sentences.length / 2)];
-    const listening = index > 2 && index % 3 === 0;
+    const sentence = lesson.sentences.find(item => item.writingTask?.answerMode === 'personal-age')
+      || lesson.sentences[Math.floor(lesson.sentences.length / 2)];
+    const listening = index > 2 && index % 3 === 0 && !sentence.writingTask?.answerMode;
     return {...sentence, id: `a1-final-${lesson.id}`, lessonId: lesson.id,
       skill: listening ? 'listening' : 'writing',
       promptAm: listening ? 'Լսիր և գրիր լսած բառը կամ նախադասությունը։' : sentence.writingTask?.promptAm || `Անգլերեն գրիր՝ «${sentence.armenian}»։`,
@@ -159,10 +164,10 @@ export const A1_FINAL_QUESTIONS: CourseQuestion[] = [
   }),
   ...chapter('lesson-8-daily-greetings', '', '', [], [
     ['Կարդա ամփոփիչ տեքստը։ Ի՞նչ է պատմողի անունը։', 'Mari'],
-    ['Քանի՞ գիրք ունի Մարին։ Գրիր թիվը անգլերեն բառով։', 'two'],
+    ['Քանի՞ գիրք ունի Մարին։', 'two'],
     ['Շաբաթվա ո՞ր օրն է անգլերենի դասը։', 'Monday'],
-    ['Ժամը քանի՞սին է սկսվում դասը։ Գրիր թիվը անգլերեն բառով։', 'ten'],
-  ]).questions.map((question, index) => ({...question, id: `a1-final-reading-${index + 1}`})),
+    ['Ժամը քանի՞սին է սկսվում դասը։', 'ten'],
+  ]).questions.map((question, index) => withAnswerMeaning({...question, writingTask: {promptAm: question.promptAm, answerMode: 'short-answer' as const}, id: `a1-final-reading-${index + 1}`})),
 ];
 
 // Optional official practice links. They are not copied or required for completion.

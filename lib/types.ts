@@ -52,6 +52,18 @@ export interface LessonCategoryMeta {
   descriptionAm: string;
 }
 
+export interface AnswerMeaning {
+  // Question-specific facts. Patterns capture a value, rather than match a
+  // model sentence; unrelated subjects and opposing answers must not pass.
+  values?: string[];
+  numberRange?: [number, number];
+  patterns: string[];
+  allowBareValue?: boolean;
+  unrelatedValues?: string[];
+  valueAliases?: Record<string, string>;
+  valueDomain?: string[];
+}
+
 export interface LessonSentence {
   id: string;
   english: string;
@@ -64,6 +76,9 @@ export interface LessonSentence {
     promptAm: string;
     acceptedAnswers?: string[];
     caseSensitive?: boolean;
+    answerMode?: 'short-answer' | 'personal-age';
+    helpAm?: string;
+    meaning?: AnswerMeaning;
   };
 }
 
@@ -449,6 +464,9 @@ export interface DailyQuestionItem {
   requiredKeywords?: string[];
   explanationAm: string;
   hintAm?: string;
+  topic?: 'days' | 'months' | 'years' | 'puzzles';
+  puzzleKind?: 'word' | 'phrase';
+  meaning?: AnswerMeaning;
 }
 
 export interface DailyQuestionAnswerRecord {
@@ -462,6 +480,7 @@ export interface DailyQuestionAnswerRecord {
 }
 
 export interface DailyQuestionDayState {
+  poolRevision?: number;
   level?: CEFRLevel;
   id: string;
   userId: string;

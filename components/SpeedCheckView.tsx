@@ -190,6 +190,10 @@ export default function SpeedCheckView({
   );
 
   const currentSentence: LessonSentence | undefined = deck[currentIndex] || filteredWords[0];
+  // This activity recalls the displayed text, rather than answering its lesson prompt.
+  const recallSentence = currentSentence && {...currentSentence, writingTask: {
+    promptAm: currentSentence.armenian, caseSensitive: currentSentence.writingTask?.caseSensitive,
+  }};
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -199,7 +203,7 @@ export default function SpeedCheckView({
     if (!currentSentence || justConfirmedText !== null || gameState !== 'playing') return;
 
     // Ավտոմատ հաստատում՝ երբ գրվում է ճիշտ պատասխանը (սխալի դեպքում չի հաստատում)
-    if (isCorrectWrittenAnswer(currentSentence, val)) {
+    if (recallSentence && isCorrectWrittenAnswer(recallSentence, val)) {
       study.start();
       const nextCorrect = correctCount + 1;
       const nextStreak = streak + 1;
@@ -231,7 +235,7 @@ export default function SpeedCheckView({
     if (!currentSentence || gameState !== 'playing' || justConfirmedText !== null) return;
     if (!inputValue.trim()) return;
 
-    if (isCorrectWrittenAnswer(currentSentence, inputValue)) {
+    if (recallSentence && isCorrectWrittenAnswer(recallSentence, inputValue)) {
       // Already handled by handleInputChange, but keep fallback safety
       handleInputChange({
         target: { value: inputValue },
