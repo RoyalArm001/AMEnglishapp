@@ -1,4 +1,5 @@
 import type { LessonItem, LessonSentence } from '../lib/types';
+import { LEARNING_MONTHS, MONTHS_LESSON_ID } from './months';
 
 // Keep the existing sentence IDs so saved answers and bookmarks still resolve.
 const word = (id: string, english: string, pronunciation: string, armenian: string): LessonSentence => ({
@@ -40,24 +41,11 @@ export const BEGINNER_LESSONS: LessonItem[] = [
     ],
   },
   {
-    id: 'lesson-3-months', categoryId: 'months-of-year', order: 3, level: 'A1', estimatedMinutes: 6,
-    titleAm: 'Տարվա ամիսները՝ մեկ առ մեկ', titleEn: 'The twelve months',
-    descriptionAm: 'Սովորիր մեկ ամսվա անուն, հետո անցիր հաջորդին։ Կարող ես ցանկացած պահի ընդմիջել։',
-    grammarTipAm: 'Ամիսների անունները սկսում ենք մեծատառով։ Դրանք նախ սովորում ենք որպես առանձին բառեր։',
-    sentences: [
-      word('s-11', 'January', 'Ջենյուերի', 'հունվար'),
-      word('s-12', 'February', 'Ֆեբրուերի', 'փետրվար'),
-      word('s-13', 'March', 'Մարչ', 'մարտ'),
-      word('s-14', 'April', 'Էյփրիլ', 'ապրիլ'),
-      word('s-15', 'May', 'Մեյ', 'մայիս'),
-      word('s-16', 'June', 'Ջուն', 'հունիս'),
-      word('beginner-july', 'July', 'Ջուլայ', 'հուլիս'),
-      word('beginner-august', 'August', 'Օգըսթ', 'օգոստոս'),
-      word('beginner-september', 'September', 'Սեփթեմբըր', 'սեպտեմբեր'),
-      word('beginner-october', 'October', 'Օքթոուբըր', 'հոկտեմբեր'),
-      word('beginner-november', 'November', 'Նոուվեմբըր', 'նոյեմբեր'),
-      word('beginner-december', 'December', 'Դիսեմբըր', 'դեկտեմբեր'),
-    ],
+    id: MONTHS_LESSON_ID, categoryId: 'months-of-year', order: 3, level: 'A1', estimatedMinutes: 6,
+    titleAm: 'Տարվա ամիսները՝ երեքական', titleEn: 'Months in small groups',
+    descriptionAm: 'Չորս փոքր մաս՝ երեքական ամսով։ Նայիր հայերեն իմաստին, լսիր, ընտրիր ու գրիր մեկ անուն։',
+    grammarTipAm: 'January = հունվար։ Ամսվա անունը սկսում ենք մեծատառով։ Սովորիր միայն այս երեք ամիսները, հետո անցիր հաջորդ մասին։',
+    sentences: LEARNING_MONTHS.map(month => word(month.id, month.english, month.pronunciation, month.armenian)),
   },
   {
     id: 'lesson-4-numbers-small', categoryId: 'numbers', order: 4, level: 'A1', estimatedMinutes: 4,

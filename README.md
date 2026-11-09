@@ -2,9 +2,13 @@
 
 ![HayLingo app icon](public/favicon.svg)
 
-**English learning for Armenian speakers · v1.12.0**
+**English learning for Armenian speakers · v1.12.1**
 
 [Փոփոխությունների պատմություն / Changelog](CHANGELOG.md) · [Տեղադրման և զարգացման ուղեցույց](docs/DEVELOPMENT.md)
+
+Ամիսների A1 դասը բաժանված է չորս փոքր մասի՝ երեքական ամսով։ Անգլերեն անունը, հայերեն իմաստն ու արտասանությունը միասին են։ Նախ նայիր և լսիր, հետո ընտրիր համապատասխան անունն ու գրիր մեկ բառ։ Այս դասում նյութը ժամանակով չի թաքցվում, իսկ հաջորդ ամսին անցնում ես քո սեղմումով։ Դասագրքի կրկնությունն էլ է երեքական քարտերով։ Նախկին պատասխաններն ու ավարտի պայմանները պահպանված են։
+
+The A1 months lesson uses four groups of three, with English–Armenian pairs, pronunciation and slow audio. Learn the cards, recognize the month, then write its name. There is no timed hiding or automatic advance in this lesson. The reading review also shows three cards at a time; existing progress and completion requirements remain intact.
 
 Օրական հարցաշարում՝ 54 հարց շաբաթվա օրերից, ամիսներից և տարեթվերից, նաև 24 թարգմանական հանելուկ՝ A1–A2 մակարդակների համար։ Նոր 10 հարցանոց շարքում օրերից, ամիսներից, տարեթվերից և հանելուկներից ընտրվում է 2-ական հարց, իսկ մնացած 2-ը՝ այլ հասանելի թեմաներից։ «Փոքր հուշում»-ը բացվում է միայն սեղմելիս։ Օրինակ՝ «Ես էջեր ունեմ, ինձ կարդում են» → book։ Ընտրությունը նույն օրվա ընթացքում կայուն է և փոխվում է ըստ ամսաթվի։ Արդեն ավարտված օրվա արդյունքը չի ջնջվում․ նոր հարցերը կտեսնես հաջորդ օրը կամ «Սկսել նորից» կոճակով։
 

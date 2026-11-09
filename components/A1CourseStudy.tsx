@@ -7,6 +7,8 @@ import { isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete
 import { useStudyActivity } from '../lib/study-activity';
 import type { LessonItem, UserProgressData } from '../lib/types';
 import LessonSources from './LessonSources';
+import { LEARNING_MONTHS, MONTH_GROUPS, MONTHS_LESSON_ID } from '../data/months';
+import MonthReference from './MonthReference';
 
 interface StudyProps {
   progress: UserProgressData;
@@ -19,6 +21,7 @@ const buttonClass = 'min-h-11 rounded-xl bg-emerald-600 px-4 py-3 font-semibold 
 export function CourseReadingPanel({lesson, progress, onVerify, onSpeak, onCompleteLesson}: StudyProps & {lesson: LessonItem; onCompleteLesson: (id: string) => void}) {
   const chapter = getA1Chapter(lesson.id);
   const [translation, setTranslation] = useState(true);
+  const [monthGroup, setMonthGroup] = useState(0);
   const study = useStudyActivity();
   if (!chapter) return null;
   const book = A1_TEXTBOOKS.find(item => item.id === chapter.bookId);
@@ -26,23 +29,32 @@ export function CourseReadingPanel({lesson, progress, onVerify, onSpeak, onCompl
   const checked = isCourseReadingComplete(progress, lesson);
   const passed = progress.learningPath?.readingAnswerIds || [];
   const question = chapter.questions.find(item => !passed.includes(item.id));
+  const questionMonth = lesson.id === MONTHS_LESSON_ID ? LEARNING_MONTHS.find(month => month.english === question?.english) : undefined;
+  const readingContext = questionMonth ? `${questionMonth.english} — ${questionMonth.armenian}` : chapter.lines.map(line => line.english).join(' ');
 
   return <section id="course-reading" className={`${panelClass} scroll-mt-24`} aria-labelledby="course-reading-title">
     <div className="space-y-2">
       <p className="flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300"><BookOpen size={20} />HayLingo · {book?.titleAm}</p>
       <h2 id="course-reading-title" className="text-xl font-bold">{chapter.titleAm}</h2>
-      <p className="text-sm text-slate-500">Կարդա այս դասին համապատասխան գլուխը, լսիր արտասանությունը և պատասխանիր երկու հարցերին։</p>
+      <p className="text-sm text-slate-500">{lesson.id === MONTHS_LESSON_ID ? 'Կրկնիր ամիսները փոքր խմբերով։ Վերջում պատասխանիր երկու կարճ հարցի․ մեկ բառը բավական է։' : 'Կարդա այս դասին համապատասխան գլուխը, լսիր արտասանությունը և պատասխանիր երկու հարցերին։'}</p>
     </div>
     <button type="button" aria-pressed={translation} onClick={() => setTranslation(value => !value)} className="min-h-11 rounded-xl border px-4 py-2">{translation ? 'Թաքցնել հայերենն ու արտասանությունը' : 'Ցույց տալ հայերենն ու արտասանությունը'}</button>
-    <div className="space-y-3">
+    {lesson.id === MONTHS_LESSON_ID ? <div className="space-y-3">
+      <nav className="flex flex-wrap gap-2" aria-label="Ամիսների կրկնության մասերը">
+        {MONTH_GROUPS.map((group, index) => <button key={group.titleAm} type="button" aria-pressed={monthGroup === index} onClick={() => setMonthGroup(index)} className={`min-h-11 rounded-xl border px-3 py-2 ${monthGroup === index ? 'border-emerald-500 bg-emerald-500/10' : 'border-slate-200 dark:border-slate-700'}`}>
+          {index + 1}. {group.titleAm}
+        </button>)}
+      </nav>
+      <MonthReference months={MONTH_GROUPS[monthGroup].months} translation={translation} onSpeak={onSpeak} />
+    </div> : <div className="space-y-3">
       {chapter.lines.map((line, index) => <article key={index} className="min-w-0 space-y-2 break-words rounded-xl bg-slate-50 p-4 dark:bg-slate-800">
         <p lang="en" data-learning-text="english" className="font-semibold">{line.english}</p>
         {translation && <><p data-learning-text="pronunciation" className="text-emerald-700 dark:text-emerald-300">{line.pronunciation}</p><p data-learning-text="armenian">{line.armenian}</p></>}
         <button type="button" onClick={() => {study.start(); onSpeak(line.english, 'slow');}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2"><Volume2 size={17} />Լսել</button>
       </article>)}
-    </div>
+    </div>}
     <p role="status" className="text-sm font-semibold">Ընթերցանության ստուգում՝ {chapter.questions.filter(item => passed.includes(item.id)).length} / {chapter.questions.length}</p>
-    {question && <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} context={chapter.lines.map(line => line.english).join(' ')} onAnswer={answer => onVerify('reading', question.id, answer)} />}
+    {question && <CourseAnswer key={question.id} question={question} onSpeak={onSpeak} context={readingContext} onAnswer={answer => onVerify('reading', question.id, answer)} />}
     {checked && <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300"><CheckCircle2 size={19} />Գլուխն ու ստուգումն ավարտված են։</p>}
     {!done && <button type="button" disabled={!checked} onClick={() => onCompleteLesson(lesson.id)} className={buttonClass}>Ավարտել դասը</button>}
     <LessonSources lesson={lesson} age={progress.profile.age} onSpeak={onSpeak} />

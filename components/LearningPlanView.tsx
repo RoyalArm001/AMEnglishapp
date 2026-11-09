@@ -6,6 +6,8 @@ import type { LessonItem, UserProgressData } from '../lib/types';
 import { areCourseLessonsComplete, canOpenCourseLesson, getCourseLessons, getCurrentCourseLesson, getFirstUnverifiedIndex, getNextCourseLevel, isCorrectWrittenAnswer, isCourseLessonComplete, isCourseReadingComplete, isCourseStepComplete, isLevelCourseComplete, needsAnswerConfirmation } from '../lib/learning-path';
 import { A1FinalAssessment, CourseReadingPanel } from './A1CourseStudy';
 import { useStudyActivity } from '../lib/study-activity';
+import { MONTHS_LESSON_ID } from '../data/months';
+import MonthsLessonStep from './MonthsLessonStep';
 
 interface Props {
   progress: UserProgressData;
@@ -53,7 +55,9 @@ export default function LearningPlanView(props: Props) {
       {nextLevel ? <button type="button" onClick={props.onAdvance} className="rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white">Սկսել {nextLevel} մակարդակը <ArrowRight className="ml-2 inline" size={17} /></button> : <p className="text-sm">Հաջորդ մակարդակի դասապլանը դեռ պատրաստ չէ։ Այն ինքնաշխատ չի համարվում անցած։</p>}
     </section>}
     {progress.level === 'A1' && lessonsComplete && <A1FinalAssessment progress={progress} onVerify={props.onVerifyCourseQuestion} onSpeak={props.onSpeak} />}
-    {active && <LessonStep key={`${progress.profile.id}-${active.id}-${progress.currentSentenceIndex}`} {...props} lesson={active} />}
+    {active && (active.id === MONTHS_LESSON_ID
+      ? <MonthsLessonStep key={`${progress.profile.id}-${active.id}-${progress.currentSentenceIndex}`} {...props} lesson={active} />
+      : <LessonStep key={`${progress.profile.id}-${active.id}-${progress.currentSentenceIndex}`} {...props} lesson={active} />)}
     {active && active.level === 'A1' && writingComplete && <CourseReadingPanel key={active.id} lesson={active} progress={progress} onVerify={props.onVerifyCourseQuestion} onSpeak={props.onSpeak} onCompleteLesson={props.onCompleteLesson} />}
     <details className="space-y-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
       <summary className="cursor-pointer text-lg font-bold">Իմ հասանելի դասերը</summary>

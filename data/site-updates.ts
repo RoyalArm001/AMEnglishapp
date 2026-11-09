@@ -11,6 +11,11 @@ interface SiteUpdate {
 // Keep newest entries first. Describe implemented changes, not planned features.
 export const SITE_UPDATES: readonly SiteUpdate[] = [
   {
+    id: 'months-small-groups', date: '2026-11-09', dateLabel: '9 նոյեմբերի, 2026', version: 'v1.12.1',
+    section: 'A1 դասապլան', title: 'Ամիսները՝ երեքական, քո արագությամբ',
+    description: 'Չորս փոքր մաս՝ հստակ հայերեն իմաստներով, արտասանությամբ ու լսելու կոճակով։ Նախ ճանաչիր ամիսը, հետո գրիր մեկ բառ։ Նյութը չի անհետանում ժամանակով, հաջորդ քայլին անցնում ես ինքդ։ Արդեն կատարված քայլերը պահպանված են։',
+  },
+  {
     id: 'translation-puzzles', date: '2026-11-07', dateLabel: '7 նոյեմբերի, 2026', version: 'v1.12.0',
     section: 'Օրվա հարցերը', title: 'Գուշակիր ու թարգմանիր',
     description: '24 նոր առաջադրանք՝ պարզ հանելուկներ և առօրյա իրավիճակների թարգմանություններ։ Մտածիր պատասխանի մասին, անհրաժեշտության դեպքում բացիր «Փոքր հուշում»-ը։ Օրվա շարքում հանելուկները հայտնվում են քո մակարդակով։',

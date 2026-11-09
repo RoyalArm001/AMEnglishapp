@@ -2,6 +2,7 @@ import { LESSONS_DATA } from './lessons';
 import { INTERNATIONAL_CHAPTERS } from './international-chapters';
 import { withAnswerMeaning } from './answer-meanings';
 import type { LessonSentence } from '../lib/types';
+import { LEARNING_MONTHS, MONTHS_LESSON_ID } from './months';
 
 export interface CourseQuestion extends LessonSentence {
   promptAm: string;
@@ -117,12 +118,9 @@ export const A1_CHAPTERS: CourseChapter[] = [
     ['I play on Tuesday.', 'Այ փլեյ օն Թյուզդեյ։', 'Երեքշաբթի ես խաղում եմ։'],
     ['I rest on Sunday.', 'Այ րեսթ օն Սանդեյ։', 'Կիրակի ես հանգստանում եմ։'],
   ], [['Ո՞ր օրն է պատմողը կարդում։', 'Monday'], ['Ո՞ր օրն է խաղում։', 'Tuesday']]),
-  chapter('lesson-3-months', 'Տարվա իմ օրացույցը', 'everyday-reading', [
-    ['January · February · March', 'Ջենյուերի · Ֆեբրուերի · Մարչ', 'հունվար · փետրվար · մարտ'],
-    ['April · May · June', 'Էյփրիլ · Մեյ · Ջուն', 'ապրիլ · մայիս · հունիս'],
-    ['July · August · September', 'Ջուլայ · Օգըսթ · Սեփթեմբըր', 'հուլիս · օգոստոս · սեպտեմբեր'],
-    ['October · November · December', 'Օքթոուբըր · Նոուվեմբըր · Դիսեմբըր', 'հոկտեմբեր · նոյեմբեր · դեկտեմբեր'],
-  ], [['Գրիր «մայիս» բառը անգլերեն։', 'May'], ['Գրիր տարվա առաջին ամսվա անունը անգլերեն։', 'January']]),
+  chapter(MONTHS_LESSON_ID, 'Կրկնենք ամիսները՝ երեքական', 'everyday-reading',
+    LEARNING_MONTHS.map(month => [month.english, month.pronunciation, month.armenian] as Line),
+    [['Գրիր «մայիս» բառը անգլերեն։', 'May'], ['Գրիր տարվա առաջին ամսվա անունը անգլերեն։', 'January']]),
   chapter('lesson-4-numbers-small', 'Մեր դասարանը', 'everyday-reading', [
     ['Twelve students.', 'Թուելվ սթյուդընթս։', 'Տասներկու աշակերտ։'],
     ['Two books. Three pens.', 'Թու բուքս։ Թրի փենզ։', 'Երկու գիրք։ Երեք գրիչ։'],
